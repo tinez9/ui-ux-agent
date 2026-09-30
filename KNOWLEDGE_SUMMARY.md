@@ -39,7 +39,7 @@ The highest-value gaps are currently:
 2. **Distinctive product functionality** — reusable feature patterns need real product evidence and implementation detail.
 3. **Frontend capabilities** — container/scroll capabilities are now operational, but native overlays, semantic primitives, performance and testing still need decision-ready coverage.
 4. **Foundations** — durable UX principles need deeper evidence, decision models, and operational examples.
-5. **Interaction and motion** — the transition/reduced-motion baseline is operational, but direct manipulation and outcome evidence remain thin. — durable UX principles need deeper evidence, decision models, and operational examples.
+5. **Interaction and motion** — the transition/reduced-motion baseline is operational, but direct manipulation and outcome evidence remain thin.
 
 ## Scoring rubric
 
@@ -49,20 +49,24 @@ The highest-value gaps are currently:
 | **1** | SEED — topic labels or unvalidated notes only |
 | **2** | BASIC — useful fragments with little depth/evidence |
 | **3** | EARLY — usable initial guidance with important gaps |
-| **4** | NARROWLY OPERATIONAL — reliable in some scenarios |
-| **5** | SOLID — reusable operational guidance with meaningful evidence |
-| **6** | STRONG — multi-source, actionable coverage of most common decisions |
-| **7** | MATURE — broad, coherent, detailed, evidence-backed knowledge |
-| **8** | DEEP — strong breadth/depth across contexts and well validated |
-| **9** | EXPERT-GRADE — unusually comprehensive, precise, current, outcome-supported |
-| **10** | REFERENCE-GRADE — exceptional, deeply validated, comprehensive, and rare |
+| **4** | DEVELOPING — fundamentals understood; major subareas still open |
+| **5** | OPERATIONAL — useful across several scenarios, but substantial gaps remain |
+| **6** | SOLID — repeatedly researched across sources, perspectives, cases, and trade-offs |
+| **7** | STRONG — broad/deep operational coverage with repeated validation and exceptions |
+| **8** | VERY MATURE — numerous investigations over time; few major known gaps |
+| **9** | EXPERT-GRADE — exceptional depth including edge cases, controversies, failures, outcomes, and evolution |
+| **10** | NEAR-EXHAUSTIVE — practically exhaustive within a defined scope; extremely rare |
 
 ## Maintenance rules
 
 - Scores are integer expert judgments, not fake measurements.
 - Scores change only when knowledge maturity materially changes.
-- Adding more text does not justify a higher score.
+- Adding more text or completing another run does not justify a higher score.
+- Broad areas normally require many independent research cycles before meaningful score increases.
+- Scores must reflect remaining unknowns, not only accumulated material.
+- Discovering hidden complexity can justify keeping or lowering a score.
 - Scores can decrease when knowledge becomes stale, contradicted, poorly scoped, or less useful.
-- Levels 8–10 require unusually strong evidence and should be rare.
+- Levels 8–10 require repeated research over time, cross-context validation, edge cases, competing views, practical evidence, and very few major known gaps; they should be rare.
+- No score makes an area closed to future research.
 - Keep this file compact. Detailed research belongs elsewhere.
 - When a score changes, update the short explanation and the relevant gap at the same time.
