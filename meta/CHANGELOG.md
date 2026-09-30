@@ -20,3 +20,9 @@ Record meaningful knowledge-base improvements, not every formatting edit.
 - Added an asynchronous-state pattern covering context-preserving loading, skeleton/spinner/progress selection, layout stability, empty-vs-error semantics, stale-data honesty, scoped recovery, and accessible status communication.
 - Established an interaction-motion baseline: purpose-driven animation, semantic reduced-motion variants, vestibular-risk boundaries, current View Transition API capabilities, progressive enhancement, and interruption-safe implementation; raised interaction/motion maturity from 2/10 to 3/10.
 - Established native scroll-driven UI guidance: continuous scroll/view timelines versus discrete scroll-state queries, CSS-over-JavaScript decision rules, reduced-motion/resilience constraints, and implementation traps; raised frontend implementation maturity from 2/10 to 3/10.
+
+
+## 2026-10-01
+- Hardened research-depth and maturity rules: broad areas now require repeated multi-perspective investigation before they can be considered mature.
+- Made scoring deliberately conservative: successful runs do not automatically raise scores, and discovering new complexity may hold or lower them.
+- Added continuous revalidation of mature areas, explicit contradiction/exception/trade-off hunting, and the principle that research speed is not learning speed.
