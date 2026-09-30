@@ -12,7 +12,8 @@ The broad question “Which context artifacts most improve visual quality in AI-
 - How should approval/undo thresholds vary by domain, blast radius, reversibility, and user expertise?
 - Which provenance details materially improve verification without overwhelming users?
 - Which products benefit from spatial navigation or direct manipulation?
-- When does motion measurably improve comprehension or perceived performance?
+- When does spatial continuity measurably improve comprehension or task success versus an instant state change, and for which navigation structures?
+- Which direct-manipulation and drag/drop feedback patterns remain robust across pointer, touch, keyboard, and reduced-motion modes?
 - Under realistic latency, when do skeletons outperform preserved stale content, spinners, or no transitional UI in perceived speed and task success?
 - How should agent activity be visualized for long-running tasks?
 - Which mix of semantic tokens, component contracts, composition rules, rendered references, and real content most improves agent fidelity when tested independently?

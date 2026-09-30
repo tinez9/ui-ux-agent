@@ -9,7 +9,7 @@ This file guides autonomous research selection. Use qualitative states; do not i
 | Foundations | WEAK | High | Seed principles; needs evidence and depth |
 | Visual design | WEAK | High | First 2026 creative signals identified; needs durable operational rules |
 | UX patterns | DEVELOPING | High | Operational forms, result-set control, and loading/empty/error-state guidance documented; many common product patterns remain |
-| Interaction & motion | WEAK | Medium | Needs evidence and implementation patterns |
+| Interaction & motion | DEVELOPING | Medium | Operational motion-purpose, reduced-motion, transition, and web implementation rules documented; direct manipulation and measured outcome evidence remain |
 | AI-native UX | ADEQUATE | Medium | Risk-shaped autonomy, approvals, progress, recovery, provenance, and denial recovery documented; domain-specific validation remains |
 | Design systems | DEVELOPING | Medium | Agent-readable contract established: semantic tokens, component contracts, composition rules, accessibility invariants, and explicit degrees of freedom; comparative validation still missing |
 | Distinctive features | WEAK | High | Core differentiation objective |
@@ -26,6 +26,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+
+### 2026-09-30 — Purposeful motion, reduced motion, and view transitions
+**Question:** How should agents decide when interface motion is useful, how should reduced-motion variants preserve meaning, and which current web primitives are safe to build on?
+
+**Finding:** Motion should earn its cost by communicating state, causality, spatial relationship, feedback, continuity, or progress. Reduced motion is a semantic interaction variant rather than a blanket late-stage disable: preserve the information while removing or replacing problematic spatial movement. `prefers-reduced-motion` is broadly available; W3C documents it as a sufficient technique for non-essential interaction-triggered motion. The View Transition API now provides current-platform primitives for SPA/MPA continuity and skippable transitions, but animation remains progressive enhancement and application state/focus/history must stay correct without it.
+
+**Evidence boundary:** W3C establishes accessibility requirements/techniques; MDN establishes platform availability and API behavior; Apple independently supports intent-driven motion and adaptation for Reduce Motion. These sources do not justify universal durations/easings or claims that animation always improves comprehension or perceived performance.
+
 
 ### 2026-09-30 — Loading, progress, empty, and error states
 **Question:** How should products represent asynchronous loading, progress, empty, stale, and failure states without destroying context or creating misleading feedback?
@@ -73,7 +81,7 @@ This file guides autonomous research selection. Use qualitative states; do not i
 **Evidence boundary:** Mostly first-party Anthropic engineering and product evidence. Strong for Claude workflow design; insufficient to claim universal user aesthetic preference or cross-model superiority.
 
 ## Sections needing review
-Foundations, motion, distinctive features, frontend implementation, and cross-model anti-generic guidance remain weak. UX patterns are now developing after form/error-recovery, search/filter/result-set, and loading/empty/error-state coverage, but navigation, onboarding, tables, settings, dialogs, and other common interactions remain. Design systems now have an operational architecture but still need comparative agent-output validation and richer component/composition examples. Trend evidence classification is now usable but should be expanded only with meaningful new evidence.
+Foundations, distinctive features, frontend implementation, and cross-model anti-generic guidance remain weak. Interaction/motion now has an operational baseline for purposeful transitions and reduced-motion behavior, but still needs direct-manipulation patterns and measured outcome evidence. UX patterns are now developing after form/error-recovery, search/filter/result-set, and loading/empty/error-state coverage, but navigation, onboarding, tables, settings, dialogs, and other common interactions remain. Design systems now have an operational architecture but still need comparative agent-output validation and richer component/composition examples. Trend evidence classification is now usable but should be expanded only with meaningful new evidence.
 
 ## Research selection rule
 Prefer a focused question that can improve one or two files substantially. Avoid broad “research UI/UX” passes.

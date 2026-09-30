@@ -3,7 +3,7 @@
 A compact snapshot of what this repository currently knows and how mature that knowledge is.
 
 **Last assessed:** 2026-09-30  
-**Overall knowledge maturity:** **3.5 / 10**
+**Overall knowledge maturity:** **3.6 / 10**
 
 > The scores measure the maturity and operational usefulness of the **repository's knowledge**, not the intelligence of any AI model and not a percentage of all possible knowledge.
 
@@ -14,7 +14,7 @@ A compact snapshot of what this repository currently knows and how mature that k
 | Foundations | **3 / 10** | Useful seed principles around hierarchy, feedback, consistency, progressive disclosure, and defaults. | Stronger evidence, cognitive/decision principles, error prevention, mental models, trust, and richer operational examples. |
 | Visual design | **3 / 10** | Initial rules for typography, composition, semantic color, identity, plus first 2026 creative signals. | Deeper art-direction guidance, stronger pattern evidence, responsive composition, typography systems, imagery, density, dark UI, and implementation examples. |
 | UX patterns | **4 / 10** | Operational guidance covers forms/error recovery, result-set control, and loading/progress/empty/error states, including accessible dynamic status and context-preserving async feedback. | Navigation, onboarding, tables/data grids, settings, dialogs, comparison, bulk actions, and stronger cross-domain outcome evidence. |
-| Interaction & motion | **2 / 10** | Durable rule that motion needs a functional job; research domains are mapped. | Pattern-level guidance, reduced-motion behavior, performance tradeoffs, gesture/direct-manipulation rules, and current platform implementation evidence. |
+| Interaction & motion | **3 / 10** | Operational baseline covers motion purpose, reduced-motion semantics, local/view transitions, high-risk spatial motion, progressive enhancement, and current web primitives. | Direct-manipulation/gesture patterns, performance tradeoffs, interruption testing, and measured evidence for comprehension/task outcomes. |
 | AI-native UX | **5 / 10** | Solid first architecture for risk-shaped autonomy, permissions, approvals, progress, provenance, recovery, undo, and denial handling. | Domain-specific validation, richer agent-state patterns, uncertainty UX, long-running workflows, delegation, and comparative outcome evidence. |
 | Design systems | **4 / 10** | Operational agent-readable architecture now separates invariants from bounded creative freedom and covers semantic tokens, component contracts, composition rules, themes, accessibility, references, and failure modes. | Comparative evidence on which artifact mix improves agent output, automated validation, governance, and richer real-world component/composition examples. |
 | Distinctive product features | **2 / 10** | Admission criteria and promising research directions are defined. | Validated feature patterns with shipped-product evidence, tradeoffs, use cases, implementation guidance, and differentiation value. |
@@ -38,8 +38,8 @@ The highest-value gaps are currently:
 1. **UX patterns** — the repository needs detailed operational knowledge for common product interactions.
 2. **Distinctive product functionality** — reusable feature patterns need real product evidence and implementation detail.
 3. **Frontend capabilities** — current browser/platform features need to be translated into practical interaction opportunities.
-4. **Interaction and motion** — current knowledge is still mostly principles rather than decision-ready patterns.
-5. **Foundations** — durable UX principles need deeper evidence, decision models, and operational examples.
+4. **Foundations** — durable UX principles need deeper evidence, decision models, and operational examples.
+5. **Interaction and motion** — the transition/reduced-motion baseline is operational, but direct manipulation and outcome evidence remain thin. — durable UX principles need deeper evidence, decision models, and operational examples.
 
 ## Scoring rubric
 

@@ -251,3 +251,36 @@ Maintain useful, traceable sources without creating an undifferentiated link dum
 - **Why it matters:** Documents current semantics for incomplete region updates; MDN's content-visibility documentation also describes deferring offscreen rendering and using intrinsic sizing to reduce layout instability.
 - **Freshness / date:** Reviewed 2026-09-30.
 - **Notes:** Platform capability evidence, not user-outcome research.
+
+
+## W3C WAI — Understanding WCAG 2.3.3 Animation from Interactions
+- **URL:** https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions
+- **Type:** accessibility standard guidance
+- **Topics:** interaction-triggered motion, vestibular safety, essential motion, reduced motion
+- **Why it matters:** Defines the accessibility rationale for making non-essential interaction-triggered motion preventable and explicitly identifies `prefers-reduced-motion` as a sufficient technique.
+- **Freshness / date:** Updated 2025-09-16; reviewed 2026-09-30.
+- **Notes:** SC 2.3.3 is WCAG 2.2 Level AAA; avoid misrepresenting it as an AA requirement.
+
+## MDN — View Transition API and ViewTransition
+- **URL:** https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API
+- **Type:** platform documentation
+- **Topics:** SPA transitions, MPA transitions, shared continuity, skippable transitions, browser support
+- **Why it matters:** Documents a current native mechanism for view continuity without hand-managing duplicate old/new DOM states; core ViewTransition is Baseline 2025 and transition types are Baseline 2026.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Platform availability does not prove that a transition improves UX; use as progressive enhancement.
+
+## MDN — prefers-reduced-motion
+- **URL:** https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion
+- **Type:** platform documentation
+- **Topics:** user motion preference, CSS media queries, vestibular accessibility
+- **Why it matters:** Confirms the widely available web primitive for detecting a user's preference to reduce non-essential motion.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Prefer this mature primitive over experimental preference APIs as the baseline implementation path.
+
+## Apple Human Interface Guidelines — Motion / Reduced Motion
+- **URL:** https://developer.apple.com/design/human-interface-guidelines/motion
+- **Type:** official platform guideline
+- **Topics:** motion intent, feedback, accessibility, reduced motion, depth effects
+- **Why it matters:** Independent platform guidance that motion should serve a clear purpose, should not carry essential information alone, and should adapt problematic depth/parallax effects for Reduce Motion.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Platform guidance rather than comparative user-outcome research.
