@@ -93,3 +93,14 @@ Foundations, distinctive features, and cross-model anti-generic guidance remain 
 
 ## Research selection rule
 Prefer a focused question that can improve one or two files substantially. Avoid broad “research UI/UX” passes.
+
+Do not infer maturity from recency or number of completed cycles. A topic already researched several times may still be the best target when important contradictions, edge cases, implementation failures, alternatives, or evidence gaps remain.
+
+Balance:
+- weak areas that need foundational coverage;
+- developing areas that need depth and competing perspectives;
+- mature areas that deserve periodic adversarial revalidation.
+
+For broad domains, prefer multiple investigations over time from different angles rather than attempting to “finish” the area in one or a few runs.
+
+A useful research cycle does not need to raise a score.
