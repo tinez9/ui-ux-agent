@@ -3,7 +3,7 @@
 A compact snapshot of what this repository currently knows and how mature that knowledge is.
 
 **Last assessed:** 2026-09-30  
-**Overall knowledge maturity:** **3.3 / 10**
+**Overall knowledge maturity:** **3.5 / 10**
 
 > The scores measure the maturity and operational usefulness of the **repository's knowledge**, not the intelligence of any AI model and not a percentage of all possible knowledge.
 
@@ -13,7 +13,7 @@ A compact snapshot of what this repository currently knows and how mature that k
 |---|---:|---|---|
 | Foundations | **3 / 10** | Useful seed principles around hierarchy, feedback, consistency, progressive disclosure, and defaults. | Stronger evidence, cognitive/decision principles, error prevention, mental models, trust, and richer operational examples. |
 | Visual design | **3 / 10** | Initial rules for typography, composition, semantic color, identity, plus first 2026 creative signals. | Deeper art-direction guidance, stronger pattern evidence, responsive composition, typography systems, imagery, density, dark UI, and implementation examples. |
-| UX patterns | **2 / 10** | Scope and evaluation template exist, but most individual interaction patterns remain undocumented. | Evidence-backed guidance for navigation, search, filters, forms, onboarding, tables, states, settings, comparison, and recovery. |
+| UX patterns | **4 / 10** | Operational guidance now covers forms/error recovery plus search, filtering, result-set orientation, zero results, mobile filtering, accessible dynamic status, and pagination tradeoffs. | Navigation, onboarding, tables/data grids, settings, loading/empty/error states, dialogs, comparison, bulk actions, and stronger cross-domain outcome evidence. |
 | Interaction & motion | **2 / 10** | Durable rule that motion needs a functional job; research domains are mapped. | Pattern-level guidance, reduced-motion behavior, performance tradeoffs, gesture/direct-manipulation rules, and current platform implementation evidence. |
 | AI-native UX | **5 / 10** | Solid first architecture for risk-shaped autonomy, permissions, approvals, progress, provenance, recovery, undo, and denial handling. | Domain-specific validation, richer agent-state patterns, uncertainty UX, long-running workflows, delegation, and comparative outcome evidence. |
 | Design systems | **4 / 10** | Operational agent-readable architecture now separates invariants from bounded creative freedom and covers semantic tokens, component contracts, composition rules, themes, accessibility, references, and failure modes. | Comparative evidence on which artifact mix improves agent output, automated validation, governance, and richer real-world component/composition examples. |

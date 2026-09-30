@@ -8,7 +8,7 @@ This file guides autonomous research selection. Use qualitative states; do not i
 |---|---|---:|---|
 | Foundations | WEAK | High | Seed principles; needs evidence and depth |
 | Visual design | WEAK | High | First 2026 creative signals identified; needs durable operational rules |
-| UX patterns | WEAK | High | Needs operational pattern guidance |
+| UX patterns | DEVELOPING | High | Operational form/error-recovery and search/filter/result-set guidance now documented; many common product patterns remain |
 | Interaction & motion | WEAK | Medium | Needs evidence and implementation patterns |
 | AI-native UX | ADEQUATE | Medium | Risk-shaped autonomy, approvals, progress, recovery, provenance, and denial recovery documented; domain-specific validation remains |
 | Design systems | DEVELOPING | Medium | Agent-readable contract established: semantic tokens, component contracts, composition rules, accessibility invariants, and explicit degrees of freedom; comparative validation still missing |
@@ -26,6 +26,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+
+### 2026-09-30 — Search, filtering, and result-set orientation
+**Question:** How should search, filtering, result state, and pagination work together so users stay oriented and can recover?
+
+**Finding:** Treat them as one result-set control system. Applied constraints need a visible summary outside potentially hidden controls; result changes need clear state/count feedback; zero results need explicit recovery; filtering/sorting applies to the whole set and resets pagination. Explicit Apply versus live filtering is conditional: choose from task shape, latency, stability, and accessibility rather than assuming either is universally superior. Pagination remains a robust default for goal-directed retrieval; automatic infinite scroll has accessibility/location costs.
+
+**Evidence boundary:** Baymard supplies behavioral ecommerce evidence for applied-filter visibility. GOV.UK, MOJ, DWP, and Home Office provide deployed public-service/accessibility guidance. W3C defines dynamic status-message requirements. Commerce-specific prevalence and public-service conventions are not universal outcome evidence.
+
 
 ### 2026-09-30 — Agent-readable design systems and bounded creativity
 **Question:** How should an agent-readable design system preserve coherence without forcing every generated page into the same composition?
@@ -57,7 +65,7 @@ This file guides autonomous research selection. Use qualitative states; do not i
 **Evidence boundary:** Mostly first-party Anthropic engineering and product evidence. Strong for Claude workflow design; insufficient to claim universal user aesthetic preference or cross-model superiority.
 
 ## Sections needing review
-Foundations, UX patterns, motion, distinctive features, frontend implementation, and cross-model anti-generic guidance remain weak. Design systems now have an operational architecture but still need comparative agent-output validation and richer component/composition examples. Trend evidence classification is now usable but should be expanded only with meaningful new evidence.
+Foundations, motion, distinctive features, frontend implementation, and cross-model anti-generic guidance remain weak. UX patterns are now developing after form/error-recovery and search/filter/result-set coverage, but navigation, onboarding, tables, settings, state patterns, and other common interactions remain. Design systems now have an operational architecture but still need comparative agent-output validation and richer component/composition examples. Trend evidence classification is now usable but should be expanded only with meaningful new evidence.
 
 ## Research selection rule
 Prefer a focused question that can improve one or two files substantially. Avoid broad “research UI/UX” passes.

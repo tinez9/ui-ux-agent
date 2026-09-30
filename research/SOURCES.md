@@ -170,6 +170,46 @@ Maintain useful, traceable sources without creating an undifferentiated link dum
 - **Freshness / date:** Reviewed 2026-09-30.
 - **Notes:** Product-system evidence, not comparative research on AI-agent performance.
 
+## Baymard — Applied Filters Overview
+- **URL:** https://baymard.com/research-articles/how-to-design-applied-filters
+- **Type:** UX research
+- **Topics:** filtering, applied state, ecommerce product lists, mobile filters, orientation
+- **Why it matters:** Large-scale desktop/mobile testing found that missing applied-filter summaries deprive users of confirmation, fast removal, and context; updated 2026 benchmark reports 28% of sites still omit them.
+- **Freshness / date:** Updated 2026-05-13; reviewed 2026-09-30.
+- **Notes:** Strong ecommerce evidence; generalize the orientation mechanism more safely than benchmark percentages.
+
+## W3C WAI — Understanding WCAG 4.1.3 Status Messages
+- **URL:** https://www.w3.org/WAI/WCAG21/Understanding/status-messages
+- **Type:** accessibility standard guidance
+- **Topics:** dynamic results, status messages, assistive technology, live updates
+- **Why it matters:** Explicitly identifies messages such as “18 results returned” and “No results returned” as status messages when results update without moving focus.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** The result list itself is not the status message; avoid unnecessary focus changes and overly chatty announcements.
+
+## GOV.UK Design System — Pagination
+- **URL:** https://design-system.service.gov.uk/components/pagination/
+- **Type:** official design-system guidance
+- **Topics:** pagination, search results, filtering, sorting, accessibility, infinite scroll
+- **Why it matters:** Provides a robust goal-directed result-navigation model, requires whole-set filter/sort behavior and first-page reset, and explicitly warns against automatic infinite scroll for keyboard users.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Public-service guidance; task context still determines whether pagination, load-more, or another model is appropriate.
+
+## MOJ Design System — Filter a list
+- **URL:** https://design-patterns.service.justice.gov.uk/patterns/filter-a-list/
+- **Type:** official design-system pattern
+- **Topics:** filtering, explicit apply, search refinement, state persistence
+- **Why it matters:** Deployed pattern for refining result sets with explicit submission and clear separation between initial search and subsequent filtering.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Supports explicit-apply as a valid model, not as a universal prohibition on live filtering.
+
+## DWP Design System — Filter design notes
+- **URL:** https://design-system.dwp.gov.uk/contribute/filters/design-notes
+- **Type:** official design-system research notes
+- **Topics:** filter state, mobile, applied filters, synchronization, focus, zero results
+- **Why it matters:** Documents practical state-synchronization and mobile-orientation problems when filters and results are not simultaneously visible.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Research notes are less normative than a mature standard but useful implementation evidence.
+
 ## Source record template
 ### Source / organization
 - **URL:**
