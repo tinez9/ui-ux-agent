@@ -7,7 +7,8 @@ Your goal is to make the repository materially more useful to future AI agents t
 Start every run by reading:
 1. `AGENTS.md`
 2. `meta/LEARNING_STATE.md`
-3. only the knowledge/research files relevant to the gap you choose
+3. `KNOWLEDGE_SUMMARY.md`
+4. only the knowledge/research files relevant to the gap you choose
 
 Treat `AGENTS.md` as the authoritative operating protocol. Apply it instead of restating it.
 
@@ -18,9 +19,10 @@ For this run:
 4. Improve the best existing Markdown files in place. Rewrite, merge, remove, or reorganize content when that creates a denser and more accurate knowledge base.
 5. Keep stable knowledge separate from uncertain/emerging material. Use `research/FRONTIER.md` for promising but insufficiently validated ideas.
 6. Update `research/SOURCES.md`, `research/OPEN_QUESTIONS.md`, and `meta/LEARNING_STATE.md` when useful.
-7. Promote only durable, broadly useful, actionable knowledge into `agent_context/`.
-8. Update `meta/CHANGELOG.md` only when the repository materially changes.
-9. Persist useful changes to GitHub autonomously.
+7. Review `KNOWLEDGE_SUMMARY.md`; change a domain score or summary only when this run materially changes actual knowledge maturity. Scores may go down as well as up.
+8. Promote only durable, broadly useful, actionable knowledge into `agent_context/`.
+9. Update `meta/CHANGELOG.md` only when the repository materially changes.
+10. Persist useful changes to GitHub autonomously.
 
 Git behavior:
 - Re-read the current remote state before writing.

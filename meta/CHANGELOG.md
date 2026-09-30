@@ -14,3 +14,4 @@ Record meaningful knowledge-base improvements, not every formatting edit.
 - Added current Adobe, Webflow, Canva, Linear, and Notion sources and upgraded the trend observatory from seed-level to operational.
 - Added an evidence-backed AI-agent control architecture: risk-shaped autonomy, scoped permissions, approval boundaries, layered progress, proportional provenance, undo/recovery, and deny-and-continue behavior.
 - Added current Anthropic, OpenAI, and Microsoft/HAX sources supporting agent oversight and recovery patterns while preserving evidence boundaries.
+- Added `KNOWLEDGE_SUMMARY.md`, a maintained 0–10 knowledge-maturity scorecard with explicit scoring rules, diagnostic gaps, and permission for scores to decrease when knowledge becomes stale or weaker.

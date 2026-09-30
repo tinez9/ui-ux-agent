@@ -38,8 +38,9 @@ Each execution is one learning cycle.
 8. Update only files that materially benefit.
 9. Compact or refactor nearby content when useful.
 10. Update sources and learning state.
-11. Update `meta/CHANGELOG.md` only for meaningful changes.
-12. Persist useful improvements in GitHub.
+11. Review `KNOWLEDGE_SUMMARY.md`; update its summaries or scores only when the repository's actual maturity changed materially.
+12. Update `meta/CHANGELOG.md` only for meaningful changes.
+13. Persist useful improvements in GitHub.
 
 A valid cycle may produce no knowledge change if the evidence adds no meaningful value.
 
@@ -98,6 +99,36 @@ Document both what fails and what to do instead. Avoid universal prohibitions.
 `agent_context/` is the compressed serving layer. It contains only durable, high-value, actionable guidance.
 
 Promote information there only when broadly useful, sufficiently supported, stable enough, concise, and likely to improve agent behavior.
+
+## Knowledge summary and scoring
+
+`KNOWLEDGE_SUMMARY.md` is the human- and agent-readable snapshot of what this repository currently knows.
+
+Maintain one 0–10 maturity score for each major knowledge area. The score measures the **quality and operational maturity of repository knowledge**, not the intelligence of the underlying model and not a percentage of all possible knowledge.
+
+Use this rubric:
+
+- **0 — EMPTY:** no useful knowledge.
+- **1 — SEED:** only a topic label or unvalidated notes.
+- **2 — BASIC:** a few useful fragments, but little depth or evidence.
+- **3 — EARLY:** usable initial guidance with important gaps.
+- **4 — NARROWLY OPERATIONAL:** reliable for some scenarios, incomplete elsewhere.
+- **5 — SOLID:** reusable operational guidance with meaningful evidence, but notable gaps remain.
+- **6 — STRONG:** multi-source, actionable knowledge covering most common decisions.
+- **7 — MATURE:** broad, coherent coverage with implementation detail, tradeoffs, and good evidence.
+- **8 — DEEP:** strong breadth and depth across contexts, current and well validated.
+- **9 — EXPERT-GRADE:** unusually comprehensive, precise, current, and supported by strong outcome evidence.
+- **10 — REFERENCE-GRADE:** exceptional and rare; comprehensive, deeply validated across contexts, current, and difficult to materially improve.
+
+Scoring rules:
+- Scores are integer judgments, not fabricated measurements.
+- Never increase a score merely because text was added.
+- Increase it only when evidence, coverage, decision quality, or implementation usefulness materially improves.
+- Scores may decrease when knowledge becomes stale, contradicted, poorly scoped, or less reliable.
+- A score of 8–10 requires unusually strong evidence and breadth; use these levels sparingly.
+- Keep the explanation beside each score concise and diagnostic.
+- The qualitative states in `meta/LEARNING_STATE.md` remain useful for research prioritization; they do not need to map mechanically to scores.
+- Update the overall score only after updating its component scores.
 
 ## Knowledge compression
 Periodically merge repeated ideas, remove stale material, shorten explanations without losing operational meaning, and prefer one strong rule with nuance over several weak paragraphs.

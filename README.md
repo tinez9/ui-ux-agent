@@ -26,6 +26,7 @@ The repository must distinguish **popular** from **good UX**, **trending** from 
 ```text
 .
 ├── AGENTS.md
+├── KNOWLEDGE_SUMMARY.md
 ├── agent_context/
 │   ├── CORE.md
 │   └── DESIGN_PLAYBOOK.md
@@ -54,7 +55,7 @@ The repository must distinguish **popular** from **good UX**, **trending** from 
 
 ## How agents should use it
 
-For normal product work, load `agent_context/CORE.md` and `agent_context/DESIGN_PLAYBOOK.md` first. Read deeper files from `knowledge/` only when relevant.
+For a fast overview of repository capability and gaps, read `KNOWLEDGE_SUMMARY.md`. For normal product work, load `agent_context/CORE.md` and `agent_context/DESIGN_PLAYBOOK.md` first. Read deeper files from `knowledge/` only when relevant.
 
 For research cycles, start with `AGENTS.md`, `meta/LEARNING_STATE.md`, and the relevant knowledge files. Update the knowledge base only when the new research materially improves it.
 
