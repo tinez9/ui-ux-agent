@@ -48,6 +48,48 @@ Do not treat every feature under “container queries” as equally mature:
 
 This distinction matters for agents: **feature-family familiarity is not browser-support evidence**. Check the exact primitive used.
 
+## Native overlay decision model: semantics before floating geometry
+
+Do not choose an overlay primitive because it visually “floats.” First decide the interaction contract.
+
+- Use a **modal `<dialog>` opened with `showModal()`** when the user must finish, cancel, or otherwise resolve a bounded task before interacting with the surrounding document. The browser places it in the top layer and makes the rest of that document inert.
+- Use a **non-modal `<dialog>`** when the surface is a dialog/subwindow but surrounding content must remain usable.
+- Use the **Popover API** for non-modal transient or persistent floating surfaces such as action menus, pickers, teaching UI, or suggestions when its lifecycle fits. Popovers are non-modal; adding `popover` does not turn arbitrary content into a dialog, menu, listbox, or tooltip.
+- Do not make a surface modal merely to simplify focus management. Modality is a user-workflow constraint, not a styling or implementation shortcut.
+
+### Modal dialog contract
+
+Native `<dialog>` removes substantial custom plumbing, but it does not choose good product behavior for you.
+
+- Give the dialog an accessible name, normally from a visible title.
+- Put initial focus where it best supports the task. The first control is not universally correct: long/structured content can justify focusing a static heading/intro with `tabindex="-1"`; destructive final steps can justify initially focusing the least destructive action.
+- Keep an explicit visible close/cancel mechanism even though modal dialogs support `Escape`.
+- Preserve `Escape` unless there is a compelling workflow reason not to; custom code should not accidentally suppress expected cancellation.
+- On close, return focus to the invoker unless the invoker disappeared or the completed workflow makes a different next focus target more logical.
+- Do not add `aria-modal="true"` to a surface that still allows outside interaction. WAI-ARIA warns that false modality can make outside content unavailable to some assistive-technology users.
+- Prefer `showModal()` over recreating background inertness manually. Use the `inert` attribute deliberately when a different UI state genuinely needs a subtree to become non-interactive.
+
+### Popover contract
+
+A popover solves **display lifecycle/top-layer behavior**, not the complete semantics of the widget inside it.
+
+When a control uses `popovertarget`, current browser behavior can provide useful invoker relationships, keyboard navigation ordering, `aria-expanded`/relationship semantics, Escape handling, and focus return. Still implement the content according to what it actually is: menu, listbox, dialog-like surface, explanatory content, etc.
+
+Do not import a floating-UI library merely because a surface needs to escape clipping or sit above page content. Start with:
+
+1. correct semantic element/widget pattern;
+2. native dialog or popover lifecycle if it satisfies the contract;
+3. CSS/native positioning where the support matrix permits;
+4. a library or custom JavaScript only for remaining requirements such as sophisticated collision policies, composite-widget behavior, virtualization, legacy support, or cross-surface coordination.
+
+This ordering keeps semantics independent from geometry and reduces JavaScript state that merely mirrors browser state.
+
+### Evidence boundary — 2026-09-30
+
+Native `<dialog>`, `showModal()`, and `inert` are broadly available in current browsers. The Popover API is also a current platform primitive, but support for adjacent newer features should be checked separately. Platform availability is evidence that custom infrastructure can often be removed; it is **not** evidence that more overlays improve usability.
+
+WAI-ARIA APG remains useful for dialog interaction requirements, but its examples explicitly require real assistive-technology testing before production reuse. Prefer semantic HTML behavior where it already supplies the contract rather than reproducing an ARIA example mechanically.
+
 ## Scroll-state queries: promising, not a default dependency
 
 Current CSS can query conditions such as whether content remains scrollable, a sticky element is stuck, or a snap target is snapped. This can remove JavaScript observers used only to decorate those states.
