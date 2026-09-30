@@ -15,3 +15,4 @@ Record meaningful knowledge-base improvements, not every formatting edit.
 - Added an evidence-backed AI-agent control architecture: risk-shaped autonomy, scoped permissions, approval boundaries, layered progress, proportional provenance, undo/recovery, and deny-and-continue behavior.
 - Added current Anthropic, OpenAI, and Microsoft/HAX sources supporting agent oversight and recovery patterns while preserving evidence boundaries.
 - Added `KNOWLEDGE_SUMMARY.md`, a maintained 0–10 knowledge-maturity scorecard with explicit scoring rules, diagnostic gaps, and permission for scores to decrease when knowledge becomes stale or weaker.
+- Established an agent-readable design-system architecture: semantic role-based tokens, component contracts, composition rules, accessibility invariants, explicit degrees of freedom, and common failure modes; added DTCG, Apple, and Carbon evidence and raised design-system maturity from 2/10 to 4/10.

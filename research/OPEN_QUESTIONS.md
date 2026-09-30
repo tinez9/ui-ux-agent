@@ -14,7 +14,8 @@ The broad question “Which context artifacts most improve visual quality in AI-
 - Which products benefit from spatial navigation or direct manipulation?
 - When does motion measurably improve comprehension or perceived performance?
 - How should agent activity be visualized for long-running tasks?
-- How can design systems constrain AI agents without making every page look the same?
+- Which mix of semantic tokens, component contracts, composition rules, rendered references, and real content most improves agent fidelity when tested independently?
+- How should design-system degrees of freedom be encoded so agents preserve brand/system integrity without converging on repetitive layouts?
 - Which patterns show real product adoption versus showcase-only visibility?
 - Which modern browser capabilities enable distinctive UX with acceptable complexity?
 - When is an independent visual evaluator worth its latency/token cost for current frontier models?

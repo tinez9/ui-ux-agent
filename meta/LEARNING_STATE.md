@@ -11,7 +11,7 @@ This file guides autonomous research selection. Use qualitative states; do not i
 | UX patterns | WEAK | High | Needs operational pattern guidance |
 | Interaction & motion | WEAK | Medium | Needs evidence and implementation patterns |
 | AI-native UX | ADEQUATE | Medium | Risk-shaped autonomy, approvals, progress, recovery, provenance, and denial recovery documented; domain-specific validation remains |
-| Design systems | WEAK | High | Especially agent-readable systems |
+| Design systems | DEVELOPING | Medium | Agent-readable contract established: semantic tokens, component contracts, composition rules, accessibility invariants, and explicit degrees of freedom; comparative validation still missing |
 | Distinctive features | WEAK | High | Core differentiation objective |
 | Frontend implementation | WEAK | Medium | Needs current platform capabilities |
 | Claude/AI-agent workflows | ADEQUATE | Medium | First evidence-backed workflow established; comparative testing still missing |
@@ -22,10 +22,18 @@ This file guides autonomous research selection. Use qualitative states; do not i
 1. What currently causes AI-generated web/app interfaces to look generic across models, and what practical alternatives work?
 2. Which AI-native interaction patterns best preserve control, feedback, provenance, approval, and recovery?
 3. Which distinctive features provide product value beyond decoration?
-4. How should agent-readable design systems balance invariants with creative degrees of freedom?
-5. Which current browser capabilities enable distinctive interaction with acceptable accessibility/performance cost?
+4. Which current browser capabilities enable distinctive interaction with acceptable accessibility/performance cost?
+5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+
+### 2026-09-30 — Agent-readable design systems and bounded creativity
+**Question:** How should an agent-readable design system preserve coherence without forcing every generated page into the same composition?
+
+**Finding:** Separate invariants from degrees of freedom. Semantic role-based tokens, component contracts, accessibility/state behavior, and theme relationships should be stable; composition, density, imagery, and selected expressive choices can remain bounded freedoms. Tokens are infrastructure rather than the whole system: agents also need component usage, composition rules, representative references, and explicit permission boundaries. The stable DTCG 2025.10 format now provides a vendor-neutral machine-readable token layer, while Apple and Carbon independently support semantic role-based styling across contexts.
+
+**Evidence boundary:** DTCG, Apple, and Carbon establish mature design-system mechanics; Anthropic shows current product adoption of reusable design-system grounding for AI design workflows. Comparative evidence about which artifact mix best improves agent output is still missing.
+
 
 ### 2026-09-30 — Risk-shaped autonomy and recovery for agents
 **Question:** Which AI-native interaction patterns best preserve control, feedback, provenance, approval, and recovery without creating approval fatigue?
@@ -49,7 +57,7 @@ This file guides autonomous research selection. Use qualitative states; do not i
 **Evidence boundary:** Mostly first-party Anthropic engineering and product evidence. Strong for Claude workflow design; insufficient to claim universal user aesthetic preference or cross-model superiority.
 
 ## Sections needing review
-Foundations, UX patterns, motion, AI-native control patterns, design systems, distinctive features, frontend implementation, and cross-model anti-generic guidance remain weak. Trend evidence classification is now usable but should be expanded only with meaningful new evidence.
+Foundations, UX patterns, motion, distinctive features, frontend implementation, and cross-model anti-generic guidance remain weak. Design systems now have an operational architecture but still need comparative agent-output validation and richer component/composition examples. Trend evidence classification is now usable but should be expanded only with meaningful new evidence.
 
 ## Research selection rule
 Prefer a focused question that can improve one or two files substantially. Avoid broad “research UI/UX” passes.

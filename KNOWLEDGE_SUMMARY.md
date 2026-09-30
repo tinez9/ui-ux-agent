@@ -3,7 +3,7 @@
 A compact snapshot of what this repository currently knows and how mature that knowledge is.
 
 **Last assessed:** 2026-09-30  
-**Overall knowledge maturity:** **3.1 / 10**
+**Overall knowledge maturity:** **3.3 / 10**
 
 > The scores measure the maturity and operational usefulness of the **repository's knowledge**, not the intelligence of any AI model and not a percentage of all possible knowledge.
 
@@ -16,7 +16,7 @@ A compact snapshot of what this repository currently knows and how mature that k
 | UX patterns | **2 / 10** | Scope and evaluation template exist, but most individual interaction patterns remain undocumented. | Evidence-backed guidance for navigation, search, filters, forms, onboarding, tables, states, settings, comparison, and recovery. |
 | Interaction & motion | **2 / 10** | Durable rule that motion needs a functional job; research domains are mapped. | Pattern-level guidance, reduced-motion behavior, performance tradeoffs, gesture/direct-manipulation rules, and current platform implementation evidence. |
 | AI-native UX | **5 / 10** | Solid first architecture for risk-shaped autonomy, permissions, approvals, progress, provenance, recovery, undo, and denial handling. | Domain-specific validation, richer agent-state patterns, uncertainty UX, long-running workflows, delegation, and comparative outcome evidence. |
-| Design systems | **2 / 10** | Key topics and the invariants-vs-freedom problem are defined. | Agent-readable system patterns, token strategy, composition rules, governance, accessibility contracts, examples, and evidence on preserving originality. |
+| Design systems | **4 / 10** | Operational agent-readable architecture now separates invariants from bounded creative freedom and covers semantic tokens, component contracts, composition rules, themes, accessibility, references, and failure modes. | Comparative evidence on which artifact mix improves agent output, automated validation, governance, and richer real-world component/composition examples. |
 | Distinctive product features | **2 / 10** | Admission criteria and promising research directions are defined. | Validated feature patterns with shipped-product evidence, tradeoffs, use cases, implementation guidance, and differentiation value. |
 | Frontend implementation | **2 / 10** | Relevant platform areas are mapped and complexity restraint is explicit. | Current browser/API capabilities, concrete implementation recipes, performance/accessibility boundaries, testing, and framework-specific guidance where useful. |
 | Claude / AI-agent frontend workflows | **5 / 10** | Evidence-backed brief → design contract → render/evaluate → iterate workflow; current context architecture and handoff guidance documented. | Comparative experiments, cross-model validation, stronger visual-evaluation loops, failure recovery, and measured evidence about which context artifacts improve results. |
@@ -36,10 +36,10 @@ The repository is currently strongest in three areas:
 The highest-value gaps are currently:
 
 1. **UX patterns** — the repository needs detailed operational knowledge for common product interactions.
-2. **Design systems for AI agents** — especially how to enforce coherence without producing repetitive layouts.
-3. **Distinctive product functionality** — reusable feature patterns need real product evidence and implementation detail.
-4. **Frontend capabilities** — current browser/platform features need to be translated into practical interaction opportunities.
-5. **Interaction and motion** — current knowledge is still mostly principles rather than decision-ready patterns.
+2. **Distinctive product functionality** — reusable feature patterns need real product evidence and implementation detail.
+3. **Frontend capabilities** — current browser/platform features need to be translated into practical interaction opportunities.
+4. **Interaction and motion** — current knowledge is still mostly principles rather than decision-ready patterns.
+5. **Foundations** — durable UX principles need deeper evidence, decision models, and operational examples.
 
 ## Scoring rubric
 

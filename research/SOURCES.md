@@ -138,6 +138,38 @@ Maintain useful, traceable sources without creating an undifferentiated link dum
 - **Freshness / date:** Reviewed 2026-09-30.
 - **Notes:** Security-oriented guidance with direct UX implications; not comparative usability testing.
 
+## Design Tokens Community Group — Design Tokens Specification 2025.10
+- **URL:** https://www.designtokens.org/TR/2025.10/format/
+- **Type:** stable community specification / interoperability standard
+- **Topics:** design tokens, typed values, groups, aliases, extensions, cross-tool interoperability
+- **Why it matters:** First stable vendor-neutral format for exchanging design decisions; provides a machine-readable foundation that agents and tools can consume without tying the system to one vendor.
+- **Freshness / date:** Final Community Group Report published 2025-10-28; reviewed 2026-09-30.
+- **Notes:** Stable and intended for implementation, but not a W3C Standards Track Recommendation. It standardizes exchange format, not design-system methodology.
+
+## Design Tokens Community Group — Resolver Module 2025.10
+- **URL:** https://www.designtokens.org/TR/2025.10/resolver/
+- **Type:** stable community specification
+- **Topics:** theming, contextual tokens, light/dark modes, accessibility contexts, token resolution
+- **Why it matters:** Defines how stable token roles can resolve differently across contexts without duplicating the whole system.
+- **Freshness / date:** Final Community Group Report published 2025-10-28; reviewed 2026-09-30.
+- **Notes:** Useful infrastructure for contextual values; does not guarantee accessible or coherent component behavior by itself.
+
+## Apple Human Interface Guidelines — Color
+- **URL:** https://developer.apple.com/design/Human-Interface-Guidelines/color
+- **Type:** official platform guideline
+- **Topics:** semantic color, dynamic appearance, increased contrast, accessibility, role consistency
+- **Why it matters:** Strong platform evidence for encoding visual decisions by semantic purpose rather than literal appearance and preserving those meanings across themes/accessibility contexts.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Apple-platform guidance; the semantic-role principle generalizes more safely than platform-specific values.
+
+## IBM Carbon Design System — Themes
+- **URL:** https://carbondesignsystem.com/elements/themes/overview/
+- **Type:** mature production design-system documentation
+- **Topics:** role-based tokens, themes, component tokens, typography, spacing
+- **Why it matters:** Concrete production example where token roles remain stable while values change across themes, and where component-specific tokens are scoped rather than treated as global primitives.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Product-system evidence, not comparative research on AI-agent performance.
+
 ## Source record template
 ### Source / organization
 - **URL:**
