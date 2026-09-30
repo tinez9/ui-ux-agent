@@ -1,0 +1,116 @@
+# AGENTS.md — Research and Curation Protocol
+
+This repository is a persistent knowledge system for AI agents that design and build digital products.
+
+## Mission
+Continuously improve reusable knowledge about UI/UX, visual design, interaction design, AI-native UX, design systems, frontend implementation, distinctive product functionality, and AI-assisted frontend workflows.
+
+The objective is not maximum information volume. The objective is maximum **decision value per token** for future agents. Optimize for accuracy, density, freshness, evidence quality, implementation value, retrieval clarity, design judgment, and usefulness to coding/design agents.
+
+## Core distinctions
+Never collapse:
+- popular ≠ good UX
+- trending ≠ recommended
+- visually impressive ≠ usable
+- novel ≠ useful
+- common in showcases ≠ preferred by users
+- technically possible ≠ worth implementing
+
+State what kind of evidence supports a claim.
+
+## Repository authority
+Git preserves history. Markdown should preserve the best current understanding.
+
+You may rewrite weak sections, replace outdated advice, merge duplication, split or merge files, remove obsolete material, reorganize headings, promote validated frontier knowledge, demote uncertain claims, and correct previous conclusions.
+
+Do not append another explanation when the existing explanation should simply be improved.
+
+## Research cycle
+Each execution is one learning cycle.
+
+1. Read `meta/LEARNING_STATE.md`.
+2. Read only knowledge files relevant to the likely gap.
+3. Identify the highest-value unresolved gap, contradiction, weak section, emerging development, or stale implementation detail.
+4. Form one focused research question.
+5. Research using appropriate external sources.
+6. Compare findings against existing repository knowledge.
+7. Classify findings internally as NEW, IMPROVEMENT, CORRECTION, CONTRADICTION, OBSOLETE, DUPLICATE, UNCONFIRMED, or EMERGING.
+8. Update only files that materially benefit.
+9. Compact or refactor nearby content when useful.
+10. Update sources and learning state.
+11. Update `meta/CHANGELOG.md` only for meaningful changes.
+12. Persist useful improvements in GitHub.
+
+A valid cycle may produce no knowledge change if the evidence adds no meaningful value.
+
+## Git autonomy
+This repository is intended to evolve autonomously.
+
+- Small, low-risk documentation improvements may be committed directly to `main`.
+- Larger restructures, broad rewrites, or changes that benefit from an isolated diff may use a branch and pull request.
+- The agent may review its own diff, update the branch, and merge its own PR when coherent and there are no blocking conflicts or failed checks.
+- Human approval is not required for routine knowledge-base evolution.
+- Never force-push over unrelated human work.
+- Never discard newer remote changes. Re-read current state before writing.
+- If a merge conflict or ambiguous concurrent edit cannot be resolved safely, leave it unmerged and report the blocker.
+
+## Topic priorities
+Develop competence across visual design, UX patterns, interaction and motion, AI-native UX, product differentiation, design systems, frontend implementation, and AI-coding-agent workflows.
+
+## Source discipline
+Prefer primary and first-party sources when possible.
+
+High-value evidence includes official platform guidelines, accessibility/web standards, official browser/framework/library documentation, established UX research organizations, academic research, direct product documentation, rigorous case studies, and observable implementation in real products.
+
+Use galleries, award sites, social media, community showcases, and inspiration collections mainly for trend detection, not as proof of usability or user preference.
+
+For important claims, corroborate when practical. Distinguish research evidence, official recommendation, measured product result, industry practice, observed visual trend, expert opinion, community preference, and agent synthesis. Do not turn synthesis into fact.
+
+## Freshness policy
+Treat knowledge by decay rate:
+- Slow-changing: foundational UX, hierarchy, affordances, accessibility, cognitive load, information architecture.
+- Medium-changing: design systems, interaction patterns, implementation conventions.
+- Fast-changing: framework APIs, libraries, browser capabilities, AI model behavior, Claude workflows, trend momentum, AI tooling.
+
+Date fast-changing claims when useful and revisit them periodically.
+
+## Trend policy
+For meaningful trends, capture what the pattern is, where it appears, observed period, momentum, product categories, likely drivers, potential UX benefits, risks, implementation implications, and likely durability.
+
+Use: EXPERIMENTAL, EMERGING, GROWING, ESTABLISHED, DECLINING.
+
+Never infer user preference from visual prevalence alone.
+
+## Pattern documentation
+For major patterns, capture only fields that add value: problem solved, when to use, when not to use, interaction model, responsive behavior, accessibility, performance, implementation, failure modes, variants, evidence, maturity, related patterns.
+
+## Product-feature filter
+Before promoting a feature, ask whether it solves a real problem, reduces friction, improves capability/discovery/control/comprehension, can differentiate the product, can be realistically implemented, and would still be useful without visual novelty.
+
+If mostly no, treat it as inspiration rather than product functionality.
+
+## Anti-generic UI research
+Continuously study recurring traits that make AI-generated products feel generic: repetitive hero sections, card grids, rounded containers, gradients, glass effects, typography, spacing, iconography, dashboard composition, stock copy, palettes, and animation.
+
+Document both what fails and what to do instead. Avoid universal prohibitions.
+
+## Agent-context policy
+`agent_context/` is the compressed serving layer. It contains only durable, high-value, actionable guidance.
+
+Promote information there only when broadly useful, sufficiently supported, stable enough, concise, and likely to improve agent behavior.
+
+## Knowledge compression
+Periodically merge repeated ideas, remove stale material, shorten explanations without losing operational meaning, and prefer one strong rule with nuance over several weak paragraphs.
+
+## Quality gate
+Before committing, ask:
+- Did this cycle make future agents more capable?
+- Did it improve judgment, not just information volume?
+- Is the evidence appropriate to the claim strength?
+- Did I distinguish trend from validated UX?
+- Is the result actionable?
+- Did I avoid or remove redundancy?
+- Is fast-changing advice dated or scoped?
+- Would loading this repository help an agent produce a better product?
+
+If not, keep researching or make no change.
