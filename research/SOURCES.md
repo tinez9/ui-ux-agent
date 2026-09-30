@@ -218,3 +218,36 @@ Maintain useful, traceable sources without creating an undifferentiated link dum
 - **Why it matters:**
 - **Freshness / date:**
 - **Notes:**
+
+
+## W3C WAI — WCAG 4.1.3 Status Messages and ARIA25
+- **URL:** https://www.w3.org/WAI/WCAG21/Understanding/status-messages
+- **Type:** accessibility standard guidance
+- **Topics:** loading, waiting, progress, success, errors, live regions
+- **Why it matters:** Defines when dynamically presented waiting/progress/result/error information must be programmatically determinable without moving focus.
+- **Freshness / date:** Reviewed 2026-09-30; ARIA25 updated 2026.
+- **Notes:** Progress-bar values alone are not necessarily announced as live updates; use an appropriate status mechanism when updates need announcement.
+
+## IBM Carbon Design System — Loading pattern
+- **URL:** https://carbondesignsystem.com/patterns/loading-pattern/
+- **Type:** mature production design-system guidance
+- **Topics:** skeletons, loading indicators, scope, progress
+- **Why it matters:** Separates structural skeleton states from process indicators and scopes loading feedback to full-page versus inline work.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Useful pattern guidance, not controlled evidence that one indicator universally improves perceived speed.
+
+## Atlassian Design System — Skeleton and progress bar
+- **URL:** https://atlassian.design/components/skeleton/usage
+- **Type:** mature production design-system guidance
+- **Topics:** skeleton geometry, layout stability, shimmer, determinate progress
+- **Why it matters:** Explicitly recommends matching skeleton geometry to expected content to avoid jumps and using progress UI when completion state matters.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Product-system guidance; avoid turning implementation conventions into universal perceptual claims.
+
+## MDN — aria-busy and content-visibility
+- **URL:** https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-busy
+- **Type:** platform documentation
+- **Topics:** busy regions, assistive technology, deferred rendering
+- **Why it matters:** Documents current semantics for incomplete region updates; MDN's content-visibility documentation also describes deferring offscreen rendering and using intrinsic sizing to reduce layout instability.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Platform capability evidence, not user-outcome research.

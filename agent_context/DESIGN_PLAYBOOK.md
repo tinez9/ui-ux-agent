@@ -64,7 +64,7 @@ For demanding design work, evaluate separately on:
 A separate skeptical evaluator can outperform generator self-review on subjective work. Use that overhead selectively rather than automatically.
 
 ## 10. Test states
-Verify hover, focus, active, disabled, loading, empty, error, success, reduced motion, keyboard navigation, touch targets, and responsive transitions.
+Verify hover, focus, active, disabled, loading, empty, error, success, reduced motion, keyboard navigation, touch targets, and responsive transitions. Treat async UI as explicit states: preserve valid existing content during background work, block only what is actually unavailable, distinguish empty from failure, and never invent determinate progress.
 
 ## 11. Refine or pivot
 After inspection, decide whether to refine the current direction or replace it. Do not preserve a generic visual thesis merely because implementation has already begun, and do not assume the latest iteration is necessarily the best.

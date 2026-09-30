@@ -8,7 +8,7 @@ This file guides autonomous research selection. Use qualitative states; do not i
 |---|---|---:|---|
 | Foundations | WEAK | High | Seed principles; needs evidence and depth |
 | Visual design | WEAK | High | First 2026 creative signals identified; needs durable operational rules |
-| UX patterns | DEVELOPING | High | Operational form/error-recovery and search/filter/result-set guidance now documented; many common product patterns remain |
+| UX patterns | DEVELOPING | High | Operational forms, result-set control, and loading/empty/error-state guidance documented; many common product patterns remain |
 | Interaction & motion | WEAK | Medium | Needs evidence and implementation patterns |
 | AI-native UX | ADEQUATE | Medium | Risk-shaped autonomy, approvals, progress, recovery, provenance, and denial recovery documented; domain-specific validation remains |
 | Design systems | DEVELOPING | Medium | Agent-readable contract established: semantic tokens, component contracts, composition rules, accessibility invariants, and explicit degrees of freedom; comparative validation still missing |
@@ -26,6 +26,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+
+### 2026-09-30 — Loading, progress, empty, and error states
+**Question:** How should products represent asynchronous loading, progress, empty, stale, and failure states without destroying context or creating misleading feedback?
+
+**Finding:** Model asynchronous UI as explicit states, preserve useful existing content during background work, scope blocking to what is actually unavailable, and choose skeleton/spinner/progress from the information the system truly has. Skeletons are best justified as structural placeholders that reserve expected geometry; determinate progress requires trustworthy progress. Empty and error states are semantically different. Dynamic waiting/progress/result/error messages need accessible status semantics without unnecessary focus movement.
+
+**Evidence boundary:** W3C defines status/progress accessibility behavior; Carbon and Atlassian independently provide mature production pattern guidance; MDN supplies platform semantics/rendering capabilities. This cycle found no strong basis for a universal wait-time threshold or for claiming skeletons always improve perceived speed.
+
 
 ### 2026-09-30 — Search, filtering, and result-set orientation
 **Question:** How should search, filtering, result state, and pagination work together so users stay oriented and can recover?
@@ -65,7 +73,7 @@ This file guides autonomous research selection. Use qualitative states; do not i
 **Evidence boundary:** Mostly first-party Anthropic engineering and product evidence. Strong for Claude workflow design; insufficient to claim universal user aesthetic preference or cross-model superiority.
 
 ## Sections needing review
-Foundations, motion, distinctive features, frontend implementation, and cross-model anti-generic guidance remain weak. UX patterns are now developing after form/error-recovery and search/filter/result-set coverage, but navigation, onboarding, tables, settings, state patterns, and other common interactions remain. Design systems now have an operational architecture but still need comparative agent-output validation and richer component/composition examples. Trend evidence classification is now usable but should be expanded only with meaningful new evidence.
+Foundations, motion, distinctive features, frontend implementation, and cross-model anti-generic guidance remain weak. UX patterns are now developing after form/error-recovery, search/filter/result-set, and loading/empty/error-state coverage, but navigation, onboarding, tables, settings, dialogs, and other common interactions remain. Design systems now have an operational architecture but still need comparative agent-output validation and richer component/composition examples. Trend evidence classification is now usable but should be expanded only with meaningful new evidence.
 
 ## Research selection rule
 Prefer a focused question that can improve one or two files substantially. Avoid broad “research UI/UX” passes.

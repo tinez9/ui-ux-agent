@@ -112,3 +112,53 @@ Test query persistence, browser back/forward, deep links/shareable filter state 
 
 ## Search/filter evidence boundary
 Baymard supplies behavioral evidence for ecommerce product lists; generalize orientation mechanisms more confidently than commerce-specific conventions. GOV.UK/MOJ/DWP/Home Office provide deployed public-service guidance and accessibility findings, including explicit-submit filtering and pagination. W3C defines the accessibility requirement for dynamic status messages. Live vs explicit apply should therefore remain conditional on task, latency, stability, and tested accessibility rather than being declared universally superior.
+
+
+## Loading, progress, empty, and error states
+
+Treat asynchronous UI as a **state machine**, not a spinner decoration. For every remote or deferred operation, define at least: initial/idle, pending, success-with-data, success-with-no-data, and failure. Add stale/refreshing, partial, queued, or cancelled states when the product can actually enter them.
+
+### Preserve useful context while work is pending
+Prefer keeping already-valid content visible during background refreshes instead of replacing the whole surface with a loader. Scope loading feedback to the region/action that is actually blocked. A full-screen loading state is justified only when the whole experience is genuinely unavailable.
+
+Do not erase useful content merely to prove that a request is happening. Disable or lock only controls whose repeated activation would be unsafe or ambiguous; unrelated work should remain available.
+
+### Choose the indicator from what the system knows
+- **Skeleton:** use when the destination structure is predictable and reserving that geometry reduces reflow. Match the approximate shape and size of real content; remove it as soon as content is ready. Skeletons are poor fits for arbitrary action controls or processes where completion/progress matters.
+- **Spinner / indeterminate activity:** use for a bounded region or action when work is underway but meaningful progress cannot be estimated. Avoid multiple competing spinners for one operation.
+- **Determinate progress:** prefer when the system has trustworthy quantitative progress. Label what is happening and expose the current value semantically. Never fabricate smooth percentages or an ETA merely to appear precise.
+- **Inline pending state:** for mutations such as save/submit/upload, keep feedback adjacent to the initiating action or affected object when possible.
+
+Atlassian and Carbon independently distinguish structural skeletons from process/progress indicators. This supports a task-based choice rather than a universal “skeletons feel faster” rule; this cycle found no basis for claiming skeletons always improve perceived speed.
+
+### Prevent loading UI from causing layout instability
+A skeleton's strongest defensible value is structural: reserve approximately the final geometry so content arrival does not cause unnecessary movement. For long/offscreen content, platform techniques such as lazy loading and `content-visibility: auto` can defer work; pair containment with an appropriate intrinsic placeholder size when needed to reduce scrollbar/layout jumps. Performance engineering should remove latency where possible rather than only mask it.
+
+### Make completion and failure unambiguous
+A pending indicator disappearing is not always enough feedback, especially for non-visual users. Communicate meaningful success, result, waiting, progress, or error status without stealing focus when no context change is needed.
+
+For failures:
+- keep successfully loaded or entered information when it remains valid;
+- state what failed in task language;
+- distinguish retryable/transient failure from permission, validation, or permanent failure when the distinction changes the remedy;
+- put retry/recovery near the failed region or action;
+- avoid trapping the whole page behind an error when only one region failed;
+- never show stale data as if it were freshly confirmed.
+
+If cached/stale content remains visible after refresh failure, label the freshness problem when it matters to the user's decision.
+
+### Empty is not the same as error
+An empty state means the system successfully has no content for the current state; an error means the intended state could not be obtained or changed. Do not use “No data” to conceal a failed request.
+
+Useful empty states explain why the surface is empty when that is not obvious and offer the most relevant next action. Search/filter zero-results are a special empty state: preserve query/constraints and offer ways to broaden them.
+
+### Accessibility contract
+WCAG 4.1.3 covers status messages that report waiting, progress, success/results, or errors without moving focus. Use appropriate semantics such as `role="status"` / live regions where needed, and avoid assertive announcements for routine progress. `aria-busy` can mark a region whose updates are incomplete. A `progressbar` should expose a current value when progress is determinate and omit it when indeterminate; native `<progress>` is preferable when it fits.
+
+Do not announce every animation frame or percentage change. For long-running progress, announce meaningful milestones at a rate users can understand.
+
+### Implementation checks
+Test fast responses that could cause loader flicker, slow responses, offline/network failure, timeout, retry, partial data, cached/stale data, background refresh, duplicate submissions, cancellation, navigation away/back, focus continuity, screen-reader announcements, reduced motion, skeleton-to-content geometry, and whether unrelated controls remain usable.
+
+## Loading-state evidence boundary
+W3C defines accessibility behavior for status/progress communication. Carbon and Atlassian provide mature production design-system guidance that independently separates skeleton, loading, and progress use cases. MDN documents current platform semantics and rendering primitives. These sources support implementation and pattern boundaries; they do **not** establish a universal wait-time threshold or prove that skeletons subjectively feel faster than other indicators.
