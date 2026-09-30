@@ -9,7 +9,8 @@ The broad question “Which context artifacts most improve visual quality in AI-
 - How much incremental benefit comes from each context artifact (design contract, screenshot/reference, design-system tokens, real content, acceptance criteria) when isolated experimentally?
 - Which recurring visual traits most strongly make current AI-generated interfaces feel generic across models, rather than only in Claude?
 - When does generative UI outperform fixed interfaces?
-- Which AI interactions need explicit provenance, approval, or undo?
+- How should approval/undo thresholds vary by domain, blast radius, reversibility, and user expertise?
+- Which provenance details materially improve verification without overwhelming users?
 - Which products benefit from spatial navigation or direct manipulation?
 - When does motion measurably improve comprehension or perceived performance?
 - How should agent activity be visualized for long-running tasks?

@@ -90,6 +90,54 @@ Maintain useful, traceable sources without creating an undifferentiated link dum
 - **Freshness / date:** Reviewed 2026-09-30.
 - **Notes:** Use as adoption evidence; product marketing claims are not independent UX outcomes.
 
+## Anthropic Engineering — How we built Claude Code auto mode
+- **URL:** https://www.anthropic.com/engineering/claude-code-auto-mode
+- **Type:** first-party engineering experiment / product telemetry
+- **Topics:** approval fatigue, risk classification, autonomy, deny-and-continue, prompt injection, blast radius
+- **Why it matters:** Current quantitative evidence that blanket permission prompting is weak supervision: Anthropic reports roughly 93% approval rates and describes risk-sensitive automated gating and recoverable denials.
+- **Freshness / date:** Published 2026-03-25; reviewed 2026-09-30.
+- **Notes:** Claude Code telemetry is product-specific; use the architecture, not the exact thresholds, as general guidance.
+
+## Anthropic Engineering — Claude Code sandboxing
+- **URL:** https://www.anthropic.com/engineering/claude-code-sandboxing
+- **Type:** first-party engineering evidence
+- **Topics:** bounded autonomy, filesystem isolation, network isolation, permission fatigue
+- **Why it matters:** Reports an 84% reduction in permission prompts from sandboxing and frames technical containment as an enabler of safer autonomy.
+- **Freshness / date:** Published 2025-10-20; reviewed 2026-09-30.
+- **Notes:** Security/engineering evidence, not a universal UX outcome study.
+
+## OpenAI API — Guardrails and human review
+- **URL:** https://developers.openai.com/api/docs/guides/agents/guardrails-approvals
+- **Type:** official documentation
+- **Topics:** guardrails, human-in-the-loop, side effects, tool approvals
+- **Why it matters:** Independent current guidance to pause for human review around consequential side effects while using automated guardrails for validation.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Implementation guidance rather than comparative UX research.
+
+## Microsoft — Guidelines for Human-AI Interaction / HAX Toolkit
+- **URL:** https://www.microsoft.com/en-us/haxtoolkit/ai-guidelines/
+- **Type:** research-backed design guidance
+- **Topics:** human-AI interaction, control, correction, failure, trust calibration
+- **Why it matters:** The 18 guidelines synthesize more than 20 years of research and provide a durable evidence base beyond current agent-product conventions.
+- **Freshness / date:** Reviewed 2026-09-30; original guideline validation published at CHI 2019.
+- **Notes:** Broad human-AI guidance; map patterns carefully to autonomous-agent contexts.
+
+## Microsoft HAX — Undo automated actions
+- **URL:** https://www.microsoft.com/en-us/haxtoolkit/pattern/g9-c-undo-automated-actions/
+- **Type:** research-backed design pattern
+- **Topics:** undo, correction, automated changes, user control
+- **Why it matters:** Gives explicit conditions and pitfalls for reversible AI automation, including making changes visible and providing a clear reversal mechanism.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Particularly useful for reversible content/state changes; repeated correction can indicate that automation itself should be reconsidered.
+
+## Microsoft Learn — Manage agentic AI risk
+- **URL:** https://learn.microsoft.com/security/zero-trust/sfi/manage-agentic-risk
+- **Type:** official guidance
+- **Topics:** human oversight, plans, progress, audit logs, provenance, interruptibility, uncertainty
+- **Why it matters:** Provides a current operational model for agent intelligibility: plans before high-impact work, live status, outcome summaries, logs, and explicit boundaries.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Security-oriented guidance with direct UX implications; not comparative usability testing.
+
 ## Source record template
 ### Source / organization
 - **URL:**

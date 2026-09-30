@@ -10,7 +10,7 @@ This file guides autonomous research selection. Use qualitative states; do not i
 | Visual design | WEAK | High | First 2026 creative signals identified; needs durable operational rules |
 | UX patterns | WEAK | High | Needs operational pattern guidance |
 | Interaction & motion | WEAK | Medium | Needs evidence and implementation patterns |
-| AI-native UX | WEAK | High | Product adoption of embedded agents identified; control/recovery patterns still weak |
+| AI-native UX | ADEQUATE | Medium | Risk-shaped autonomy, approvals, progress, recovery, provenance, and denial recovery documented; domain-specific validation remains |
 | Design systems | WEAK | High | Especially agent-readable systems |
 | Distinctive features | WEAK | High | Core differentiation objective |
 | Frontend implementation | WEAK | Medium | Needs current platform capabilities |
@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which current browser capabilities enable distinctive interaction with acceptable accessibility/performance cost?
 
 ## Recent research
+
+### 2026-09-30 — Risk-shaped autonomy and recovery for agents
+**Question:** Which AI-native interaction patterns best preserve control, feedback, provenance, approval, and recovery without creating approval fatigue?
+
+**Finding:** Oversight should be proportional to consequence and reversibility. Low-risk work can run autonomously inside narrow capability boundaries; consequential side effects deserve concrete approvals; irreversible/high-blast-radius work needs stronger confirmation plus technical containment. Long-running agents need layered progress and post-run records, while reversible automation should favor visible undo. Denials should preserve safe progress and recover through a lower-risk path where possible.
+
+**Evidence boundary:** Anthropic telemetry supplies product-specific evidence for approval fatigue and sandboxing; OpenAI independently recommends approvals around side effects; Microsoft agent guidance and HAX support inspectability, human control, and undo. Exact thresholds remain product/domain-specific.
 
 ### 2026-09-30 — 2026 trend signal vs real product adoption
 **Question:** Which current UI/UX trends have evidence of real product adoption rather than showcase-only popularity?
