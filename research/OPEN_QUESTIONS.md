@@ -2,8 +2,12 @@
 
 Prioritize questions whose answers could materially change future agent behavior.
 
-- Which context artifacts most improve visual quality in AI-generated frontend work?
-- Which recurring visual traits most strongly make current AI-generated interfaces feel generic?
+## Resolved / narrowed this cycle
+The broad question “Which context artifacts most improve visual quality in AI-generated frontend work?” now has a useful first answer for Claude: a brief-grounded design contract plus visual references/rendered inspection and explicit evaluation criteria are supported by Anthropic's current workflow evidence. Remaining comparative questions belong below.
+
+## Current queue
+- How much incremental benefit comes from each context artifact (design contract, screenshot/reference, design-system tokens, real content, acceptance criteria) when isolated experimentally?
+- Which recurring visual traits most strongly make current AI-generated interfaces feel generic across models, rather than only in Claude?
 - When does generative UI outperform fixed interfaces?
 - Which AI interactions need explicit provenance, approval, or undo?
 - Which products benefit from spatial navigation or direct manipulation?
@@ -12,5 +16,4 @@ Prioritize questions whose answers could materially change future agent behavior
 - How can design systems constrain AI agents without making every page look the same?
 - Which patterns show real product adoption versus showcase-only visibility?
 - Which modern browser capabilities enable distinctive UX with acceptable complexity?
-
-Delete questions after adequate resolution; split questions that are too broad.
+- When is an independent visual evaluator worth its latency/token cost for current frontier models?
