@@ -284,3 +284,20 @@ Maintain useful, traceable sources without creating an undifferentiated link dum
 - **Why it matters:** Independent platform guidance that motion should serve a clear purpose, should not carry essential information alone, and should adapt problematic depth/parallax effects for Reduce Motion.
 - **Freshness / date:** Reviewed 2026-09-30.
 - **Notes:** Platform guidance rather than comparative user-outcome research.
+
+
+## MDN — Scroll-driven animation timelines
+- **URL:** https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll-driven_animations/Timelines
+- **Type:** platform documentation
+- **Topics:** scroll progress timelines, view progress timelines, CSS animation timelines, performance, reduced motion
+- **Why it matters:** Documents native scroll/view timelines, their direct reversible relationship to scrolling, the main-thread cost avoided versus JavaScript scroll tracking for presentational effects, and reduced-motion handling.
+- **Freshness / date:** Reviewed 2026-09-30; page updated in September 2026.
+- **Notes:** Platform/performance evidence only; it does not establish that scroll animation improves usability or comprehension.
+
+## MDN — Container scroll-state queries
+- **URL:** https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Conditional_rules/Container_scroll-state_queries
+- **Type:** platform documentation
+- **Topics:** scrollable, scrolled, snapped, stuck, container queries
+- **Why it matters:** Provides a discrete CSS alternative when the UI needs to react to scroll state rather than interpolate continuously across scroll progress.
+- **Freshness / date:** Reviewed 2026-09-30.
+- **Notes:** Check exact descriptor/browser support independently; do not hide essential navigation or information behind unsupported enhancement.

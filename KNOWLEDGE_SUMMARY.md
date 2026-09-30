@@ -3,7 +3,7 @@
 A compact snapshot of what this repository currently knows and how mature that knowledge is.
 
 **Last assessed:** 2026-09-30  
-**Overall knowledge maturity:** **3.6 / 10**
+**Overall knowledge maturity:** **3.7 / 10**
 
 > The scores measure the maturity and operational usefulness of the **repository's knowledge**, not the intelligence of any AI model and not a percentage of all possible knowledge.
 
@@ -18,7 +18,7 @@ A compact snapshot of what this repository currently knows and how mature that k
 | AI-native UX | **5 / 10** | Solid first architecture for risk-shaped autonomy, permissions, approvals, progress, provenance, recovery, undo, and denial handling. | Domain-specific validation, richer agent-state patterns, uncertainty UX, long-running workflows, delegation, and comparative outcome evidence. |
 | Design systems | **4 / 10** | Operational agent-readable architecture now separates invariants from bounded creative freedom and covers semantic tokens, component contracts, composition rules, themes, accessibility, references, and failure modes. | Comparative evidence on which artifact mix improves agent output, automated validation, governance, and richer real-world component/composition examples. |
 | Distinctive product features | **2 / 10** | Admission criteria and promising research directions are defined. | Validated feature patterns with shipped-product evidence, tradeoffs, use cases, implementation guidance, and differentiation value. |
-| Frontend implementation | **2 / 10** | Relevant platform areas are mapped and complexity restraint is explicit. | Current browser/API capabilities, concrete implementation recipes, performance/accessibility boundaries, testing, and framework-specific guidance where useful. |
+| Frontend implementation | **3 / 10** | Operational guidance now covers container-responsive components, scroll-state CSS, scroll/view animation timelines, progressive enhancement, reduced-motion boundaries, and CSS-vs-JavaScript decisions. | Broader native UI primitives, semantic HTML/accessibility recipes, performance measurement, testing, and framework-specific integration where useful. |
 | Claude / AI-agent frontend workflows | **5 / 10** | Evidence-backed brief → design contract → render/evaluate → iterate workflow; current context architecture and handoff guidance documented. | Comparative experiments, cross-model validation, stronger visual-evaluation loops, failure recovery, and measured evidence about which context artifacts improve results. |
 | Anti-patterns / generic AI UI | **3 / 10** | A useful watchlist exists and Claude-specific generic-output signals have begun to be identified. | Cross-model evidence, precise causal explanations, contextual exceptions, and strong “do this instead” alternatives. |
 | Trend observatory | **5 / 10** | Operational evidence ladder distinguishes showcase signals, creative/commercial momentum, shipped adoption, and measured outcomes; initial 2026 trends documented. | Broader longitudinal evidence, more product categories, measured behavioral outcomes, and systematic durability tracking. |
@@ -37,7 +37,7 @@ The highest-value gaps are currently:
 
 1. **UX patterns** — the repository needs detailed operational knowledge for common product interactions.
 2. **Distinctive product functionality** — reusable feature patterns need real product evidence and implementation detail.
-3. **Frontend capabilities** — current browser/platform features need to be translated into practical interaction opportunities.
+3. **Frontend capabilities** — container/scroll capabilities are now operational, but native overlays, semantic primitives, performance and testing still need decision-ready coverage.
 4. **Foundations** — durable UX principles need deeper evidence, decision models, and operational examples.
 5. **Interaction and motion** — the transition/reduced-motion baseline is operational, but direct manipulation and outcome evidence remain thin. — durable UX principles need deeper evidence, decision models, and operational examples.
 

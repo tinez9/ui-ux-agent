@@ -59,6 +59,46 @@ Potential uses include:
 
 Treat these as progressive enhancement until the project's support matrix confirms the exact descriptor. Do not use scroll state to hide essential navigation or information: the underlying interaction must remain usable when the query is unsupported.
 
+## Scroll-driven animations: use scroll as a timeline, not as application state
+
+CSS scroll-driven animations can bind keyframe progress to either **scroll progress** (`scroll()`) or **view progress** (`view()`) instead of time. This is useful when the visual effect is genuinely a continuous function of scrolling: reading-progress indicators, a local reveal tied to an element entering/leaving its scrollport, or spatial illustration whose progress should reverse naturally when the user scrolls back.
+
+Prefer the native timeline when all of these are true:
+- the effect is presentational rather than domain/application state;
+- progress should track scroll continuously and reversibly;
+- the non-animated page remains complete and understandable;
+- the exact primitives meet the project's support matrix;
+- reduced-motion users receive a safer equivalent.
+
+Do **not** turn ordinary scroll position into React/application state merely to drive a visual interpolation. MDN notes that CSS scroll-driven timelines avoid the main-thread tracking required by JavaScript `scroll` listeners or observers for these effects. That is a platform/performance advantage, not evidence that adding animation improves UX.
+
+### Choose the timeline from the meaning
+
+- Use a **scroll progress timeline** when the effect represents progress through a scroller: for example a document progress bar.
+- Use a **view progress timeline** when the effect belongs to a particular subject entering, crossing, or leaving its scrollport.
+- Use **scroll-state container queries** when the requirement is discrete rather than continuous — e.g. “is this sticky header actually stuck?” or “does more content remain scrollable?” Do not animate a continuous timeline when a boolean state is the real requirement.
+- Keep JavaScript when scrolling changes application/domain state, coordinates complex non-presentational behavior, or native primitives cannot satisfy the support contract.
+
+### Accessibility and resilience
+
+Scroll-linked movement is still motion. Respect `prefers-reduced-motion`; remove, reduce, or replace non-essential motion while preserving any information it communicated. A useful implementation escape hatch is to detach optional animations from their timeline for reduced-motion users.
+
+Never make scroll-driven animation the only carrier of:
+- reading progress needed to navigate;
+- selected/current state;
+- instructions or essential labels;
+- access to controls or content.
+
+Avoid large-scale pan, zoom, parallax, or continuous scaling simply because the platform makes them easy. The motion-purpose and vestibular-safety rules in `INTERACTION_MOTION.md` still apply.
+
+### Implementation traps
+
+- Declare `animation-timeline` **after** the `animation` shorthand; the shorthand resets the timeline to `auto`.
+- A scroll timeline requires an actual scroll range. If the selected axis does not overflow, there is no useful progression.
+- View timelines track a subject within its nearest ancestor scroller; use insets/ranges deliberately rather than relying on accidental viewport geometry.
+- Test forward and reverse scrolling, keyboard/page scrolling, zoom, dynamic content changes, reduced motion, and the no-enhancement path.
+- Treat scroll-driven animations and scroll-state queries as separate capabilities and verify the exact primitive rather than assuming support from the family name.
+
 ## Decision rule: CSS capability vs JavaScript
 
 Before adding JavaScript for responsive or environmental styling, ask:

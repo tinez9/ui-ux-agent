@@ -13,7 +13,7 @@ This file guides autonomous research selection. Use qualitative states; do not i
 | AI-native UX | ADEQUATE | Medium | Risk-shaped autonomy, approvals, progress, recovery, provenance, and denial recovery documented; domain-specific validation remains |
 | Design systems | DEVELOPING | Medium | Agent-readable contract established: semantic tokens, component contracts, composition rules, accessibility invariants, and explicit degrees of freedom; comparative validation still missing |
 | Distinctive features | WEAK | High | Core differentiation objective |
-| Frontend implementation | WEAK | Medium | Needs current platform capabilities |
+| Frontend implementation | DEVELOPING | Medium | Operational container-responsive and scroll-driven CSS guidance documented; broader native UI primitives, performance, testing, and semantic patterns remain |
 | Claude/AI-agent workflows | ADEQUATE | Medium | First evidence-backed workflow established; comparative testing still missing |
 | Anti-patterns / AI slop | WEAK | High | Claude-specific tells identified; cross-model evidence and alternatives still needed |
 | Trend observatory | ADEQUATE | Medium | Evidence ladder established; first adoption-vs-showcase distinctions documented |
@@ -26,6 +26,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+
+### 2026-09-30 — Scroll-driven timelines vs discrete scroll state
+**Question:** When should agents use native scroll-driven animations or scroll-state queries instead of JavaScript scroll tracking?
+
+**Finding:** Use scroll/view timelines when a presentational effect is genuinely a continuous, reversible function of scroll progress; use scroll-state queries when the requirement is discrete such as stuck/scrollable/snapped state. Keep application/domain state out of scroll plumbing unless scrolling truly changes that state. Native CSS removes main-thread JavaScript tracking for these visual effects, but that performance capability does not justify adding motion. The no-animation path must remain complete, and reduced-motion handling remains mandatory for non-essential scroll-linked movement.
+
+**Evidence boundary:** MDN documents current platform behavior and the performance architecture of CSS timelines; existing W3C/MDN reduced-motion guidance establishes the accessibility boundary. This cycle found no strong outcome evidence that scroll-linked animation itself improves comprehension or task success.
+
 
 ### 2026-09-30 — Purposeful motion, reduced motion, and view transitions
 **Question:** How should agents decide when interface motion is useful, how should reduced-motion variants preserve meaning, and which current web primitives are safe to build on?
@@ -81,7 +89,7 @@ This file guides autonomous research selection. Use qualitative states; do not i
 **Evidence boundary:** Mostly first-party Anthropic engineering and product evidence. Strong for Claude workflow design; insufficient to claim universal user aesthetic preference or cross-model superiority.
 
 ## Sections needing review
-Foundations, distinctive features, frontend implementation, and cross-model anti-generic guidance remain weak. Interaction/motion now has an operational baseline for purposeful transitions and reduced-motion behavior, but still needs direct-manipulation patterns and measured outcome evidence. UX patterns are now developing after form/error-recovery, search/filter/result-set, and loading/empty/error-state coverage, but navigation, onboarding, tables, settings, dialogs, and other common interactions remain. Design systems now have an operational architecture but still need comparative agent-output validation and richer component/composition examples. Trend evidence classification is now usable but should be expanded only with meaningful new evidence.
+Foundations, distinctive features, and cross-model anti-generic guidance remain weak. Frontend implementation is now developing after container-responsive and scroll-driven CSS guidance, but still needs broader native UI primitives, semantic HTML patterns, performance, testing, and framework integration. Interaction/motion now has an operational baseline for purposeful transitions and reduced-motion behavior, but still needs direct-manipulation patterns and measured outcome evidence. UX patterns are now developing after form/error-recovery, search/filter/result-set, and loading/empty/error-state coverage, but navigation, onboarding, tables, settings, dialogs, and other common interactions remain. Design systems now have an operational architecture but still need comparative agent-output validation and richer component/composition examples. Trend evidence classification is now usable but should be expanded only with meaningful new evidence.
 
 ## Research selection rule
 Prefer a focused question that can improve one or two files substantially. Avoid broad “research UI/UX” passes.
