@@ -9,3 +9,6 @@ Record meaningful knowledge-base improvements, not every formatting edit.
 - Added the first evidence-backed Claude frontend workflow: brief-grounded design contracts, explicit visual evaluation criteria, rendered-browser inspection, selective independent evaluation, and refine-vs-pivot iteration.
 - Documented current Claude Code instruction architecture (AGENTS.md / CLAUDE.md / scoped rules / skills) and design-to-code handoff principles.
 - Added four first-party Anthropic sources and narrowed the initial context-artifact research question.
+- Added a four-level trend evidence ladder separating showcase signals, commercial creative signals, shipped product adoption, and measured outcomes.
+- Documented 2026 evidence boundaries for human-crafted/tactile expression and scan-first experiences, plus real product adoption of infinite-canvas and contextual human-agent work surfaces.
+- Added current Adobe, Webflow, Canva, Linear, and Notion sources and upgraded the trend observatory from seed-level to operational.
