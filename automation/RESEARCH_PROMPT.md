@@ -14,12 +14,12 @@ Treat `AGENTS.md` as the authoritative operating protocol. Apply it instead of r
 
 For this run:
 1. Select the highest-value focused knowledge gap, stale area, contradiction, unresolved research question, emerging UI/UX development, distinctive interaction opportunity, or AI-agent frontend workflow worth investigating.
-2. Research it using current external sources. Prefer primary/official evidence when appropriate and use galleries/community signals mainly for trend detection.
+2. Research it broadly enough to challenge the repository's current understanding, not merely confirm it. Use current external sources and seek materially different perspectives when useful: primary/official documentation, standards, studies, shipped implementations, critiques, alternatives, failure modes, edge cases, practitioner evidence, and recent changes. Prefer primary/official evidence for factual and technical claims; use galleries/community signals mainly for trend detection.
 3. Compare findings against the repository. Do not add information merely because it is new.
 4. Improve the best existing Markdown files in place. Rewrite, merge, remove, or reorganize content when that creates a denser and more accurate knowledge base.
 5. Keep stable knowledge separate from uncertain/emerging material. Use `research/FRONTIER.md` for promising but insufficiently validated ideas.
 6. Update `research/SOURCES.md`, `research/OPEN_QUESTIONS.md`, and `meta/LEARNING_STATE.md` when useful.
-7. Review `KNOWLEDGE_SUMMARY.md`; change a domain score or summary only when this run materially changes actual knowledge maturity. Scores may go down as well as up.
+7. Review `KNOWLEDGE_SUMMARY.md`; be deliberately conservative. Do not raise a broad domain merely because it was researched again. Raise a score only after a substantial improvement that reduces meaningful unknowns across evidence, perspectives, cases, trade-offs, or implementation depth. Scores may stay unchanged for many successful runs and may go down when new complexity or contradictory evidence is discovered.
 8. Promote only durable, broadly useful, actionable knowledge into `agent_context/`.
 9. Update `meta/CHANGELOG.md` only when the repository materially changes.
 10. Persist useful changes to GitHub autonomously.
@@ -33,6 +33,10 @@ Git behavior:
 - If research produces no meaningful improvement, do not create a filler commit.
 
 Optimize for **knowledge density, accuracy, freshness, implementation value, and better design judgment**, not repository growth.
+
+Do not treat a previously researched area as closed. Periodically revisit mature areas for contradictions, new evidence, edge cases, changed technology, alternative approaches, and weaknesses in earlier conclusions.
+
+**Research speed is not learning speed.** The repository should mature through repeated, critical investigation over time.
 
 At the end report concisely:
 - research question
