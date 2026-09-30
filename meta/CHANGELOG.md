@@ -23,6 +23,7 @@ Record meaningful knowledge-base improvements, not every formatting edit.
 
 
 ## 2026-10-01
+- Added the first operational distinctive-feature pattern: contextual command surfaces, including admission criteria, intent separation, contextual ranking, accessibility, previews, shared command registries, and failure modes; maturity score intentionally unchanged.
 - Hardened research-depth and maturity rules: broad areas now require repeated multi-perspective investigation before they can be considered mature.
 - Made scoring deliberately conservative: successful runs do not automatically raise scores, and discovering new complexity may hold or lower them.
 - Added continuous revalidation of mature areas, explicit contradiction/exception/trade-off hunting, and the principle that research speed is not learning speed.
