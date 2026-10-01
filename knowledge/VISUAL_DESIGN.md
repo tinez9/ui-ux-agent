@@ -59,5 +59,70 @@ Before shipping a typography system, verify:
 ### Evidence boundary
 W3C establishes accessibility constraints for text spacing and reflow. GOV.UK provides a mature, tested production example of a responsive type scale, relative sizing, constrained reading measure, and alignment guidance. Neither source proves one universal font size, line height, character count, modular ratio, or fluid-scaling formula for all products.
 
+## High-density product interfaces
+
+Density is not the same as making everything smaller. Treat it as **useful information and action capacity per unit of attention and space**. A dense interface succeeds when experienced users can scan, compare, navigate, and act faster without losing targetability, hierarchy, state clarity, or error resistance.
+
+### Earn density from the task
+Use higher density when users repeatedly compare many peer records, monitor state, triage queues, inspect structured data, or execute frequent operations where viewport capacity has real workflow value. Do not compress a low-information page merely to make it look professional or advanced.
+
+Prefer removing low-value chrome before shrinking meaningful content. Reduce repeated labels, decorative containers, redundant descriptions, oversized empty space, and duplicated controls first. Compression should increase signal-to-noise, not simply decrease pixels.
+
+### Density is multidimensional
+Control density through separate variables rather than one global scale factor:
+- row/component height;
+- horizontal padding and column spacing;
+- typography role and line height;
+- amount of metadata shown by default;
+- number and prominence of persistent actions;
+- grouping and separators;
+- disclosure depth;
+- viewport width allocated to the work surface.
+
+This matters because visual compactness and interaction target size are not equivalent. An icon can remain visually small while its interactive hit area is larger.
+
+### Preserve hierarchy while compressing
+Dense surfaces need **stronger information architecture, not more decoration**. Use alignment, stable columns, semantic typography, restrained separators, grouping, whitespace at section boundaries, and consistent status encoding so the eye can form chunks quickly.
+
+Avoid giving every value a badge, card, border, icon, or accent color. Those devices consume visual bandwidth and flatten priority when repeated across hundreds of cells. Reserve high-salience treatments for states that materially change interpretation or action.
+
+### Tables are a special density tool
+Structured comparison is a legitimate reason to preserve a two-dimensional table rather than transforming every row into a card. USWDS explicitly treats scrollable tables as suitable for dense data and recommends minimizing columns where possible; on narrow screens, choose deliberately between preserving the table with horizontal scrolling and transforming records into a stacked representation according to the comparison task.
+
+Carbon provides a useful production model rather than a universal sizing law: its current data table exposes row heights from 24px extra-small through 64px extra-large and explicitly assigns the smallest size to highly dense layouts. It keeps table header, toolbar, batch-action bar, and pagination sizing coordinated. The transferable principle is **density coherence**: related controls and data rhythm should change as a system rather than through isolated CSS overrides.
+
+### Compact does not waive targetability
+WCAG 2.2 SC 2.5.8 requires pointer targets at AA to be at least 24×24 CSS px or satisfy defined spacing/equivalent/inline/essential exceptions. The enhanced AAA criterion uses 44×44 CSS px. These are accessibility constraints, not a prescription that every visible row must be 44px tall.
+
+A dense 24–32px row can therefore coexist with usable controls when hit areas, spacing, keyboard operation, and equivalent actions are designed deliberately. Conversely, a compact-looking toolbar full of adjacent tiny targets can fail even when the data itself remains readable. For frequent, destructive, edge-positioned, or sequential actions, larger targets may be warranted beyond minimum conformance.
+
+### Offer density modes only when they solve a real split
+Comfortable/compact modes are useful when the same product genuinely serves different interaction conditions or expertise levels. Atlassian's token documentation explicitly recognizes compact/cozy/comfortable views as possible non-color themes, supporting density as a systematic theme rather than scattered component exceptions.
+
+Do not add a density preference merely because enterprise software often has one. A mode creates a testing matrix: every component, overflow state, focus treatment, dynamic label, localization case, and responsive transition must remain valid in each supported density.
+
+If density is user-selectable, persist the preference at an appropriate scope and avoid silently changing semantic information between modes. If compact mode hides secondary metadata rather than merely changing spacing, describe and test that as information disclosure, not styling.
+
+### Responsive density is task-preserving, not desktop miniaturization
+On smaller viewports, ask which relationships must remain simultaneously comparable. Preserve those; progressively remove secondary columns/actions, move low-frequency operations into disclosure, or switch representations when row-by-row reading is more important than cross-column comparison.
+
+Horizontal scrolling can be preferable to destroying table semantics for genuinely two-dimensional data. Stacking can be preferable for directory-like records where each row is independently consumed. Do not mechanically convert every desktop table into cards.
+
+### Agent density contract
+Before increasing density, verify:
+1. the task benefits from seeing or manipulating more items simultaneously;
+2. low-value chrome was removed before meaningful information was shrunk;
+3. hierarchy remains obvious at scan speed;
+4. interactive target size/spacing still meets the accessibility requirement independently of visual size;
+5. compact controls remain keyboard-operable and focus-visible;
+6. important statuses do not rely on color or tiny iconography alone;
+7. truncation does not hide values needed for comparison or decisions;
+8. narrow layouts preserve the task's critical comparison relationships;
+9. any density modes are implemented as coherent system variants and regression-tested;
+10. high-risk or frequent actions receive enough target area and separation for their consequence and use frequency.
+
+### Evidence boundary
+Carbon and Atlassian demonstrate mature production approaches to density variants and coordinated component sizing; USWDS supplies deployed guidance for dense/tabular information and small-screen representation; W3C establishes minimum pointer-target constraints. These sources support the architecture and accessibility boundaries above, but they do **not** prove one universally optimal row height, spacing scale, density mode, or information-per-screen target. Density should ultimately be validated against the product's real tasks, error rate, scan time, and user population.
+
 ## Research queue
-Editorial composition; high-density product interfaces; expressive typography; variable fonts; image-led interfaces; 3D/shader aesthetics; texture/materiality; dark-interface readability; multilingual typography and script-specific behavior.
+Editorial composition; expressive typography; variable fonts; image-led interfaces; 3D/shader aesthetics; texture/materiality; dark-interface readability; multilingual typography and script-specific behavior; measured density outcomes and adaptive density.
