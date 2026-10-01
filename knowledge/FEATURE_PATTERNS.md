@@ -105,3 +105,8 @@ A preview that is slower than opening the object defeats its purpose. Keep the s
 
 ### Agent decision rule
 Add preview when **inspection frequency × navigation cost × value of preserved context** is high. Design it as an explicit intermediate depth level, not as decorative hover chrome.
+
+
+## Comparison workspaces
+
+Comparison workspaces are appropriate when a small candidate set must be evaluated against several shared criteria and serial detail-page inspection creates memory/navigation cost. Normalize labels, units, missing-value semantics, and attribute meaning before designing the matrix. Treat comparison as a narrowing stage rather than an unbounded data view; for many candidates, filter/sort/shortlist first. Desktop evidence from Baymard supports dedicated comparison for spec-driven products, while its mobile testing shows materially lower usefulness under narrow viewport constraints. When the content is tabular, preserve native table/header relationships per W3C guidance. Optimize for meaningful differences, keep candidate identity visible, and do not hide compare selection behind hover.
