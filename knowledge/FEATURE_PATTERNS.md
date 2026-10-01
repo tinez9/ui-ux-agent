@@ -56,3 +56,52 @@ Represent commands as shared data rather than scattered keyboard handlers: stabl
 
 ### Agent decision rule
 Add a command surface because **command density + repetition + context** make a secondary searchable layer valuable, not because sophisticated products happen to have one.
+
+
+## Interactive previews / peek
+
+**Problem solved:** repeated open/back navigation is expensive when users need to inspect many adjacent objects before deciding which one deserves full attention. A preview can expose enough information to evaluate an item while preserving the surrounding list, board, search, or file context.
+
+**Evidence boundary:** this is a shipped interaction model, not proof of universal task improvement. Linear Peek previews issue/project details from lists and boards, can remain open while arrowing through adjacent items, and also previews supported command-menu results. Apple's Quick Look similarly previews files without opening their owning app and supports moving through multiple selected files. These examples establish a durable inspect-without-navigate pattern; they do not establish that previews outperform normal navigation in every task.
+
+### When it earns its place
+Prefer preview when users repeatedly **scan → inspect → compare → continue scanning**, objects contain decision-relevant detail that cannot fit in the parent view, and full navigation would destroy useful position/filter/selection context.
+
+Skip it when the preview merely enlarges information already visible, the object is normally opened once rather than compared, or the task requires most of the full detail surface anyway.
+
+### Three preview contracts
+Do not collapse these into one interaction:
+1. **Transient glance:** fast, read-mostly, easily dismissed, no commitment.
+2. **Persistent inspector:** stays open while selection/focus moves through adjacent objects; useful for triage and comparison.
+3. **Full detail:** canonical surface for deep reading, editing, history, destructive actions, or complex workflows.
+
+A preview should have an obvious path to full detail. If it accumulates enough editing and navigation to become a second full-detail implementation, the abstraction is probably wrong.
+
+### Preserve browsing context
+The strongest value is not “show more in a popup”; it is **inspect without losing place**. Keep parent filters, ordering, scroll position, and selection stable. When the user advances to another item, update the preview rather than forcing close/open cycles. Linear's arrow-through-adjacent-items behavior and Quick Look's multi-file navigation are concrete examples.
+
+### Trigger semantics matter
+Keyboard- or click-invoked previews are more predictable than hover-only previews. Hover/focus content introduces accidental-trigger and accessibility costs. If author-controlled additional content appears on hover or focus, WCAG 2.2 SC 1.4.13 requires it to be dismissible, hoverable when pointer-triggered, and persistent under the criterion's conditions. A keyboard-accessible deliberate trigger is therefore a safer baseline for information-rich previews.
+
+Do not label an interactive preview as a tooltip. WAI-ARIA's tooltip pattern keeps focus on the trigger and explicitly notes that a popup containing focusable elements should use another pattern such as a non-modal dialog.
+
+### Information design
+Show the smallest set of fields that answers the likely “is this the item I need?” question. Prioritize identity, status, salient metadata, short content/context, and preview-specific media. Avoid copying the entire detail page.
+
+Preview freshness is product-specific. Linear previews current issue/project state; for comment/evidence workflows, a stable snapshot can be preferable. Linear's Figma integration deliberately keeps the embedded snapshot unchanged until refresh so comments retain historical context. Decide whether the preview contract is **live state** or **snapshot evidence** rather than refreshing implicitly.
+
+### Latency and resource budget
+A preview that is slower than opening the object defeats its purpose. Keep the shell responsive, cancel superseded requests while rapidly moving between items, cache cheap adjacent data where justified, and avoid expensive eager media. Apple's Quick Look documentation explicitly recommends avoiding long-running/resource-intensive preview preparation and exposes asynchronous loading.
+
+### Failure modes
+- hover-only access or accidental previews that obscure the list;
+- preview duplicates the full page and creates two competing interaction models;
+- parent scroll/filter/selection state is lost on close;
+- arrowing rapidly shows stale data from an earlier request;
+- preview contains essential actions unavailable elsewhere;
+- focus enters a surface that is still modeled as a tooltip;
+- heavy preview generation makes scanning slower than normal navigation;
+- stale snapshots are presented as live state, or live updates destroy evidence/context that users expected to remain stable.
+
+### Agent decision rule
+Add preview when **inspection frequency × navigation cost × value of preserved context** is high. Design it as an explicit intermediate depth level, not as decorative hover chrome.
