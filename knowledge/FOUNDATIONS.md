@@ -10,6 +10,76 @@ Durable principles that should survive changing visual trends and frontend libra
 - Progressive disclosure can manage complexity when secondary information can safely wait; hiding frequent or prerequisite information merely adds interaction and discovery cost.
 - Defaults are product decisions, especially for privacy, destructive actions, AI autonomy, notifications, and irreversible operations.
 
+## Mental models: expose a coherent product world, not the implementation
+
+A **mental model** is the user's evolving belief about what objects exist, how they relate, what state they can be in, and what actions cause. A **conceptual model** is the product/design model presented to help users form useful beliefs. They are not identical: design cannot simply copy an assumed user belief, and users may hold incomplete or conflicting models.
+
+### Start with domain objects and consequences
+
+Before drawing screens, describe the smallest coherent product world:
+
+- the objects users care about (`project`, `invoice`, `playlist`, `deployment`), not database tables or service boundaries;
+- important relationships (contains, belongs to, shares with, derives from, depends on);
+- durable states users need to reason about;
+- actions in user language and their observable consequences;
+- ownership, scope, visibility, and lifecycle when these affect decisions.
+
+Then make navigation, labels, permissions, URLs, empty states, and actions reinforce that model. If the same object is called a "workspace" in navigation, a "team" in permissions, and an "organization" in billing without a real distinction, the interface is teaching competing models.
+
+### Familiarity is a prior, not a veto on better models
+
+People transfer expectations from physical objects and other software. Apple explicitly recommends grounding experiences in established physical and digital patterns and using concepts people know. This can lower initial learning cost, but familiar metaphors should not force artificial constraints onto a digital product.
+
+Reuse a familiar model when its important predictions remain true. Depart from it when the product gains meaningful capability, but make the new rule observable through naming, state, feedback, onboarding-in-context, or safe experimentation. Do not preserve a metaphor after it starts lying about behavior.
+
+### Detect implementation leakage
+
+Suspect the implementation model is leaking when users must understand:
+
+- internal service/module boundaries to know where an object lives;
+- storage or synchronization mechanics that do not affect their decision;
+- arbitrary distinctions created by backend schemas;
+- different names for one user concept because different teams own it;
+- hidden propagation rules ("changing this over here also changes that") that the UI does not represent;
+- state machines expressed as unexplained technical statuses rather than task-relevant states.
+
+Not all technical detail is leakage. Surface it when it changes cost, risk, timing, permissions, privacy, reliability, or another decision the user genuinely needs to make.
+
+### Test predictions, not whether users can repeat terminology
+
+A coherent conceptual model lets users predict unfamiliar cases. During research, ask people to explain or act on scenarios such as:
+
+- Where would you look for X?
+- What do you expect will happen if you move/delete/share this?
+- Who can see this now, and after this action?
+- Is this a copy, reference, version, or the same object in another place?
+- What would you expect to persist after leaving or signing in elsewhere?
+- If this action fails halfway, what do you think remains changed?
+
+Repeated wrong predictions are stronger evidence of model mismatch than failure to remember product vocabulary. Fix the underlying object/action/state representation before adding explanatory copy around a structurally misleading model.
+
+### Preserve coherence across surfaces
+
+A model is learned across the whole product, not one screen. When an object or relationship appears in navigation, search, settings, notifications, command palettes, URLs, API-facing UI, and error messages, preserve its identity and action semantics unless the context genuinely changes them.
+
+Cross-platform consistency should preserve **conceptual invariants**, not pixel-identical layout. Apple’s current HIG similarly recommends familiar concepts and consistent behavior while adapting to platform/context.
+
+### Failure modes
+
+Avoid:
+
+- copying a real-world metaphor so literally that digital capabilities become awkward;
+- inventing new nouns where established domain language is accurate and understood;
+- treating IA labels as a substitute for defining object relationships;
+- exposing backend entities one-for-one as user-facing concepts;
+- adding tutorials to compensate for contradictory object/action semantics;
+- silently changing the meaning or scope of an action between surfaces;
+- assuming there is one universal user mental model: expertise, prior products, domain background, and context can produce different expectations.
+
+### Agent decision rule
+
+Before implementing a feature, write a compact model: **objects → relationships → states → actions → consequences → scope**. Compare it with the existing product vocabulary and with evidence about user expectations. Prefer the smallest model that predicts real behavior. Introduce a new concept only when it represents a distinction users need to reason about; otherwise keep implementation complexity behind the interface.
+
 ## Choice architecture: reduce uncertainty, not mechanically the option count
 
 ### Decision rule
@@ -124,9 +194,10 @@ Prefer **evidence of reliability + understandable limits + recovery** over decor
 - Hick (1952) is controlled choice-reaction research, not direct evidence for arbitrary menu-size thresholds.
 - Pirolli's information-foraging models provide a stronger basis for reasoning about navigation cues and expected value, but they do not prescribe one universal information architecture.
 - Recognition-over-recall and progressive-disclosure guidance are heuristics; context, frequency, expertise, risk, and information dependencies determine whether exposing or hiding information is better.
+- Mental models are user beliefs, while conceptual models are designer/product representations intended to support useful understanding; alignment is a design objective, not proof that all users share one model.
+- Apple HIG (2026) provides current first-party support for familiar concepts, consistent behavior, contextual adaptation, recovery, and feedback. It does not establish that familiar metaphors should always win or that one conceptual model fits every audience.
 - WCAG 2.2 establishes accessibility requirements around predictable behavior and consistent identification; it does not prove that consistency alone creates generalized product trust.
-- Apple HIG independently supports clear/proportionate feedback, reversibility, transparent intent, consistency, and correction. These are mature platform guidelines, not controlled evidence that a specific combination maximizes trust in every product category.
 - Claims about "trust" should therefore be framed as calibrated design mechanics and hypotheses to validate in context, not as a guaranteed emotional outcome.
 
 ## Research needs
-Mental models, trust calibration outcome evidence, decision architecture beyond simple choice reaction, expert-vs-novice adaptation, cross-cultural expectations, and measured comparisons of disclosure/navigation/recovery structures.
+Trust calibration outcome evidence, competing mental models across expertise/domain backgrounds, decision architecture beyond simple choice reaction, expert-vs-novice adaptation, cross-cultural expectations, and measured comparisons of disclosure/navigation/recovery structures.
