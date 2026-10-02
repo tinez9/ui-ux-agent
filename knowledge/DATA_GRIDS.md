@@ -41,6 +41,43 @@ Keep current keyboard focus, selected rows/cells, and the active editing cell as
 
 For “select all,” state whether it means visible rows, the current page, filtered results, or the entire result set. Never imply dataset-wide selection from a header checkbox that only affects rendered rows.
 
+## Bulk selection is a query-state contract
+
+Treat bulk selection as explicit state, not as a side effect of which rows happen to be rendered. At minimum model:
+
+- **explicit IDs** — the user selected particular objects;
+- **page scope** — all objects on the current page are selected;
+- **query scope** — all objects matching the current filter/search are selected, including unloaded pages;
+- **query scope with exclusions** — all matching objects except IDs the user subsequently deselected.
+
+The UI must expose which model is active and the selected count when known. PatternFly's current bulk-selection guidance deliberately distinguishes “Select page” from “Select all” across pages and keeps a cross-page selected-item count; this is stronger than an ambiguous header checkbox. Carbon likewise uses a three-state header checkbox and exposes batch actions only after selection. These are mature implementation conventions, not evidence that every product needs bulk selection.
+
+A useful two-step escalation for very large result sets is: header checkbox selects the visible/current page, then an explicit control offers “Select all N results matching these filters.” Do not silently upgrade page selection to dataset selection.
+
+### Selection and filters must have defined semantics
+
+Before implementing cross-page selection, decide what happens when search, filters, sort, pagination, refresh, or route changes. Sorting normally should not change membership. Filter/query changes are more dangerous: either clear selection, preserve only explicitly selected IDs with a visible count, or preserve a query-scoped selection only when the product can state exactly which query snapshot/rule it represents. Never let a hidden filter change expand the destructive target set without the user understanding it.
+
+For mutable datasets, query-scoped bulk actions need a consistency policy. “All matching” can mean matches at selection time or matches when the action executes. If records can arrive/change between those moments, freeze a snapshot/version where feasible or disclose that the action applies to the current matching set at execution. Consequential operations should not hide this distinction.
+
+### Bulk actions operate on eligibility, not merely selection
+
+A selected set can contain objects with different permissions, states, locks, dependencies, or supported actions. Compute action eligibility across the whole target set before presenting or executing a bulk action.
+
+Prefer one of these explicit policies:
+
+- **all-or-nothing** — disable/block an action unless every target is eligible;
+- **eligible subset** — state before execution that only `X of N` targets can be changed and why others are excluded;
+- **per-item outcome** — attempt each target and return a durable success/failure summary.
+
+Do not silently skip ineligible rows while presenting the operation as successful. For destructive or high-blast-radius actions, confirmation should name the action and scope/count, and recovery/undo should be proportional to consequence.
+
+### Long-running bulk mutations need job semantics
+
+Large actions may outlive the page request. Once work is asynchronous, preserve a job record with target definition, initiating user, progress when trustworthy, completion state, failures, and a route back to results. Do not keep a modal open as the only representation of a 10-minute operation.
+
+Partial failure is a first-class state: report succeeded, failed, skipped, and still-pending counts separately when relevant; retain enough item-level detail to retry or repair failures without repeating successful work. If retrying is supported, define whether it retries failed IDs or re-evaluates the original query.
+
 ## Sorting and headers
 
 Use real column headers. Sorting should expose the active sort column and direction programmatically (`aria-sort` is appropriate on the relevant header) and visually. Keep the header label stable; the control changes sort state rather than renaming the data concept.
@@ -80,12 +117,12 @@ Before implementing a complex table, answer:
 2. Why is native `<table>` insufficient?
 3. What exactly can be focused, selected, activated, and edited?
 4. Which keys move between cells and which operate the widget inside a cell?
-5. What does “select all” include?
-6. What happens to focus after sort, filter, pagination, row deletion, save, and virtualization?
-7. Which columns/relationships must survive narrow layouts?
-8. Can the same task be completed without drag or pointer precision?
-9. Are row/column counts and positions truthful when data is virtualized or partially loaded?
-10. Has the implementation been tested with keyboard and real assistive technologies rather than inferred from ARIA markup alone?
+5. What does “select all” include: page, loaded items, filtered query, or entire dataset?
+6. If selection spans pages, how is it represented and what happens when filters/data change?
+7. Are all selected objects eligible for each bulk action; what happens on partial failure?
+8. What happens to focus after sort, filter, pagination, row deletion, save, and virtualization?
+9. Which columns/relationships must survive narrow layouts?
+10. Are row/column counts and positions truthful when data is virtualized or partially loaded, and has the implementation been tested with keyboard and real assistive technologies?
 
 ## Failure modes
 
@@ -94,6 +131,11 @@ Before implementing a complex table, answer:
 - implementing arrow-key navigation without a coherent way to enter/exit cell widgets;
 - treating focus and selection as the same state;
 - ambiguous page-vs-dataset “select all”;
+- silently expanding selection when filters/query change;
+- storing “all selected” as only the IDs currently rendered;
+- executing a bulk action against mixed permissions/states without an eligibility policy;
+- reporting partial success as complete success or forcing users to rediscover failed items;
+- long-running bulk work represented only by a blocking modal/spinner;
 - virtualization that loses focused rows or reports misleading position/count information;
 - responsive card conversion that destroys comparison;
 - horizontal compression that makes targets/text unusably small;
@@ -102,4 +144,4 @@ Before implementing a complex table, answer:
 
 ## Evidence boundary
 
-W3C WAI-ARIA Authoring Practices defines the current `grid` and `treegrid` interaction contracts and explicitly distinguishes composite grid behavior from ordinary tables. Its examples are illustrative, not production guarantees, and warn about browser/assistive-technology support gaps. MDN independently recommends native table semantics where they satisfy the requirement and reserves `grid`/`treegrid` for structures with selection, two-dimensional navigation, or comparable interaction. These sources establish semantics and keyboard expectations; they do not prove that spreadsheet-like interaction improves a particular product task. Product research should justify whether the added interaction complexity is worthwhile.
+W3C WAI-ARIA Authoring Practices defines the current `grid` and `treegrid` interaction contracts and explicitly distinguishes composite grid behavior from ordinary tables. Its examples are illustrative, not production guarantees, and warn about browser/assistive-technology support gaps. MDN independently recommends native table semantics where they satisfy the requirement and reserves `grid`/`treegrid` for structures with selection, two-dimensional navigation, or comparable interaction. Carbon's current data-table guidance establishes mature selectable-table and batch-action conventions; PatternFly's current bulk-selection pattern explicitly distinguishes page-level from cross-page selection and exposes selected counts. These sources establish semantics and implementation conventions; they do not prove that spreadsheet-like interaction or bulk operations improve a particular product task. Product research should justify whether the added interaction complexity is worthwhile.
