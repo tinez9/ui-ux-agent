@@ -47,8 +47,7 @@ Test keyboard-only recovery, screen-reader error order, zoom/reflow, mobile keyb
 GOV.UK provides extensively deployed guidance recommending progression-time validation by default, preservation of entered data, specific corrective errors, and error summaries. W3C provides accessibility requirements and implementation techniques. Baymard provides behavioral evidence strongest for commerce/checkout forms. Generalize the mechanisms cautiously; do not universalize checkout-specific percentages or conventions.
 
 ## Next research domains
-Navigation; search/filtering/results; onboarding; settings; tables/data grids; dashboards; feeds; catalogs; authentication; empty/loading/error states; notifications; dialogs/drawers; tabs; command palettes; contextual actions; comparison; bulk operations; undo/recovery.
-
+Onboarding; settings; tables/data grids; dashboards; feeds; catalogs; authentication; notifications; dialogs/drawers; tabs; comparison; undo/recovery.
 
 ## Search, filtering, and result-set orientation
 
@@ -60,105 +59,114 @@ Use search when the user can express a target or identifying clue; use filters t
 ### Make applied state visible outside the controls
 Do not rely on checked boxes inside a sidebar/drawer as the only record of state. Show a compact applied-filter overview near the results, especially when controls can be hidden or off-screen. Each applied constraint should be removable; provide “clear all” when several constraints can accumulate. A bare badge such as “3 filters” is weaker than naming the active constraints.
 
-This is both orientation and recovery: Baymard observed confirmation, removal, and context problems when ecommerce users lacked an applied-filter overview. DWP design notes independently identify the synchronization problem when controls and current results are not simultaneously visible.
-
 ### Apply timing is a product decision, not a universal rule
-Two valid models exist:
-
-**Explicit apply** is a strong default when:
-- users commonly choose several criteria before wanting results;
-- updates are expensive or slow;
-- result movement would make the controls or current position unstable;
-- accessibility/testing favors a predictable submit → result transition.
-
-**Live filtering** can be appropriate when:
-- updates are fast and stable;
-- each selection is independently meaningful;
-- users benefit from immediate result/count feedback;
-- controls and result state remain understandable during updates.
-
-Do not make checkbox changes silently trigger expensive or disorienting navigation. If updates are dynamic, announce concise status such as “18 results” without stealing focus. Avoid chatty live regions.
+Use explicit apply when users commonly choose several criteria, updates are expensive/slow, result movement destabilizes controls, or a predictable submit-result transition matters. Live filtering can fit fast stable updates where each selection is independently meaningful and immediate feedback helps. If updates are dynamic, announce concise result status without stealing focus.
 
 ### Preserve orientation after a result-set change
-After search/filter/sort:
-- show the query and active constraints;
-- show a useful result count when available;
-- apply filters/sort to the entire result set, not only the visible page;
-- reset pagination to the first page when the set changes;
-- avoid unnecessary focus jumps;
-- if a full navigation occurs, make the new page/state evident in title and heading;
-- if content updates in place, expose the result/status change programmatically.
-
-WCAG 4.1.3 specifically treats messages such as “18 results returned” and “No results returned” as status messages when they appear without a context change. The results themselves are not the status message.
+After search/filter/sort, show query and constraints, show a useful result count, apply controls to the whole set, reset pagination when the set changes, avoid unnecessary focus jumps, and expose in-place result/status changes programmatically.
 
 ### Zero results are a recovery state
-Never treat zero results as a terminal blank state. Preserve the query and applied constraints, state that no matches were found, and provide the cheapest relevant recovery actions: remove one constraint, clear filters, edit the query, broaden scope, or use an alternative route. Do not silently substitute unrelated results without labeling that change.
-
-Where feasible, prevent obviously impossible combinations or communicate counts before application, but do not disable options in ways that hide why a choice is unavailable.
+Preserve query and constraints, state that no matches were found, and provide the cheapest relevant recovery actions. Do not silently substitute unrelated results without labeling that change.
 
 ### Mobile filters
-On narrow screens, filters often move above results or into a disclosure/drawer. Keep the filter entry point visually tied to the results, surface applied state outside the hidden panel, and make returning to the updated results obvious. Test long filter groups, scrolling inside panels, keyboard/screen-reader order, and whether expanded filters push the result state out of view.
+Keep the filter entry point tied to results, surface applied state outside hidden panels, and make return to updated results obvious.
 
 ### Pagination vs continuous loading
-Choose the navigation model from the task:
-- **Pagination** favors location, returnability, explicit progress, deep linking, and bounded loading. It is a robust default for search, case lists, and goal-directed result sets.
-- **Load more** can preserve browsing continuity while retaining an explicit user action; preserve loaded state and scroll position when users open an item and return.
-- **Infinite scroll** fits low-commitment feeds better than goal-directed retrieval. Avoid it when users need the footer, stable position, comparison, keyboard navigation, or reliable return to a previous place.
-
-GOV.UK explicitly advises against automatic infinite scroll because it causes keyboard-user problems; MOJ also notes footer reachability and recommends pagination for long result lists. This is strong public-service guidance, not proof that pagination wins every browsing context.
+- **Pagination** favors location, returnability, explicit progress, deep linking, and bounded loading.
+- **Load more** can preserve browsing continuity while retaining an explicit user action.
+- **Infinite scroll** fits low-commitment feeds better than goal-directed retrieval; avoid it when users need stable position, comparison, keyboard navigation, footer access, or reliable return.
 
 ### Implementation checks
-Test query persistence, browser back/forward, deep links/shareable filter state where useful, refresh, empty states, slow/error states, stale requests/race conditions, focus after updates, screen-reader announcements, keyboard-only filtering, 400% zoom/reflow, mobile drawers, result-count accuracy, sort + filter interaction, pagination reset, and return-from-detail scroll/state restoration.
+Test query persistence, back/forward, deep links, refresh, empty/error states, race conditions, focus, announcements, keyboard filtering, zoom/reflow, mobile drawers, result-count accuracy, sort/filter interaction, pagination reset, and return-from-detail restoration.
 
 ## Search/filter evidence boundary
-Baymard supplies behavioral evidence for ecommerce product lists; generalize orientation mechanisms more confidently than commerce-specific conventions. GOV.UK/MOJ/DWP/Home Office provide deployed public-service guidance and accessibility findings, including explicit-submit filtering and pagination. W3C defines the accessibility requirement for dynamic status messages. Live vs explicit apply should therefore remain conditional on task, latency, stability, and tested accessibility rather than being declared universally superior.
-
+Baymard supplies behavioral evidence for ecommerce product lists. GOV.UK/MOJ/DWP/Home Office provide deployed public-service guidance. W3C defines dynamic status-message requirements. Live vs explicit apply remains conditional on task, latency, stability, and tested accessibility.
 
 ## Loading, progress, empty, and error states
 
-Treat asynchronous UI as a **state machine**, not a spinner decoration. For every remote or deferred operation, define at least: initial/idle, pending, success-with-data, success-with-no-data, and failure. Add stale/refreshing, partial, queued, or cancelled states when the product can actually enter them.
+Treat asynchronous UI as a **state machine**, not a spinner decoration. Define idle, pending, success-with-data, success-with-no-data, and failure; add stale/refreshing, partial, queued, or cancelled states when real.
 
 ### Preserve useful context while work is pending
-Prefer keeping already-valid content visible during background refreshes instead of replacing the whole surface with a loader. Scope loading feedback to the region/action that is actually blocked. A full-screen loading state is justified only when the whole experience is genuinely unavailable.
-
-Do not erase useful content merely to prove that a request is happening. Disable or lock only controls whose repeated activation would be unsafe or ambiguous; unrelated work should remain available.
+Keep already-valid content visible during background refreshes where possible. Scope blocking and loading feedback to what is actually unavailable.
 
 ### Choose the indicator from what the system knows
-- **Skeleton:** use when the destination structure is predictable and reserving that geometry reduces reflow. Match the approximate shape and size of real content; remove it as soon as content is ready. Skeletons are poor fits for arbitrary action controls or processes where completion/progress matters.
-- **Spinner / indeterminate activity:** use for a bounded region or action when work is underway but meaningful progress cannot be estimated. Avoid multiple competing spinners for one operation.
-- **Determinate progress:** prefer when the system has trustworthy quantitative progress. Label what is happening and expose the current value semantically. Never fabricate smooth percentages or an ETA merely to appear precise.
-- **Inline pending state:** for mutations such as save/submit/upload, keep feedback adjacent to the initiating action or affected object when possible.
-
-Atlassian and Carbon independently distinguish structural skeletons from process/progress indicators. This supports a task-based choice rather than a universal “skeletons feel faster” rule; this cycle found no basis for claiming skeletons always improve perceived speed.
+- **Skeleton:** when destination structure is predictable and reserving geometry reduces reflow.
+- **Spinner / indeterminate activity:** for bounded work whose meaningful progress cannot be estimated.
+- **Determinate progress:** when trustworthy quantitative progress exists; never fabricate percentages or ETA.
+- **Inline pending state:** for mutations, adjacent to the initiating action or affected object where possible.
 
 ### Prevent loading UI from causing layout instability
-A skeleton's strongest defensible value is structural: reserve approximately the final geometry so content arrival does not cause unnecessary movement. For long/offscreen content, platform techniques such as lazy loading and `content-visibility: auto` can defer work; pair containment with an appropriate intrinsic placeholder size when needed to reduce scrollbar/layout jumps. Performance engineering should remove latency where possible rather than only mask it.
+Reserve approximately final geometry. Performance engineering should remove latency where possible rather than only mask it.
 
 ### Make completion and failure unambiguous
-A pending indicator disappearing is not always enough feedback, especially for non-visual users. Communicate meaningful success, result, waiting, progress, or error status without stealing focus when no context change is needed.
-
-For failures:
-- keep successfully loaded or entered information when it remains valid;
-- state what failed in task language;
-- distinguish retryable/transient failure from permission, validation, or permanent failure when the distinction changes the remedy;
-- put retry/recovery near the failed region or action;
-- avoid trapping the whole page behind an error when only one region failed;
-- never show stale data as if it were freshly confirmed.
-
-If cached/stale content remains visible after refresh failure, label the freshness problem when it matters to the user's decision.
+Preserve valid information, state failures in task language, distinguish failure classes when remedies differ, keep recovery near the failed region, and never present stale data as freshly confirmed.
 
 ### Empty is not the same as error
-An empty state means the system successfully has no content for the current state; an error means the intended state could not be obtained or changed. Do not use “No data” to conceal a failed request.
-
-Useful empty states explain why the surface is empty when that is not obvious and offer the most relevant next action. Search/filter zero-results are a special empty state: preserve query/constraints and offer ways to broaden them.
+Empty means the system successfully has no content; error means intended state could not be obtained or changed.
 
 ### Accessibility contract
-WCAG 4.1.3 covers status messages that report waiting, progress, success/results, or errors without moving focus. Use appropriate semantics such as `role="status"` / live regions where needed, and avoid assertive announcements for routine progress. `aria-busy` can mark a region whose updates are incomplete. A `progressbar` should expose a current value when progress is determinate and omit it when indeterminate; native `<progress>` is preferable when it fits.
-
-Do not announce every animation frame or percentage change. For long-running progress, announce meaningful milestones at a rate users can understand.
+WCAG 4.1.3 covers status messages for waiting, progress, results, or errors without moving focus. Use appropriate semantics and avoid chatty announcements. Native `<progress>` is preferable when it fits.
 
 ### Implementation checks
-Test fast responses that could cause loader flicker, slow responses, offline/network failure, timeout, retry, partial data, cached/stale data, background refresh, duplicate submissions, cancellation, navigation away/back, focus continuity, screen-reader announcements, reduced motion, skeleton-to-content geometry, and whether unrelated controls remain usable.
+Test fast/slow responses, offline/network failure, retry, partial/stale data, background refresh, duplicate submission, cancellation, navigation, focus, screen readers, reduced motion, geometry, and unrelated controls.
 
 ## Loading-state evidence boundary
-W3C defines accessibility behavior for status/progress communication. Carbon and Atlassian provide mature production design-system guidance that independently separates skeleton, loading, and progress use cases. MDN documents current platform semantics and rendering primitives. These sources support implementation and pattern boundaries; they do **not** establish a universal wait-time threshold or prove that skeletons subjectively feel faster than other indicators.
+W3C defines accessibility behavior. Carbon and Atlassian provide mature production guidance separating skeleton, loading, and progress use cases. These sources do not establish a universal wait threshold or prove skeletons always feel faster.
+
+## Navigation and wayfinding
+
+Design navigation from the **task topology**, not from a preferred component. First determine whether the experience is primarily a linear transaction, repeated multi-task workspace, hierarchical information space, or a mixture with explicit boundaries.
+
+### Do not add global navigation by default
+A clear end-to-end transaction often benefits from fewer escape routes and stronger progression cues. Persistent service/product navigation is more justified when users return repeatedly, switch among multiple independent tasks, or need stable access to top-level areas. Navigation is not a sitemap: expose the few durable destinations that describe the product's useful top-level structure rather than every reachable screen.
+
+This distinction is visible in deployed GOV.UK guidance: repeated multi-task services may use service navigation, while clear end-to-end journeys are directed toward task/progress structures instead. Treat that as strong production guidance for the mechanism, not proof that government information architecture transfers unchanged to every product.
+
+### Separate hierarchy from history and progress
+Do not make breadcrumbs, Back, and steppers interchangeable:
+- **Breadcrumbs** represent location in a meaningful hierarchy and can provide jumps to ancestors. They are weak when the structure is flat and should not represent transaction progress.
+- **Back** represents return to the prior meaningful state. In a transaction, preserve the previous page's state rather than treating Back as a parent-hierarchy link.
+- **Progress/task structures** represent position or completion within a process, not information hierarchy.
+
+Avoid showing breadcrumb + Back merely because both are available; redundant navigation adds noise without necessarily adding orientation. GOV.UK explicitly advises choosing between them for its service patterns.
+
+### Preserve stable landmarks, labels, and relative order
+Repeated navigation should remain predictable across views. Keep durable destinations in stable relative positions and use consistent labels for the same destination/function. A responsive layout may change presentation (for example, expanded sidebar to disclosure) without changing the conceptual navigation model or silently renaming/reordering core destinations.
+
+WCAG 2.x requires repeated navigation mechanisms to occur in the same relative order unless the user initiates a change. Current WCAG 3 drafts continue to develop consistent structural order, navigation order, and labels; treat draft WCAG 3 material as directional, not yet normative.
+
+### Expose current location without relying on styling alone
+Users should be able to identify the current page/section from page title/heading plus navigation state. Mark the current destination semantically where appropriate (`aria-current="page"` for the current page link); distinguish “current page” from “inside this section” when the design system supports both concepts.
+
+### Preserve returnability
+Navigation quality includes what happens after leaving a list, workspace, or transaction step. Preserve meaningful query/filter state, selection, scroll/location, and unsaved work according to product semantics. Browser back/forward and deep links should not become second-class paths. Do not create a custom Back control that contradicts browser history or reconstructs a different state.
+
+### Responsive navigation is an information-architecture decision
+Do not solve narrow screens by hiding arbitrary destinations. Preserve the priority and naming of core destinations; change presentation when necessary. If secondary destinations move behind a menu, keep the current location understandable and keyboard/focus behavior coherent. Avoid duplicating the same active navigation tree in two simultaneously focusable DOM regions just to support breakpoints.
+
+### Navigation contract for agents
+Before implementing navigation, answer:
+1. What are the stable user-recognizable objects/areas?
+2. Is the dominant journey hierarchical, linear, multi-task, or mixed?
+3. Which destinations must remain globally reachable, and which belong only in context?
+4. What does Back mean here: history, parent, cancel, or previous process step?
+5. What state must survive leaving and returning?
+6. How is current location communicated visually and semantically?
+7. Does responsive transformation preserve the same conceptual model?
+8. Can keyboard, assistive-technology, deep-link, refresh, and browser-history paths reach equivalent states?
+
+### Failure modes
+- mirroring backend modules or org charts as navigation without validating user concepts;
+- using breadcrumbs as a history trail or progress indicator;
+- persistent global navigation inside a focused transaction where it mainly creates exits;
+- mega-navigation that exposes the sitemap instead of prioritizing destinations;
+- moving/renaming repeated destinations between pages without a user-controlled reason;
+- mobile navigation that hides critical state or changes the information architecture accidentally;
+- custom history behavior that loses form/filter state or fights browser Back;
+- icon-only primary navigation whose meaning depends on memorization.
+
+### Implementation checks
+Test direct entry on deep pages, refresh, browser back/forward, return from detail, expired/auth-changed sessions, unsaved state, keyboard traversal, skip links/landmarks, screen-reader current-location announcement, zoom/reflow, long/localized labels, narrow/wide transitions, permission-dependent destinations, and URLs copied into a new session.
+
+## Navigation evidence boundary
+WCAG 2.x provides normative accessibility requirements for consistent repeated navigation; WCAG 3 material reviewed in October 2026 is still draft and should not be treated as a final requirement. GOV.UK provides current deployed guidance that clearly separates hierarchical breadcrumbs, historical/process Back, and repeated multi-task service navigation. These sources strongly support semantic separation and predictability, but they do not prove one navigation shell, sidebar pattern, or information architecture is universally superior.
