@@ -63,6 +63,19 @@ For asynchronous work, distinguish **event delivery** from **event state**. Dism
 
 Repeated individually-correct notifications can create a collectively unusable system. Aggregate by object, conversation, actor, or time window when individual interruption adds little value. Preserve exceptional events that materially change required action. Avoid replacing a meaningful event with an opaque “12 updates” summary when one update requires urgent action.
 
+Treat batching as a **latency trade-off**, not a universal optimization. A two-week randomized field experiment (Fitz et al., 2019; n=237) found that predictable delivery three times per day improved several self-reported attention/well-being outcomes and reduced phone interruptions relative to usual delivery, while hourly batching produced little change. Completely suppressing notifications did not reproduce the same benefits and increased anxiety/FoMO. This is useful causal evidence that fewer interruption boundaries can matter, but it does **not** establish three batches per day as a product default: the study was short, smartphone-wide, and not a test of domain-specific deadlines or safety-critical events.
+
+Prefer **semantic aggregation before arbitrary time batching** when the product knows the event structure:
+- coalesce repeated state changes for the same object when intermediate states no longer matter;
+- group conversational/activity bursts while retaining actor/object context;
+- summarize low-urgency catch-up material at a user-chosen or predictable time;
+- bypass a batch when waiting would materially increase loss, deadline risk, safety risk, or required rework;
+- do not let a high-volume source monopolize a digest merely because it generated more events.
+
+Aggregation must preserve the **exception path**. A digest should expose the few items that changed required action, not merely rank by recency or volume. If summarization is probabilistic, keep the original events recoverable and do not let generated wording become the sole representation of consequential facts. Apple currently ships both Scheduled Summary and machine-generated notification summaries/prioritization; its own support documentation warns that generative results can vary and important information should be checked. Treat this as platform evidence for the pattern and for its uncertainty boundary, not evidence that automated prioritization is universally accurate.
+
+Measure attention quality rather than notification volume alone. Useful product metrics include interruption count per active period, proportion of notifications that lead to a meaningful action, time-to-action for genuinely time-sensitive events, unread backlog age, preference opt-outs/mutes, duplicate-channel delivery, and whether users can find a missed event later. Open/click rate alone can reward increasingly interruptive behavior and is not evidence that attention was well allocated.
+
 Notification preferences should map to user-recognizable event classes and outcomes, not internal service names. Let users reduce interruption without necessarily losing durable access to events. Respect OS-level controls; never imply the app can guarantee delivery behavior the platform/user may suppress.
 
 ## Permission timing
@@ -87,6 +100,10 @@ Handle stale links: the object may have been deleted, permission may have change
 - using push for routine engagement rather than time-sensitive user value;
 - treating “important” as synonymous with “interrupt immediately”;
 - duplicating the same event across push, email, badge, banner, and inbox without an escalation reason;
+- batching time-sensitive events merely to satisfy a global digest schedule;
+- summarizing away the one event that changes required action;
+- treating generated notification summaries as canonical state;
+- optimizing open/click rate while interruption, mute, or backlog costs rise;
 - notification counts that do not reconcile with the destination;
 - using assertive live regions for routine successes;
 - allowing low-value events to crowd out exceptional ones;
@@ -111,4 +128,6 @@ Before implementing a notification, answer:
 
 ## Evidence boundary
 
-W3C provides normative accessibility behavior for status messages and cautions against unnecessary assertive interruption. Apple and Android provide current production platform models for permission, interruption level, user control, channels, and deep linking; they demonstrate platform capabilities and constraints, not that any exact importance taxonomy is universally optimal. GOV.UK supplies deployed banner guidance while explicitly acknowledging open research on missed information and dismissibility. This cycle found no strong basis for universal toast durations, badge-count thresholds, batching windows, or claims that push/email inherently improve engagement without unacceptable attention cost.
+W3C provides normative accessibility behavior for status messages and cautions against unnecessary assertive interruption. Apple and Android provide current production platform models for permission, interruption level, user control, channels, grouping and deep linking; they demonstrate platform capabilities and constraints, not that any exact importance taxonomy is universally optimal. Apple also ships Scheduled Summary and AI-assisted prioritization/summarization, demonstrating production adoption while explicitly warning that generated summaries can vary. GOV.UK supplies deployed banner guidance while acknowledging open research on missed information and dismissibility.
+
+Fitz et al. (2019), *Computers in Human Behavior*, provides randomized field evidence that notification delivery cadence can affect attention and well-being: three predictable batches per day outperformed usual delivery on several outcomes, while hourly batching did not. Generalize cautiously because the intervention lasted two weeks, operated across smartphone notifications rather than one product taxonomy, and does not establish safe delay bounds for consequential events. There remains no strong basis here for a universal batching window, toast duration, badge-count threshold, or claim that push/email inherently improves engagement without unacceptable attention cost.
