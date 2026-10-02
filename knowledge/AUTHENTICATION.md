@@ -97,6 +97,57 @@ For accounts created through an identity provider, decide what happens if that p
 
 For every authenticator or recovery factor, define loss/unavailability behavior, evidence required to regain control, temporary assurance/privilege changes, notifications, revocation, and escalation when the normal path cannot be completed.
 
+## Federated identity and account linking are identity-graph mutations
+
+Treat a federated login identity as a tuple anchored in the issuer/provider and its stable subject identifier, not as an email address. OpenID Connect defines the `sub` claim as the subject identifier in an ID token; email is additional profile data. Email can change, can collide across identity-provider connections, and a provider's `email_verified` claim does not necessarily mean that provider remains authoritative for ownership of an arbitrary third-party mailbox.
+
+Therefore **same email is evidence for a possible match, not sufficient proof that two product accounts are the same person**. Do not automatically merge accounts merely because normalized email strings match. Auth0's deployed model demonstrates why: the same email can legitimately exist in different connections, and its current user-initiated linking guidance requires authentication of the identities being linked rather than equality of their email addresses.
+
+### Link only after proving control of both sides
+
+A safe user-initiated linking ceremony starts from an authenticated product account, makes the intended secondary identity explicit, and requires fresh authentication with that secondary identity before mutation. For higher-risk products, consider fresh authentication of the existing/primary account too. The UI should state what linking changes: future sign-in methods, data/account that will be reached, permissions that remain separate, and whether the operation is reversible.
+
+Do not turn “Sign in with Google/Apple/SSO” into an implicit linking action simply because the returned email matches an existing local account. If policy wants one product account per person, route the collision into an explicit prove-and-link/recover-existing-account journey rather than silently choosing an identity.
+
+### Define canonical product identity independently of login identities
+
+Keep the application's durable account/person/workspace identifier separate from any provider-specific login identifier. A product account may have multiple authenticators and federated identities over time. Business data, ownership, entitlements, audit history, billing, and collaboration references should not depend on whichever login method happens to be marked “primary.”
+
+This matters during linking because provider implementations may choose a primary identity and discard or subordinate profile metadata from the secondary identity. Auth0, for example, documents that after linking its primary identity remains the main profile and secondary `user_metadata`/`app_metadata` are not automatically merged. An application that equates provider profile merge with domain-account merge can lose metadata or transfer authority unexpectedly.
+
+Before linking, define explicitly:
+- canonical product account ID;
+- identities/authenticators attached to it;
+- which profile attributes are authoritative and from where;
+- how entitlements, organization memberships, billing and ownership combine—or deliberately do not combine;
+- what happens to active sessions for both pre-link accounts;
+- audit record and notifications;
+- unlink/recovery behavior.
+
+### Enterprise federation adds organization authority
+
+A matching email domain is not sufficient evidence of enterprise membership. Provider-specific authoritative organization/tenant claims should be used when access depends on organizational membership, and membership/authorization should remain distinct from authentication. Auth0's current Google Workspace guidance illustrates the edge case: a Google account can use a non-Google mailbox, so `email_verified=true` alone does not establish that Google is authoritative for that email domain; the hosted-domain claim is needed for Workspace-domain authority.
+
+Do not persist enterprise access forever from a one-time login assertion. Define what happens when the IdP removes the user, changes tenant membership, disables the identity, or changes claims. SSO proves an authentication event; application authorization still needs its own lifecycle.
+
+### Unlinking can be destructive or create lockout
+
+Before unlinking, prove the current user's authority and ensure at least one viable sign-in/recovery path remains. Show which sign-in method will stop working and whether any organization access depends on it. Do not offer unlink as a harmless profile toggle if it can orphan the account, change the canonical identity, remove access, or weaken recovery.
+
+Account deletion also needs identity-graph semantics: deleting a provider identity, unlinking it, deleting the product account, and deleting a provider account are different operations. Never infer one from another silently.
+
+### Linking failure modes
+
+- automatic merge on matching email without proving both identities;
+- using mutable email as the durable foreign key instead of provider + stable subject;
+- assuming `email_verified=true` means the IdP is authoritative for every email/domain;
+- allowing a newly authenticated low-assurance identity to attach itself to a high-value existing account;
+- silently selecting which duplicate account “wins” and losing the other's data or entitlements;
+- coupling product data ownership to the provider's notion of primary identity;
+- unlinking the final viable authenticator and locking the user out;
+- preserving enterprise privileges after the IdP no longer asserts membership;
+- treating link/unlink as profile decoration rather than an account-control event.
+
 ## Session UX
 
 A session is user-visible product state even when tokens are not. Design explicitly for expiry, remote revocation, privilege/membership changes, multiple tabs/windows, sensitive operations requiring fresh authentication, shared/public devices, and sign-out scope where relevant.
@@ -124,8 +175,9 @@ Before implementing account entry, answer:
 6. What are **all** recovery routes, and which is cheapest for an attacker to exploit?
 7. Can users establish redundancy before loss, and can they revoke lost authenticators afterward?
 8. Which changes (email/phone/IdP/recovery contact) transfer future account control, and how are they protected/notified?
-9. When does the session expire or require step-up, and what task state survives interruption?
-10. Have keyboard, screen-reader, autofill/password-manager, passkey, localization, rate-limit, service-failure, multiple-account, federated, lost-device, and support-assisted recovery paths been tested?
+9. If identities can link/unlink, what is the canonical product account, how is control of both sides proved, and what happens to data/entitlements/sessions?
+10. When does the session expire or require step-up, and what task state survives interruption?
+11. Have keyboard, screen-reader, autofill/password-manager, passkey, localization, rate-limit, service-failure, multiple-account, federated, lost-device, linking/unlinking, and support-assisted recovery paths been tested?
 
 ## Failure modes
 
@@ -145,7 +197,7 @@ Before implementing account entry, answer:
 
 ## Evidence boundary
 
-NIST SP 800-63B-4 (published 2025-08-01) is authoritative security guidance for authentication/authenticator management in its scope and provides a useful recovery-method taxonomy; its assurance levels and exact requirements are not universal consumer-product defaults. W3C WebAuthn Level 3 is a Recommendation as of 2026-08-25 and establishes the web platform public-key authentication model; it does not define an application's account-recovery policy or prove a particular passkey UX best. Google's passkey documentation demonstrates one major ecosystem's sync and cross-device model; do not generalize its exact behavior to every credential provider. Product rules above about cooling-off periods, notifications, support protocols, and factor-change protection are risk-based synthesis and must be calibrated to the product threat model.
+NIST SP 800-63B-4 (published 2025-08-01) is authoritative security guidance for authentication/authenticator management in its scope and provides a useful recovery-method taxonomy; its assurance levels and exact requirements are not universal consumer-product defaults. W3C WebAuthn Level 3 is a Recommendation as of 2026-08-25 and establishes the web platform public-key authentication model; it does not define an application's account-recovery policy or prove a particular passkey UX best. OpenID Connect establishes stable subject identity semantics for federated authentication but does not prescribe an application's account-linking policy. Auth0 documentation supplies concrete production behavior and failure cases around cross-connection duplicates, linking and provider authority; those mechanics are vendor-specific evidence, so generalize the identity principles rather than Auth0's exact data model. Google's passkey documentation demonstrates one major ecosystem's sync and cross-device model; do not generalize its exact behavior to every credential provider. Product rules above about cooling-off periods, notifications, support protocols, factor-change protection, explicit linking and canonical product identity are risk-based synthesis and must be calibrated to the product threat model.
 
 ## Primary sources reviewed
 
@@ -153,6 +205,11 @@ NIST SP 800-63B-4 (published 2025-08-01) is authoritative security guidance for 
 - NIST authentication assurance levels: https://pages.nist.gov/800-63-4/sp800-63b/aal/
 - W3C — WebAuthn Level 3 became Recommendation (2026-08-25): https://www.w3.org/news/2026/web-authentication-an-api-for-accessing-public-key-credentials-level-3-is-now-a-w3c-recommendation/
 - W3C — WebAuthn Level 4 First Public Working Draft (2026-09-15): https://www.w3.org/news/2026/first-public-working-draft-web-authentication-an-api-for-accessing-public-key-credentials-level-4/
+- OpenID Foundation — How OpenID Connect works: https://openid.net/developers/how-connect-works/
+- Auth0 Support — Implement client-side user-initiated account linking (updated 2026-02-20): https://support.auth0.com/center/s/article/Implement-Client-Side-User-Initiated-Account-Linking
+- Auth0 Support — Unique email address per user requirements (updated 2025-09-10): https://support.auth0.com/center/s/article/Does-Auth0-Require-a-Unique-Email-Address-Per-User
+- Auth0 Support — Google hosted-domain claim and provider authority (updated 2026-02-20): https://support.auth0.com/center/s/article/How-to-get-hd-claim-from-google-sign-in-to-verify-user-belongs-to-a-Google-Workspace-or-Cloud-organization-account
+- Auth0 Support — User ID and profile behavior after linked accounts (updated 2025-09-10): https://support.auth0.com/center/s/article/After-2-accounts-linked-what-will-be-the-user-id-in-the-token-generated-by-Auth0
 - Google for Developers — Passkeys: https://developers.google.com/identity/passkeys
 - GOV.UK Design System — Create accounts: https://design-system.service.gov.uk/patterns/create-accounts/
 - GOV.UK Service Manual — Checking users' identities: https://www.gov.uk/service-manual/design/checking-users-identities
