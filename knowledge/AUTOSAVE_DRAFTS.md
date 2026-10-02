@@ -107,18 +107,60 @@ Do not promise offline editing merely because an already-open page keeps accepti
 
 ## Multiple tabs, devices, and collaborators
 
-Autosave creates concurrency even in apparently single-user products: the same user can open two tabs or devices.
+Autosave creates concurrency even in apparently single-user products: the same user can open two tabs or devices. Treat every write as being based on a particular observed revision, not merely as “the latest save request.”
 
-Use revision/version preconditions or an equivalent concurrency mechanism when overwriting newer remote state would be harmful. A server rejection due to stale base state is not a generic network error; it is a reconciliation event.
+### Prevent lost updates before designing conflict UI
 
-Possible policies:
+Use revision/version preconditions or an equivalent concurrency mechanism when overwriting newer remote state would be harmful. HTTP already provides a useful primitive: a server can return an `ETag` for a resource and require an update to carry `If-Match`. If the resource changed after the editor loaded it, the precondition fails with `412 Precondition Failed` instead of silently replacing the newer version. RFC 9110 explicitly defines conditional state-changing requests as a way to prevent the lost-update problem; RFC 6585 additionally defines `428 Precondition Required` for servers that require clients to make writes conditional.
 
-- automatic merge for independent changes when semantics permit;
-- operation-based reconciliation for structured editors;
-- explicit conflict review when intent is ambiguous;
-- exclusive editing only when the domain truly requires locking.
+This is a correctness boundary, not merely an API detail. A UI cannot provide trustworthy conflict recovery if the persistence layer silently accepts stale overwrites.
 
-Do not silently implement last-writer-wins for valuable content unless that loss policy is intentional and acceptable.
+Do not assume timestamps are equivalent to strong version identity. If correctness requires proving that the exact base representation is still current, use a mechanism with the required comparison semantics.
+
+### A stale write is a reconciliation event, not a network error
+
+When a precondition fails, preserve three things separately:
+
+1. **base** — the revision the user's edits started from;
+2. **local intent** — the user's unsynchronized changes;
+3. **remote current state** — the newer canonical revision.
+
+Never discard local intent just because the server rejected the stale write. Fetching the newest server state and replacing the editor may fix transport state while destroying the user's work.
+
+Choose the recovery policy from data semantics:
+
+- **automatic merge** when edits are demonstrably independent and merge semantics are trustworthy;
+- **operation-based reconciliation** for structured editors where intent can be preserved more accurately than whole-document replacement;
+- **explicit conflict review** when both versions changed the same meaningful unit or automatic resolution could alter intent;
+- **exclusive editing / locking** only when the domain truly requires serialization and the lock lifecycle can be made reliable.
+
+Cloud Firestore illustrates an important implementation distinction: optimistic transactions proceed only if read documents remain unchanged and may retry on contention, eventually failing if contention persists. Automatic retry is appropriate only when rerunning the operation preserves its semantics; it is not permission to replay arbitrary user side effects.
+
+### Conflict granularity should match user meaning
+
+A conflict should be surfaced at the smallest unit for which the product can still explain the choice correctly. Field-level conflicts may be appropriate for independent settings; block/section conflicts for structured documents; line-level diffs may help source-like text. Whole-document “mine vs theirs” is a fallback, not a default architecture.
+
+Do not manufacture false conflicts merely because two revisions differ. Changes to independent fields can often coexist. Conversely, a text merge that is syntactically conflict-free can still be semantically wrong. Technical merge success is not proof that user intent was preserved.
+
+### Conflict UX
+
+When human review is necessary:
+
+- state that newer changes exist and that the user's work has been preserved;
+- identify the conflicting scope rather than presenting the entire document when possible;
+- show authorship/time/version context only when it helps distinguish intent;
+- make `keep mine`, `keep theirs`, and merge behavior explicit about what each replaces;
+- preview the resulting state for consequential merges;
+- preserve a recoverable copy/version before destructive resolution;
+- after resolution, save against the newly reconciled base rather than retrying the original stale write blindly.
+
+Avoid modal conflict prompts for every harmless concurrent edit. Conflict UI is a last-mile tool for ambiguity the system cannot safely resolve, not the concurrency mechanism itself.
+
+### Same-user tabs are still concurrency
+
+Do not treat two tabs owned by the same account as one editor. They may have different bases, offline queues, dirty state, and ordering. Cross-tab messaging can improve awareness, but correctness must still live at the persistence/version boundary because another device or disconnected client will not share that browser channel.
+
+Last-writer-wins is acceptable only when loss is explicitly harmless or the data model deliberately defines that policy. It is not a neutral default for valuable authored content.
 
 ## Validation
 
@@ -161,12 +203,12 @@ Before implementing autosave, answer:
 2. What is the maximum acceptable work-loss window?
 3. Is there a durable local draft?
 4. Can users edit offline, or only remain visually interactive?
-5. How are overlapping saves ordered/versioned?
-6. What happens if another tab/device/collaborator edits concurrently?
-7. Can invalid intermediate drafts be persisted?
+5. How are overlapping saves ordered/versioned, and what precondition prevents lost updates?
+6. What are the base, local-intent, and remote-current representations during reconciliation?
+7. At what semantic granularity can concurrent edits be merged safely?
 8. Which action is the explicit publish/submit/send boundary?
-9. How can users recover mistaken automatically saved edits?
-10. What happens on network failure, auth expiry, crash, tab close, and process kill?
+9. How can users recover mistaken automatically saved edits or a bad conflict resolution?
+10. What happens on network failure, auth expiry, contention, crash, tab close, and process kill?
 
 If these questions are unanswered, adding a debounce and a `Saved` label is not a complete autosave design.
 
@@ -176,7 +218,11 @@ If these questions are unanswered, adding a debounce and a `Saved` label is not 
 - **Debounce-only durability:** a crash before the delayed request loses meaningful work.
 - **Unload dependence:** correctness relies on a lifecycle event browsers may not fire.
 - **Stale acknowledgement:** an older request completes and clears dirty state for newer edits.
-- **Last-writer loss:** another tab/device silently overwrites newer work.
+- **Blind last-writer-wins:** another tab/device silently overwrites newer work.
+- **Refetch-as-recovery:** stale-write rejection triggers a refetch that destroys unsynchronized local intent.
+- **Retry-as-resolution:** the same stale write is retried until it overwrites the newer revision.
+- **False clean merge:** a technically conflict-free merge changes semantic intent.
+- **Conflict avalanche:** harmless independent edits trigger repeated blocking conflict dialogs.
 - **Autosave-as-publish:** transient edits immediately become externally consequential.
 - **Invalid-state rejection loop:** intermediate drafts cannot be persisted because publish validation is reused for saving.
 - **Offline ambiguity:** edits look saved but exist only in volatile memory.
@@ -185,12 +231,18 @@ If these questions are unanswered, adding a debounce and a `Saved` label is not 
 
 ## Evidence boundary
 
-The browser lifecycle guidance above is current platform documentation. Microsoft Office supplies shipped-product evidence that autosave, offline persistence, synchronization, recovery, and versioning are distinct concerns. These sources support the architecture and failure boundaries; they do not establish a universal debounce interval, save-status wording, or conflict strategy. Those remain product- and data-model-specific.
+Browser lifecycle guidance is current platform documentation. Microsoft Office supplies shipped-product evidence that autosave, offline persistence, synchronization, recovery, and versioning are distinct concerns. HTTP semantics and MDN establish version preconditions as a concrete mechanism for preventing lost updates. Firestore provides current production documentation for optimistic/pessimistic contention behavior and retry boundaries. These sources support the architecture and failure boundaries; they do **not** establish a universal debounce interval, conflict granularity, merge algorithm, save-status wording, or whether a product should use locking versus optimistic concurrency. Those remain product- and data-model-specific.
 
 ## Sources
 
 - MDN — `beforeunload`: https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event
 - MDN — `unload`: https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event
 - MDN — `pagehide`: https://developer.mozilla.org/en-US/docs/Web/API/Window/pagehide_event
+- MDN — `ETag`: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/ETag
+- MDN — `If-Match`: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-Match
+- MDN — Conditional requests: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Conditional_requests
+- HTTP Semantics (RFC 9110) — Conditional Requests: https://httpwg.org/specs/rfc9110.html#conditional.requests
+- RFC 6585 — `428 Precondition Required`: https://httpwg.org/specs/rfc6585.html#status-428
+- Firebase — Firestore transaction serializability and isolation: https://firebase.google.com/docs/firestore/transaction-data-contention
 - Microsoft Support — What is AutoSave?: https://support.microsoft.com/en-gb/office/collab-files/what-is-autosave
 - Microsoft Support — Can I work offline?: https://support.microsoft.com/en-us/word/can-i-work-offline
