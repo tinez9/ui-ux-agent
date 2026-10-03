@@ -5,6 +5,8 @@ Use drag-and-drop when the spatial act itself communicates the operation: reorde
 
 Drag is a **direct-manipulation accelerator**, not a complete command model. The underlying operation should remain explicit enough to expose through buttons, menus, forms, keyboard-accessible controls, automation, and undo/recovery.
 
+Prefer direct manipulation when **spatial relationship is information**. Prefer explicit commands when the user primarily needs **precision, distant/non-visible destinations, repeatability, or unambiguous semantics**. Often the strongest design exposes both over one shared operation model rather than choosing one globally.
+
 ## Model the operation before the gesture
 Represent the domain operation independently from pointer coordinates:
 
@@ -18,6 +20,29 @@ Pointer/touch drag, keyboard/menu actions, and programmatic commands should invo
 
 Distinguish **reorder** from **transfer**. A line between siblings communicates relative placement; highlighting a container communicates transfer into that container. Trees may need both plus combine/nesting. Never show a valid-looking target that will reject the drop.
 
+## Spatial manipulation vs explicit commands
+Do not frame the choice as “natural drag” versus “clunky controls.” Each interaction optimizes a different problem.
+
+Use spatial manipulation when:
+- source and destination are simultaneously visible and their relationship matters;
+- approximate placement is sufficient or snapping makes the final state deterministic;
+- direct preview helps the user understand the consequence before commitment;
+- repeated local rearrangement benefits from low ceremony.
+
+Prefer or prominently pair explicit controls when:
+- exact numeric/ordinal placement matters;
+- destinations are numerous, remote, collapsed, filtered, off-screen, or expensive to traverse;
+- users need to repeat the same transformation reliably;
+- the geometry changes across responsive layouts but domain semantics do not;
+- the action needs strong naming, auditability, automation, or assistive-technology access.
+
+This is also a **precision spectrum**. Dragging can be excellent for rough spatial placement while a field, menu, stepper, alignment command, or snapping rule supplies exactness. W3C explicitly uses a precise text value as a valid alternative to dragging a slider; Atlassian likewise advises against a range control when selecting an exact value is important. Do not force motor precision to stand in for semantic precision.
+
+## Modality continuity
+Users can switch among touch, mouse, keyboard, stylus, speech, or assistive input on the same device. Do not permanently simplify or hide controls merely because a touchscreen was detected. Preserve concurrent input mechanisms and let the same domain operation remain reachable as modality changes.
+
+Responsive adaptation should therefore change **interaction mechanics**, not silently change capability. A desktop board may make drag prominent while a phone emphasizes Move commands, but both should preserve the same valid destinations and operation semantics.
+
 ## Before drag
 - Make draggable objects discoverable. Prefer a visible handle when movement is a primary action; if the object contains other interactive controls, restrict drag initiation to the handle to avoid click/drag conflicts.
 - Do not rely on cursor changes, hover, or learned convention alone; touch and keyboard users do not receive hover affordances.
@@ -29,7 +54,9 @@ The interface must continuously answer:
 1. **What am I moving?** Use a recognizable preview; simplify large/complex items rather than cloning an entire surface.
 2. **Where can it go?** Expose only valid targets.
 3. **What will happen if I release now?** Show the operation, not merely proximity: before/after indicator, destination highlight, copy/move state, nesting level, or rejection.
-4. **Can I cancel?** Releasing outside a valid target or an explicit cancel path should safely preserve prior state where feasible.
+4. **Can I cancel?** Releasing outside a valid target should preserve prior state where feasible; provide an explicit cancellation path for modes that otherwise remain active.
+
+Pointer cancellation is not merely polish. W3C technique G210 treats the ability to abort a path-based drag after pickup as a sufficient approach for Pointer Cancellation: dropping outside a target or undoing the move are examples. Prefer commitment on the up/release event rather than causing irreversible effects at pointer-down.
 
 For long scrollable surfaces, auto-scroll can be useful but must not become an uncontrollable mode. Keep direction/speed predictable and retain non-drag alternatives for distant destinations.
 
@@ -46,7 +73,8 @@ WCAG 2.2 SC 2.5.7 requires author-provided dragging functionality to have a sing
 Provide an accessible non-drag route to the **same meaningful outcomes**. Mature patterns include:
 - a More/Move menu with commands such as Move to top / Move before… / Move to…;
 - a drag-handle button that opens movement commands when no other action menu exists;
-- a modal/form for complex tree or cross-container destinations.
+- a modal/form for complex tree or cross-container destinations;
+- select-source then select-destination flows where direct movement is difficult.
 
 Avoid blindly mapping movement to arrow keys. Directional keys become ambiguous across wrapping layouts, boards, trees, RTL, responsive changes, and nested destinations. Semantic commands such as “Move to Doing” or “Move before Task B” are more stable when geometry is not the domain model.
 
@@ -74,6 +102,9 @@ Use a library when it materially improves collision detection, scrolling, sensor
 
 ## Failure modes
 - **Drag-only capability:** excludes users who cannot perform precise dragging and violates WCAG where a simple pointer alternative is required.
+- **False binary:** product chooses drag *or* commands globally instead of matching each to spatial versus semantic/precision needs.
+- **Precision theater:** exact outcomes require delicate motor placement even though the domain has discrete or numeric semantics.
+- **Input lock-in:** touch detection removes mouse/keyboard-accessible controls on hybrid devices.
 - **Invisible capability:** movement exists only if the user guesses an object is draggable.
 - **Gesture conflict:** whole-row dragging steals text selection, scrolling, links, buttons, or long-press behavior.
 - **Ambiguous drop:** target highlights without communicating before/after/inside/copy/move semantics.
@@ -85,16 +116,19 @@ Use a library when it materially improves collision detection, scrolling, sensor
 - **Animation dependence:** movement is understandable only from motion; reduced-motion users lose the state transition.
 
 ## Evidence and boundaries
-- **W3C WCAG 2.2:** SC 2.5.7 establishes the normative simple-pointer alternative requirement for dragging. This is an accessibility requirement, not evidence that drag is unusable.
-- **Atlassian Pragmatic Drag and Drop:** mature shipped design guidance supports visible handles, operation-specific drop indicators, accessible move controls, focus restoration, outcome announcements, optimistic updates, and complex tree alternatives. Treat exact visual dimensions/timings as Atlassian conventions, not universal constants.
-- **Apple HIG:** platform guidance supports multi-item drag, destination feedback, and operation-specific pointer feedback, especially across iPadOS/macOS. Platform conventions do not automatically generalize to every web/mobile product.
+- **W3C WCAG 2.2:** SC 2.5.7 establishes the normative simple-pointer alternative requirement for dragging; the Input Modalities guidance also stresses concurrent mechanisms and the lower precision of touch. G210 supplies a cancellation pattern. These are accessibility requirements/techniques, not evidence that drag is universally inferior.
+- **Atlassian Pragmatic Drag and Drop:** mature shipped design guidance supports visible handles, operation-specific drop indicators, accessible move controls, focus restoration, outcome announcements, optimistic updates, and complex tree alternatives. Atlassian's Range guidance independently warns against approximate slider interaction when exact selection matters. Treat exact visual dimensions/timings as Atlassian conventions, not universal constants.
+- **Apple HIG:** platform guidance supports multi-item drag, destination feedback, operation-specific behavior, and alternative commands. Platform conventions do not automatically generalize to every web/mobile product.
 
-There is still limited comparative outcome evidence establishing when drag-and-drop outperforms explicit commands for productivity, comprehension, or error rate. Prefer it when spatial manipulation has intrinsic meaning; otherwise test against simpler command-based interaction.
+There is still limited comparative outcome evidence establishing when drag-and-drop outperforms explicit commands for productivity, comprehension, or error rate. The decision matrix above is therefore operational synthesis from standards and mature product guidance, not a measured universal law. Prefer drag when spatial manipulation has intrinsic meaning; otherwise test against simpler command-based interaction.
 
 ## Sources
 - W3C WAI, WCAG 2.2 — Dragging Movements (2.5.7): https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html
+- W3C WAI — Understanding Guideline 2.5 Input Modalities: https://www.w3.org/WAI/WCAG22/Understanding/input-modalities
+- W3C WAI — G210 Ensuring that drag-and-drop actions can be cancelled: https://www.w3.org/WAI/WCAG21/Techniques/general/G210
 - Atlassian Design System — Pragmatic drag and drop design guidelines: https://atlassian.design/components/pragmatic-drag-and-drop/design-guidelines/
 - Atlassian Design System — Pragmatic drag and drop accessibility guidelines: https://atlassian.design/components/pragmatic-drag-and-drop/accessibility-guidelines/
+- Atlassian Design System — Range usage: https://atlassian.design/components/range/usage
 - Apple Human Interface Guidelines — Drag and drop: https://developer.apple.com/design/human-interface-guidelines/drag-and-drop
 
-**Reviewed:** 2026-10-03
+**Reviewed:** 2026-10-04
