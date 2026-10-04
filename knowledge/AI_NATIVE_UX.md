@@ -94,17 +94,54 @@ Not every AI output needs a wall of citations. Provenance becomes more important
 
 For consequential agent work, retain inspectable records of relevant tools/data and actions. Present a concise summary first and expose detail on demand.
 
-## Trust calibration
+## Trust calibration: optimize decisions, not perceived trust
 
-Do not communicate AI confidence through anthropomorphic certainty.
+The goal is not to make users trust AI more. It is to help them rely on it when warranted and scrutinize, override, or verify it when not.
 
-Help users calibrate trust through:
-- explicit scope and limitations
-- observable actions and results
-- source/provenance access where relevant
-- visible uncertainty when it changes a decision
-- correction and recovery paths
-- predictable permission boundaries
+Treat **system trustworthiness**, **displayed confidence**, **user trust**, **user self-confidence**, and **decision quality** as separate variables. NIST's trustworthiness model includes validity/reliability and explainability/interpretability as distinct characteristics; an explanation is not evidence that an output is correct.
+
+### Confidence is an intervention, not neutral metadata
+
+Show confidence only when it is meaningful for the task, calibrated against outcomes, and likely to change a useful decision. Do not manufacture precise percentages from model tone, token probabilities, or an unvalidated heuristic.
+
+A 2025 randomized Microsoft Research study found that users' self-confidence aligned with displayed AI confidence and that this effect could persist after AI assistance ended; real-time correctness feedback reduced the alignment. Therefore a confidence badge can alter human metacognition rather than merely report model state.
+
+Prefer, when appropriate:
+- calibrated uncertainty tied to the specific decision or claim
+- concrete limitations or missing evidence
+- source/provenance access
+- verification or comparison actions
+- outcome feedback that lets users learn when reliance was justified
+
+### Explanation can increase persuasion without increasing correctness
+
+Do not equate more reasoning text with transparency or calibration. A 2026 preregistered study (N=559) found that summarized reasoning traces increased trust and appeal without improving task performance over answer-only output; full traces impaired performance in that experiment, and neither trace format calibrated users' self-evaluation. Separate 2025 research found confident delivery could suppress error detection even when reasoning was flawed.
+
+Use explanations to answer decision-relevant questions such as:
+- What evidence materially supports this output?
+- What assumptions or constraints matter?
+- What would make the recommendation change?
+- What should the user verify before acting?
+
+Do not expose verbose reasoning merely to create an impression of rigor. Prefer concise evidence, assumptions, provenance, and actionable verification over persuasive narrative.
+
+### Match uncertainty UX to consequence
+
+For low-consequence generative work, correction and iteration may be more useful than persistent confidence UI. For consequential factual or decision-support work, uncertainty, provenance, alternatives, and verification paths deserve more prominence.
+
+When uncertainty is high and the system can reduce it, prefer an action over a decorative warning: ask for missing context, retrieve stronger evidence, compare alternatives, run a check, or defer a consequential action.
+
+### Evaluate calibration behaviorally
+
+Do not measure trust UX only with “How much do you trust the AI?” Track whether users:
+- accept correct assistance and reject incorrect assistance
+- verify when verification is warranted
+- detect failures and recover
+- maintain appropriate self-confidence
+- understand scope and limitations
+- avoid both automation bias and needless distrust
+
+Where ground truth is available, evaluate reliance conditional on AI correctness and confidence, not only aggregate acceptance rate.
 
 ## Implementation checklist for AI coding agents
 
@@ -120,11 +157,15 @@ For every autonomous feature, define:
 - audit/provenance requirements
 - failure and partial-success states
 - what happens when a guardrail denies an action
+- whether confidence is actually calibrated and decision-relevant
+- what uncertainty/provenance users need at the decision point
+- how users can verify consequential outputs
+- how calibration will be evaluated beyond self-reported trust
 
 Do not ship the happy-path agent loop without these states.
 
 ## Evidence boundary
 
-The approval-fatigue and sandboxing numbers above are Anthropic product telemetry and engineering evidence, not universal UX measurements. OpenAI and Microsoft guidance independently support risk-based approvals, guardrails, inspectability, and recovery, while Microsoft HAX provides longer-lived human-AI interaction research. Together they support the architecture, but exact thresholds should be validated for each product and risk domain.
+The approval-fatigue and sandboxing numbers above are Anthropic product telemetry and engineering evidence, not universal UX measurements. OpenAI and Microsoft guidance independently support risk-based approvals, guardrails, inspectability, and recovery, while Microsoft HAX provides longer-lived human-AI interaction research. NIST supports separating trustworthiness characteristics and evaluating AI in context of human goals. Recent Microsoft studies provide experimental evidence that confidence and explanation presentation can themselves alter reliance, self-confidence, error detection, and subjective trust; these findings are task- and study-specific and do not justify a universal prohibition on confidence displays or explanations. Exact thresholds and presentation choices should be validated for each product and risk domain.
 
 Do not treat AI-native UX as synonymous with chat UI.
