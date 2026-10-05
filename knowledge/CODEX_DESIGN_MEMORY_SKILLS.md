@@ -103,6 +103,23 @@ Therefore treat drift as a **triage problem**, not a boolean failure:
 5. **Contract stale or ambiguous** — evidence suggests the documentation no longer represents reality, but intent is unclear. Mark `CONFLICT`/uncertainty and escalate for evidence; do not auto-fix either side.
 6. **Test/capture noise** — rendering instability, browser/font/resource variance, animation, DPR or threshold effects. Stabilize the test before making a design decision.
 
+### Real migration check: contract drift can be visually silent
+
+Carbon's v10→v11 migration is a useful adversarial case for the model. Carbon explicitly states that the release did **not** require a visual redesign, while still renaming large parts of the token vocabulary toward semantic usage (for example, moving from ordinal names toward role names), changing package/API structure, introducing inline theming and deprecating assets for later removal. Its migration guidance also recommends static tooling to find legacy token usage.
+
+This exposes a major blind spot in screenshot-led governance: **a product can have zero meaningful pixel drift while accumulating serious contract drift**. Old token names, deprecated component APIs, legacy package imports or obsolete theme assumptions may render identically today yet be semantically stale and migration-blocking tomorrow. Conversely, a broad visual diff can be legitimate while the semantic contract remains coherent.
+
+For agents, drift therefore has at least four independent axes:
+
+- **visual drift** — rendered pixels/layout/appearance changed;
+- **semantic drift** — token/component roles no longer express current intent;
+- **API/structural drift** — implementation depends on deprecated packages, props, selectors or component contracts;
+- **documentation/governance drift** — declared guidance, migration status or ownership no longer matches supported practice.
+
+Do not use one axis as a proxy for the others. A green visual-regression suite cannot certify design-system conformance. Static token/API checks can catch visually silent migration debt; rendered tests can catch appearance regressions that static checks cannot. Both still require adjudication when intent changes.
+
+Carbon also supports staged migration rather than instant deletion: deprecated assets can remain supported for a major-version window before removal. This validates treating **deprecation as a first-class contract state**, not as either "valid forever" or "delete now". An agent should prefer explicit replacement mapping, consumer discovery and migration sequencing over mechanically rewriting every deprecated symbol in one pass.
+
 ### Three-way comparison beats circular validation
 
 Avoid comparing only `DESIGN.md ↔ current UI`. That allows either side to validate itself. Prefer three evidence classes:
@@ -147,7 +164,7 @@ Do not turn every observed CSS value into a rule. Existing implementation may co
 
 For an existing coherent product, prefer:
 
-`evidence inventory → confidence-aware contract → implementation discipline → drift detection/adjudication → critique/refinement → rendered QA`
+`evidence inventory → confidence-aware contract → implementation discipline → multi-axis drift detection/adjudication → critique/refinement → rendered QA`
 
 If a maintained design source already exists, do not reverse-engineer it from screenshots merely because an extractor is available. Use extraction to fill documented gaps and detect divergence between declared intent and shipped UI.
 
@@ -155,8 +172,8 @@ For products without a trustworthy source of truth, browser/code extraction can 
 
 ## Evidence boundary
 
-The extraction-skill findings establish mechanisms, dependencies and failure modes; they do not establish causal improvement over baseline Codex/Claude or prove generated contracts preserve designer intent. The drift model is an agent synthesis grounded in the DTCG stable token format and current Storybook/Chromatic visual-testing mechanics. Those sources establish machine-readable contracts, rendered diffing, baselines and known capture failure modes; they do **not** empirically validate this six-way adjudication taxonomy or prove that visual regression improves product outcomes.
+The extraction-skill findings establish mechanisms, dependencies and failure modes; they do not establish causal improvement over baseline Codex/Claude or prove generated contracts preserve designer intent. The drift model is an agent synthesis grounded in the DTCG stable token format and current Storybook/Chromatic visual-testing mechanics. Carbon's v10→v11 migration provides a real design-system counterexample showing that semantic/API migration can be intentionally visually stable and that deprecation can span versions. These sources support multi-axis drift detection, but do **not** empirically validate the six-way adjudication taxonomy or prove that the proposed pipeline improves product outcomes.
 
 ## Next research direction
 
-Test the drift model against real design-system change histories: deprecations, theme migrations, intentional redesigns and visual-regression incidents. The key question is whether the six-way classification remains useful under real multi-team governance, especially when design files, tokens and shipped code disagree for long periods.
+Investigate a contrasting real migration where intentional visual redesign and semantic/token migration happen together. The useful test is whether multi-axis drift classification still separates expected appearance change from accidental implementation regressions when both contract and pixels move at once.
