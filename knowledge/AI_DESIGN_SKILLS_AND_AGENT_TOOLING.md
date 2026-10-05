@@ -20,6 +20,7 @@ Before recommending an install, inspect the canonical repository for:
 8. **Security/supply chain** — inspect installers, scripts, hooks and package execution separately from Markdown instructions.
 9. **Maintenance/freshness** — canonical upstream, license, `archived`, `pushed_at`, commits/releases.
 10. **Marginal value** — prefer complementary capabilities over overlapping anti-slop packs.
+11. **Behavioral evidence** — distinguish installation/trigger success, output quality, and causal uplift. A skill that reliably activates is not thereby proven to improve the result.
 
 Stars are adoption signal, never evidence of design quality or user outcomes.
 
@@ -74,6 +75,26 @@ Its strongest idea is falsifiable evidence: build success, DOM presence and unin
 **License/maintenance:** parent repo MIT, unarchived and pushed 2026-10-05 when inspected.
 
 ## Promising but not yet recommended
+
+### `Syo-M/codex-frontend-skills` — Codex-native orchestration plus unusually explicit evaluation
+
+**Status:** high-value research reference and promising Codex-specific candidate; not promoted to the default stack yet because maintenance/adoption and causal-uplift evidence are still weak.
+
+This repository is materially more interesting than a Claude skill copied into `~/.codex/skills`: it treats Codex as a runtime with skills, custom-agent delegation, profiles, installation/verification logic and an evaluation harness. That makes it useful evidence for what **Codex-native** design tooling can exploit beyond portable `SKILL.md` prose.
+
+**Evidence inspected 2026-10-05:** canonical GitHub metadata shows MIT, unarchived, 0 stars / 0 forks, created 2026-07-13 and last pushed **2026-07-15**. Low adoption and nearly three months without a push prevent a maintenance-based recommendation despite the repository's unusually rigorous internal evidence.
+
+Its `EVALUATION.md` is stronger than typical skill marketing. For v2.0.0 it records a model-pinned Codex CLI 0.144.1 series using `gpt-5.6-terra`: **90/90 valid PASS runs across 30 prompts**, **9/9 over-trigger negatives clean**, and **21/21 expected custom-agent delegations initiated and completed**. A separate targeted regression reports **18/18 PASS**. A blinded review of 10 retained outputs reports 10/10 PASS and 92.7% across its applicable rubric. These are useful operational signals because reports and validators are retained rather than only showing curated screenshots.
+
+**Crucial boundary:** the repository itself correctly labels **harness causal uplift as NOT CONFIGURED**. It has not run the same-model, same-prompt, same-fixture paired comparison with and without the skills. Therefore 90/90 activation/task success does **not** establish that the skill pack caused better design. The blinded review shows acceptable retained outputs, not improvement over baseline. Preserve this distinction when evaluating every skill.
+
+**Model-specific finding:** its recorded comparison found `gpt-5.6-terra` completed expected custom-agent delegation while `gpt-5.4-mini` passed the same task contracts without delegating. This is direct evidence that a workflow depending on Codex custom-agent behavior can be **model-sensitive even when final task contracts pass**. Do not infer runtime equivalence from compatible skill syntax.
+
+**Best fit:** study or trial when Codex-specific delegation, profiles, trigger discipline and reproducible evaluation matter. Its evaluation architecture is worth borrowing even if the skill pack itself is not installed.
+
+**Do not infer:** independent certification, broad framework coverage, cross-model equivalence, user preference, or causal improvement from the current reports.
+
+**Promotion gate:** refresh canonical maintenance state; inspect current skill/agent executable surfaces and installer; then run a paired baseline-vs-pack visual benchmark on representative projects. A positive blinded causal comparison would be substantially stronger evidence than another activation series.
 
 ### `wenkang-deepblue/frontend-design` — human-in-the-loop visual decision sandbox
 
@@ -132,7 +153,8 @@ Do not maximize skill count. A plausible, non-exclusive architecture is:
 - **direction/refinement:** Impeccable;
 - **specialist craft:** selected Emil skills when needed;
 - **human visual decisions:** a sandbox such as `wenkang-deepblue/frontend-design` only when visual round-trip feedback materially helps;
-- **rendered verification:** `frontend-visual-qa` in Claude Code, or another validated target-specific verifier.
+- **rendered verification:** `frontend-visual-qa` in Claude Code, or another validated target-specific verifier;
+- **Codex orchestration/evaluation:** treat native delegation/profile harnesses as a separate layer, not as evidence that their design doctrine is superior.
 
 This is a workflow hypothesis, not a proven ranking. Install only layers with marginal value for the project.
 
@@ -146,7 +168,8 @@ Before adding a skill:
 4. pin/record version or commit where practical;
 5. run the same representative task with and without it;
 6. compare rendered desktop/mobile states, accessibility, task correctness, originality, complexity and churn;
-7. retain only if marginal improvement outweighs conflict, context and maintenance cost.
+7. separately record **activation**, **output quality**, and **causal uplift**; never substitute one for another;
+8. retain only if marginal improvement outweighs conflict, context and maintenance cost.
 
 ## Freshness policy: search recency is not repository recency
 
@@ -164,8 +187,8 @@ Negative evidence should remain recorded so future cycles do not repeatedly redi
 
 ## Candidates for focused investigation
 
-Current search surfaced potentially relevant candidates including `superdesigndev/superdesign-skill` (design workflow plus external CLI/service), `Impertio-Studio/Frontend-Design-Claude-Skill-Package`, `dobromirdikov/codex-frontend-design-skill`, and newer Codex-specific frontend packs. None should be promoted from README claims alone. Inspect provenance, executable/service dependencies, maintenance, licensing, overlap and actual marginal workflow value first.
+Current search surfaced potentially relevant candidates including `danieloleary/design-md-for-codex` (persistent project design memory), `MaxHan7/frontend-ui-standards-skill` (design-system-first Codex implementation), `Enixes/astra-frontend-design` (evaluation-oriented Codex/Astra frontend workflow), `superdesigndev/superdesign-skill` (design workflow plus external CLI/service), and `dobromirdikov/codex-frontend-design-skill`. None should be promoted from README claims alone. Inspect provenance, executable/service dependencies, maintenance, licensing, overlap and actual marginal workflow value first.
 
 ## Open evidence gap
 
-Evidence is much stronger for **what skills contain** than for **how much they improve output**. Build a repeatable benchmark: identical brief + starter repo + baseline agent versus one skill versus composed skills, then blind/rubric rendered evaluation. For verification skills, seed known responsive/state/visual defects and measure detection, false positives, missed states, time/context cost and whether captured evidence is actually opened and reasoned about. For decision sandboxes, measure whether structured visual feedback reduces clarification turns and implementation churn without increasing divergence from the real app. Popularity and attractive before/after examples are weak proxies for causal value.
+Evidence is much stronger for **what skills contain** than for **how much they improve output**. Build a repeatable benchmark: identical brief + starter repo + baseline agent versus one skill versus composed skills, then blind/rubric rendered evaluation. For Codex-native harnesses, preserve model/version and delegation behavior because syntactic compatibility does not imply behavioral equivalence. For verification skills, seed known responsive/state/visual defects and measure detection, false positives, missed states, time/context cost and whether captured evidence is actually opened and reasoned about. For decision sandboxes, measure whether structured visual feedback reduces clarification turns and implementation churn without increasing divergence from the real app. Popularity, activation rates and attractive before/after examples are weak proxies for causal value.
