@@ -4,7 +4,7 @@ Last reviewed: 2026-10-05
 
 ## Research question
 
-How should agents preserve or extract project design memory without freezing the UI or laundering accidental implementation values into a new source of truth?
+How should agents preserve, extract and validate project design memory without freezing the UI or laundering accidental implementation values into a new source of truth?
 
 ## Core finding
 
@@ -43,7 +43,7 @@ Canonical metadata inspected 2026-10-05: MIT, unarchived, last pushed 2026-06-27
 
 ## Extracting a contract from existing UI: evidence hierarchy
 
-A newly inspected candidate, `KunalKumarkkr01/design-system-extractor`, exposes an important improvement over screenshot-only extraction: it drives real Chrome through the Chrome DevTools MCP, uses the accessibility tree to map structure, reads CSS custom properties and computed styles, captures desktop/mobile screenshots, explores interaction states and secondary pages, then writes an implementation-oriented `design.md`.
+`KunalKumarkkr01/design-system-extractor` exposes an important improvement over screenshot-only extraction: it drives real Chrome through the Chrome DevTools MCP, uses the accessibility tree to map structure, reads CSS custom properties and computed styles, captures desktop/mobile screenshots, explores interaction states and secondary pages, then writes an implementation-oriented `design.md`.
 
 **Decision:** promising mechanism/reference, **not a default-install recommendation**. Canonical metadata inspected 2026-10-05: MIT, unarchived, last pushed 2026-07-20, 1 star / 0 forks. It also has a hard Node + Chrome + Chrome DevTools MCP dependency and can execute page JavaScript through a browser, so its operational/supply-chain surface is much larger than a passive Markdown skill.
 
@@ -57,9 +57,7 @@ The mechanism suggests a useful evidence hierarchy for extraction:
 
 ### Critical correction: runtime truth is not design intent
 
-The extractor claims a running page contains the "ground truth" because computed styles expose exact shipped values. That is true only for **rendered implementation truth**. It does not establish **design-system intent**.
-
-A computed `13px` gap may be a deliberate token, an inherited library default, a breakpoint interpolation, a legacy patch or an accidental override. A CSS custom property is stronger evidence when it is semantically named and reused, but even tokens can be deprecated or misapplied. Therefore extraction should not flatten observation into prescription.
+A running page can establish **rendered implementation truth** but not automatically **design-system intent**. A computed `13px` gap may be a deliberate token, an inherited library default, a breakpoint interpolation, a legacy patch or an accidental override. A semantically named/reused custom property is stronger evidence, but even tokens can be deprecated or misapplied.
 
 A robust generated contract should attach provenance and confidence to important claims:
 
@@ -74,11 +72,11 @@ When confidence is insufficient, preserve the uncertainty rather than silently i
 
 ### Route/state coverage is part of extraction quality
 
-Homepage-only extraction is structurally weak. A useful contract needs representative routes, component archetypes, responsive breakpoints, themes and interaction states. The inspected extractor improves on shallow token scrapers by explicitly mapping secondary pages and noting intentional rule breaks. That is valuable, but its output template still cannot prove whether an inconsistency is intentional without product/design provenance.
+Homepage-only extraction is structurally weak. A useful contract needs representative routes, component archetypes, responsive breakpoints, themes and interaction states. Browser extraction can expose intentional-looking rule breaks, but it still cannot prove whether an inconsistency is intentional without product/design provenance.
 
 ### Preview validates the contract, not the product
 
-Rendered design-system previews are useful for catching malformed tokens, missing modes and internally inconsistent documentation. They do **not** prove that the extracted contract reproduces the source product, nor that a later implementation is correct. Keep three checks separate:
+Rendered design-system previews are useful for catching malformed tokens, missing modes and internally inconsistent documentation. They do **not** prove that the extracted contract reproduces the source product, nor that a later implementation is correct. Keep the transitions explicit:
 
 `source evidence → extracted contract/preview → implementation → rendered QA/parity`
 
@@ -86,32 +84,79 @@ Each transition can introduce error.
 
 ## Candidate comparison: extraction mechanisms
 
-Several current repositories advertise `DESIGN.md` generation, but the mechanism matters more than the file name.
-
-- `KunalKumarkkr01/design-system-extractor`: strongest inspected mechanism this cycle for **live-site evidence**, because it combines DOM/computed values, accessibility structure, responsive screenshots, states and routes. Low adoption and non-trivial MCP/browser surface prevent promotion.
-- `simonbloom/design-system-extractor-skill`: advertises source/code/rendered evidence, component inventory, extraction notes with confidence/assumptions/gaps, preview rendering and optional token exports. This provenance model is conceptually strong, but canonical metadata shows no push since 2026-04-25, only 4 stars / 0 forks and no detected repository license; do not recommend installation despite recent search recrawls.
+- `KunalKumarkkr01/design-system-extractor`: strongest inspected mechanism for **live-site evidence**, combining DOM/computed values, accessibility structure, responsive screenshots, states and routes. Low adoption and non-trivial MCP/browser surface prevent promotion.
+- `simonbloom/design-system-extractor-skill`: advertises source/code/rendered evidence, component inventory, extraction notes with confidence/assumptions/gaps, preview rendering and optional token exports. Conceptually strong provenance model, but canonical metadata shows no push since 2026-04-25, only 4 stars / 0 forks and no detected repository license; do not recommend installation despite recent search recrawls.
 - Screenshot-first generators remain useful when screenshots are the only evidence available, but exact tokens and hidden state/responsive behavior should be marked approximate rather than laundered into authoritative design rules.
+
+## Design-contract drift: detection is not adjudication
+
+A visual/token diff can establish that **something changed**. It cannot establish whether the change is wrong. This distinction is critical for autonomous agents because blindly repairing every mismatch can erase intentional evolution, while blindly accepting every new baseline can canonize regressions.
+
+Current tooling supports the detection side well. The stable DTCG 2025.10 format gives tokens explicit structure, aliases, groups, extensions and `$deprecated`, making machine-readable contract comparison practical. Storybook/Chromatic can render named component states and compare browser snapshots against accepted baselines across themes, viewports and browsers. Chromatic also exposes an important operational fact: visual changes still require review/verification; snapshot baselines are historical evidence, not design intent. Capture instability, animations, font/resource failures, DPR changes and diff thresholds can create false positives or hide subtle changes.
+
+Therefore treat drift as a **triage problem**, not a boolean failure:
+
+1. **Contract violation** — current implementation contradicts a still-valid normative rule. Fix implementation; do not update the contract merely to make CI green.
+2. **Intentional evolution** — a deliberate product/design decision supersedes the contract. Update the normative source and implementation together, with rationale/migration where useful; then establish the new baseline.
+3. **Approved exception** — a local deviation has a real contextual reason. Record scope and rationale; do not promote it into a global token/rule.
+4. **Legacy debt / accidental divergence** — shipped UI differs but no credible intent supports it. Keep the contract normative and create remediation rather than reverse-engineering the drift into documentation.
+5. **Contract stale or ambiguous** — evidence suggests the documentation no longer represents reality, but intent is unclear. Mark `CONFLICT`/uncertainty and escalate for evidence; do not auto-fix either side.
+6. **Test/capture noise** — rendering instability, browser/font/resource variance, animation, DPR or threshold effects. Stabilize the test before making a design decision.
+
+### Three-way comparison beats circular validation
+
+Avoid comparing only `DESIGN.md ↔ current UI`. That allows either side to validate itself. Prefer three evidence classes:
+
+`declared contract ↔ previous accepted implementation/baseline ↔ proposed/current implementation`
+
+Then add decision provenance when available (design file, issue/ADR, approved review, product requirement). This separates four questions:
+
+- Did code change?
+- Did rendered output change?
+- Does the change violate the current contract?
+- Should the contract itself change?
+
+Those questions require different evidence and should not be collapsed into one automated pass/fail.
+
+### Baseline acceptance is a governance action
+
+Visual-regression systems compare against a last-known accepted snapshot. Accepting a snapshot changes future expectations, so agents should treat baseline updates like contract-affecting writes rather than cleanup. Never auto-accept a broad visual diff solely because the build is otherwise correct. Require a traceable reason for identity-critical, accessibility-relevant or wide-surface changes.
+
+Likewise, token migration should distinguish replacement from deprecation. DTCG's `$deprecated` field can mark tokens/groups as deprecated while preserving machine-readable compatibility; use deprecation/migration where consumers still exist rather than silently renaming or deleting contract vocabulary.
+
+### Practical drift pipeline for agents
+
+Use layered checks rather than one giant screenshot gate:
+
+1. **Static contract checks:** schema/type validity, aliases, deprecated-token usage, forbidden literals where justified, component API/state contracts.
+2. **Component-state checks:** representative stories/fixtures for variants, states, themes and responsive conditions.
+3. **Rendered regression:** stable browser snapshots with deterministic data/fonts/animations; inspect diffs rather than equating pixels with correctness.
+4. **Journey checks:** Playwright/Cypress/Vitest-browser states where composition depends on real interaction or route state.
+5. **Adjudication:** classify each material drift using the six cases above and attach provenance.
+6. **Write-back:** change implementation, contract, exception registry, baseline, or test harness according to classification — not all of them by default.
+
+The goal is not zero drift. The goal is **intentional, explainable drift with the correct source of truth updated**.
 
 ## Design memory is a contract, not a style preset
 
-A high-value project design memory should preserve **intent** without freezing legitimate evolution. Prefer a contract containing semantic tokens/theme relationships, typography roles, component/state contracts, identity-critical composition rules, accessibility invariants, product-specific motion principles, explicit no-go decisions with rationale, bounded freedoms, and unresolved conflicts.
+A high-value project design memory should preserve **intent** without freezing legitimate evolution. Prefer semantic tokens/theme relationships, typography roles, component/state contracts, identity-critical composition rules, accessibility invariants, product-specific motion principles, explicit no-go decisions with rationale, bounded freedoms, and unresolved conflicts.
 
-Do not turn every observed CSS value into a rule. Existing implementation may contain accidental drift, legacy debt or one-off styling. Extraction needs provenance, confidence and judgment.
+Do not turn every observed CSS value into a rule. Existing implementation may contain accidental drift, legacy debt or one-off styling. Extraction and drift detection both need provenance, confidence and judgment.
 
 ## Operational recommendation
 
 For an existing coherent product, prefer:
 
-`evidence inventory → confidence-aware contract → implementation discipline → critique/refinement → rendered QA`
+`evidence inventory → confidence-aware contract → implementation discipline → drift detection/adjudication → critique/refinement → rendered QA`
 
-If a maintained design source already exists, do not reverse-engineer it from screenshots merely because an extractor is available. Use extraction to fill documented gaps and to detect divergence between declared intent and shipped UI.
+If a maintained design source already exists, do not reverse-engineer it from screenshots merely because an extractor is available. Use extraction to fill documented gaps and detect divergence between declared intent and shipped UI.
 
 For products without a trustworthy source of truth, browser/code extraction can bootstrap one, but generated rules should initially be reviewable hypotheses rather than automatically normative policy.
 
 ## Evidence boundary
 
-This research inspected canonical repository metadata and actual skill instructions. It establishes mechanisms, dependencies and failure modes; it does not establish causal improvement over baseline Codex/Claude, nor does it prove that generated contracts preserve designer intent. No candidate inspected here currently supplies a rigorous same-task comparison of extracted-contract fidelity and downstream implementation quality.
+The extraction-skill findings establish mechanisms, dependencies and failure modes; they do not establish causal improvement over baseline Codex/Claude or prove generated contracts preserve designer intent. The drift model is an agent synthesis grounded in the DTCG stable token format and current Storybook/Chromatic visual-testing mechanics. Those sources establish machine-readable contracts, rendered diffing, baselines and known capture failure modes; they do **not** empirically validate this six-way adjudication taxonomy or prove that visual regression improves product outcomes.
 
 ## Next research direction
 
-Test **design-contract drift detection**: how agents should compare declared tokens/components against rendered production UI, distinguish legitimate exceptions from accidental divergence, and update either implementation or contract without making the documentation circularly self-validating.
+Test the drift model against real design-system change histories: deprecations, theme migrations, intentional redesigns and visual-regression incidents. The key question is whether the six-way classification remains useful under real multi-team governance, especially when design files, tokens and shipped code disagree for long periods.
