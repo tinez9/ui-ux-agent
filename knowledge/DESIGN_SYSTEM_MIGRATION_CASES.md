@@ -146,6 +146,51 @@ Do not blindly multiply every component × state × brand × mode × browser. De
 
 The objective is **coverage of independent variation**, not maximal screenshot count.
 
+## Case 4: automation is a layered detector, not accessibility proof
+
+Current tooling supports a useful automation stack, but no single layer proves conformance. Storybook's accessibility addon runs axe-core against the rendered DOM and describes automated checks as a **first line of QA**; its current documentation says axe-core automatically catches up to 57% of WCAG issues. W3C likewise states that evaluation tools save effort but cannot perform checks that require human judgment. This directly falsifies a tempting agent shortcut: `axe passes in every theme → every theme is accessible`.
+
+Primary sources reviewed:
+- https://storybook.js.org/docs/writing-tests/accessibility-testing
+- https://www.w3.org/WAI/test-evaluate/tools/selecting/
+- https://www.w3.org/WAI/WCAG22/Understanding/understanding-techniques
+- https://playwright.dev/docs/emulation
+
+### Divide validation by what each layer can actually observe
+
+1. **Static/token graph — prevent impossible mappings cheaply.** Validate that required semantic roles exist for every supported variant, aliases resolve, deprecated/forbidden primitives are not consumed, and known foreground/background role pairs satisfy computable contrast constraints. This is strong for deterministic token relationships but weak for arbitrary page backgrounds, overlays, images, browser substitutions, DOM semantics and interaction.
+2. **Rendered DOM rules — catch machine-detectable violations in the real component tree.** Run axe-like rules on each materially distinct resolved story/page state. Browser-based checks are stronger than source linting because they inspect compiled/rendered output, but their pass is bounded to rules that can be decided automatically.
+3. **Behavioral browser tests — assert interaction contracts explicitly.** Use keyboard-driven tests for reachability, order, focus movement, dialog/menu behavior and state changes; assert the resulting DOM/accessibility state rather than assuming axe will exercise interactions. Color-scheme emulation can cover light/dark, but an automation framework's available emulation knobs must not be confused with complete assistive-technology coverage.
+4. **Rendered/perceptual checks — inspect properties not captured by DOM rules.** Exercise focus appearance on actual backgrounds, state differentiation, text clipping/reflow/zoom, meaningful boundaries, content over imagery, and forced-colors rendering. Visual regression can detect change, but a stable screenshot does not establish accessibility correctness.
+5. **Human/assistive-technology review — decide meaning and usability.** Validate whether labels/alternatives convey the right purpose, interaction is understandable, status/error meaning is perceivable, reading/interaction order makes sense, and representative screen-reader or other AT workflows remain usable. Automation should route uncertainty here rather than manufacture a pass.
+
+### Preserve three outcomes, not pass/fail
+
+Storybook exposes `violations`, `passes` and `incomplete` results. That is a better model for autonomous agents than collapsing every automated run to green/red. A machine result should be recorded as **detected violation**, **machine-checked pass for this rule/state**, or **needs review / not machine-decidable**. `Pass` must never be promoted to “WCAG-conformant component.”
+
+This matters in theme matrices because a single semantic component can have different evidence per variant. A contrast rule may be machine-decidable in Brand A/light, require contextual review over an image in Brand B/light, and be irrelevant to authored colors under forced-colors where the browser paints system colors.
+
+### Avoid two false-confidence traps
+
+- **Untested state masquerading as a pass.** Current Storybook documentation warns that asynchronous components can be checked before their final UI state is rendered, producing false negatives. Agents must wait for the target state explicitly before running accessibility assertions.
+- **Baseline regression masquerading as conformance.** Accessibility baselines are useful for detecting newly introduced violations, but “no new violation” can preserve existing debt. Track regression status separately from conformance status, just as visual baselines are separated from design intent.
+
+### Risk-shaped CI recipe for theme changes
+
+For an agent changing a theme or design-system component:
+
+1. derive affected semantic roles and consumers from the token graph;
+2. enumerate materially different component states and affected variants rather than all theoretical combinations;
+3. render those states deterministically and wait for final async content;
+4. run DOM accessibility rules and preserve incomplete/manual-review findings;
+5. exercise keyboard/focus/state transitions separately;
+6. add targeted rendered checks for focus, reflow, state differentiation and unusual backgrounds;
+7. run a dedicated forced-colors path where the component depends on color, borders, shadows, backgrounds or SVG paint;
+8. escalate meaning, AT behavior and unresolved perceptual questions to human review;
+9. record **coverage and evidence type**, not merely a single accessibility badge.
+
+The durable rule is: **automate breadth; reserve judgment for properties automation cannot observe reliably.** Theme-matrix automation is most valuable as a detector and routing system, not as an accessibility oracle.
+
 ## Durable conclusion
 
 Four different phenomena must not be collapsed:
@@ -155,14 +200,14 @@ Four different phenomena must not be collapsed:
 - **variation**: multiple contracts/renderings are intentionally valid at the same time and may remain so indefinitely;
 - **accessibility conformance**: shared requirements remain invariant, but must be demonstrated against every materially different resolved rendering regime rather than inherited from architecture alone.
 
-Carbon v10→v11 shows that contract drift can be visually silent. Atlassian shows that visual and contract change can be intentional and staged. Maersk/Spectrum/SAP show that visual divergence can be a permanent system capability. WCAG plus forced-colors behavior show that a semantically correct theme mapping can still fail at the rendered accessibility layer.
+Carbon v10→v11 shows that contract drift can be visually silent. Atlassian shows that visual and contract change can be intentional and staged. Maersk/Spectrum/SAP show that visual divergence can be a permanent system capability. WCAG plus forced-colors behavior show that a semantically correct theme mapping can still fail at the rendered accessibility layer. Current accessibility tooling adds a final boundary: automated checks can scale detection across variants, but a clean run is evidence only for the rules and states actually exercised.
 
-For AI coding/design agents, "make everything consistent" and "the component is accessible once" are both unsafe. The stronger objective is **variant-aware conformance**: preserve shared invariants, apply the correct semantic variant, respect migration state, and re-prove accessibility wherever the resolved values or browser rendering regime materially change.
+For AI coding/design agents, "make everything consistent", "the component is accessible once", and "axe is green" are all unsafe. The stronger objective is **variant-aware conformance with explicit evidence**: preserve shared invariants, apply the correct semantic variant, respect migration state, automate machine-decidable checks, and route perceptual/semantic uncertainty to the appropriate review layer.
 
 ## Evidence boundary
 
-The migration material is case-study synthesis from first-party Atlassian documentation. The multi-brand conclusion is supported by first-party Maersk, Adobe Spectrum and SAP design-system documentation. Cross-theme accessibility guidance is grounded in W3C WCAG guidance, current browser behavior documented by MDN, and Spectrum/Maersk production-system guidance. These establish requirements, mechanisms and real system architecture; they do not prove that the proposed risk-shaped QA matrix catches every accessibility regression. The matrix is agent-oriented synthesis and still needs validation against failures from large multi-brand products.
+The migration material is case-study synthesis from first-party Atlassian documentation. The multi-brand conclusion is supported by first-party Maersk, Adobe Spectrum and SAP design-system documentation. Cross-theme accessibility guidance is grounded in W3C WCAG guidance, current browser behavior documented by MDN, and Spectrum/Maersk production-system guidance. The automation layer is grounded in current Storybook/axe integration documentation, W3C evaluation guidance and Playwright's documented browser-emulation capabilities. These establish requirements, mechanisms and important limits; they do not prove that the proposed risk-shaped QA matrix catches every accessibility regression. The matrix is agent-oriented synthesis and still needs validation against failures from large multi-brand products and assistive-technology workflows.
 
 ## Next research direction
 
-Investigate **automated accessibility validation for theme matrices**: determine which cross-theme failures can be caught reliably with token-graph/static checks, browser automation and axe-like rules, and which still require rendered/perceptual or human review. Focus on false confidence—especially cases where automated contrast checks pass while focus, state differentiation, forced-colors behavior, typography/reflow or semantic meaning still fail.
+Investigate **focus and interaction testing as an agent workflow**: compare browser automation, accessibility-tree assertions, screenshots and assistive-technology/manual checks on components whose DOM semantics pass automated rules but whose focus movement, focus visibility, keyboard order or composite-widget behavior is still wrong. Seek concrete failure cases that reveal where an agent should stop auto-fixing and escalate judgment.
