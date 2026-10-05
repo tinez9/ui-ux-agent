@@ -18,12 +18,14 @@ Record meaningful knowledge-base improvements, not every formatting edit.
 - Established an agent-readable design-system architecture: semantic role-based tokens, component contracts, composition rules, accessibility invariants, explicit degrees of freedom, and common failure modes; added DTCG, Apple, and Carbon evidence and raised design-system maturity from 2/10 to 4/10.
 - Added an evidence-backed search/filter/result-set pattern covering applied-state visibility, live-vs-explicit apply tradeoffs, accessible result feedback, zero-result recovery, mobile filters, and pagination/infinite-scroll boundaries; raised UX-pattern maturity from 2/10 to 4/10.
 - Added an asynchronous-state pattern covering context-preserving loading, skeleton/spinner/progress selection, layout stability, empty-vs-error semantics, stale-data honesty, scoped recovery, and accessible status communication.
-- Established an interaction-motion baseline: purpose-driven animation, semantic reduced-motion variants, vestibular-risk boundaries, current View Transition API capabilities, progressive enhancement, and interruption-safe implementation; raised interaction/motion maturity from 2/10 to 3/10.
+- Established an interaction-motion baseline: purpose-driven animation, semantic reduced-motion variants, current View Transition API capabilities, progressive enhancement, and interruption-safe implementation; raised interaction/motion maturity from 2/10 to 3/10.
 - Established native scroll-driven UI guidance: continuous scroll/view timelines versus discrete scroll-state queries, CSS-over-JavaScript decision rules, reduced-motion/resilience constraints, and implementation traps; raised frontend implementation maturity from 2/10 to 3/10.
-
 
 ## 2026-10-01
 - Added the first operational distinctive-feature pattern: contextual command surfaces, including admission criteria, intent separation, contextual ranking, accessibility, previews, shared command registries, and failure modes; maturity score intentionally unchanged.
 - Hardened research-depth and maturity rules: broad areas now require repeated multi-perspective investigation before they can be considered mature.
 - Made scoring deliberately conservative: successful runs do not automatically raise scores, and discovering new complexity may hold or lower them.
 - Added continuous revalidation of mature areas, explicit contradiction/exception/trade-off hunting, and the principle that research speed is not learning speed.
+
+## 2026-10-05
+- Added an operational iconography system: icon-vs-text decision rules, semantic registry, icon-only clarity test, family/state governance, accessibility/RTL boundaries, and an anti-generic icon-deletion pass. Visual-design maturity intentionally unchanged.
