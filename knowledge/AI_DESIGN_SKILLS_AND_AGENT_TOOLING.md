@@ -75,6 +75,42 @@ GitHub stars are only an adoption signal. They are not evidence that a skill imp
 
 **Observed repository signal (2026-10-05):** canonical repo updated 2026-10-02, ~43.5k stars and ~2.5k forks.
 
+### `daymade/claude-code-skills/frontend-visual-qa` — rendered verification and falsifiable visual QA
+
+**Status:** recommended candidate for Claude Code when the missing capability is post-implementation verification rather than more design advice.
+
+**What is distinctive:** this skill explicitly treats build success, DOM presence, and uninspected screenshot files as insufficient visual proof. It establishes an audit contract (artifact, actor/job, exact target identity, state, viewport matrix, journeys, source of truth, authorization and pass condition), then selects an evidence level and inspects the rendered artifact. Its scope includes core visual quality, responsive behavior, state/journey coverage, browser output, native shells, reference parity and data visualization. It defaults to audit-only and separates visual verification from permission to edit, rebuild or deploy.
+
+The strongest reusable idea is an **evidence hierarchy**: real visible browser/native journeys for browser/OS-level claims; same-state browser/E2E evidence for interaction and geometry; fresh headless sweeps for mechanical defects; source/lint/build reasoning only as hypotheses/regression support. This prevents a common agent failure: claiming a UI is correct because the code compiles or a screenshot was generated but never inspected.
+
+**Best fit:** close the loop after Impeccable/UI-UX Pro Max/another design skill has produced or refined an interface. Particularly useful for responsive regressions, overflow/wrapping, wrong conditional states, reference parity, charts, downloads/print/popups, and release-oriented visual review.
+
+**Why it adds marginal value:** it occupies a different layer from design-generation skills. Impeccable primarily improves direction/refinement; UI/UX Pro Max improves retrieval; specialist craft skills improve particular design decisions. `frontend-visual-qa` asks whether the *actual rendered product in the correct state* supports the claim. This is a more valuable complement than installing another overlapping anti-slop prompt pack.
+
+**Risks / boundaries:** it is currently Claude-oriented and should not be assumed portable to Codex merely because the Markdown can be read there. Full value depends on browser/native tooling and project harnesses. Its detailed protocol is relatively large, so context cost and operational complexity are higher than a narrow screenshot skill. Browser-driving capabilities expand the executable/trust surface; use them against controlled targets and respect project authorization. Visual QA also cannot certify domain facts, user preference, or functional correctness that was not exercised.
+
+**License and maintenance:** parent repository is MIT, unarchived, and was pushed on 2026-10-05. Direct GitHub metadata showed ~1.4k stars and ~222 forks on 2026-10-05. Adoption remains context, not proof of output quality.
+
+**Decision:** promote as the first strong rendered-verification candidate, but keep the recommendation scoped to Claude Code until portability is explicitly validated.
+
+## Rendered-verification landscape: do not collapse different jobs
+
+A 2026-10-05 search found several superficially similar skills, but they solve different verification problems:
+
+- **Visual regression** (`maxrihter/claude-skill-visual-regression`) uses Playwright screenshot baselines and diffs to catch *unintended change*. This is CI/regression infrastructure, not a design-quality judge. It is promising but currently has minimal adoption signal; evaluate its implementation before installing broadly.
+- **Reference parity** (`Huc91/pixel-perfect-skill`, `Krowli/visual-parity`) compares a live/rendered implementation with Figma, an image, or another reference. Useful when a source of truth exists; inappropriate for deciding whether the reference itself is good UX. `visual-parity` explicitly targets Claude Code, Codex and Gemini CLI, making it an interesting portability candidate, but it was effectively unadopted at discovery time and therefore remains experimental.
+- **Broad UAT/audit** (`tsilverberg/webapp-uat`, `EnchStyle/ui-ux-audit-skill`) combines browser journeys with accessibility/responsive/error checks. These may be useful when release QA is the goal, but their broad scoring/checklist claims need source inspection and evidence review before promotion.
+- **Visual design review** (`AslanMazhidov/design-review-skill`) forces screenshot inspection at multiple breakpoints and proposes CSS fixes. The core loop is sound, but it currently has little adoption and overlaps more with Impeccable's critique role than `frontend-visual-qa` does.
+
+**Operational distinction:**
+
+1. *Does it still look like the approved baseline?* → visual regression.
+2. *Does it match a specified design/reference?* → reference parity.
+3. *Does the rendered product exhibit visual/responsive/state defects?* → rendered visual QA.
+4. *Is the design direction itself appropriate, coherent, distinctive and usable?* → design critique/research, not screenshot diffing.
+
+Do not use pixel similarity as a proxy for UX quality. A perfectly reproduced bad design is still a bad design, while an intentional improvement can correctly fail a visual-regression test.
+
 ## Composition strategy
 
 Do not maximize skill count. A strong baseline stack has distinct jobs:
@@ -84,7 +120,7 @@ Do not maximize skill count. A strong baseline stack has distinct jobs:
 - **Specialist craft:** motion, direct manipulation, mobile-native details, accessibility, data visualization, or another domain only when the product needs it.
 - **Rendered verification:** browser/screenshots/state coverage should close the loop regardless of which design skill generated the advice.
 
-For the three initial candidates, a plausible non-exclusive composition is **UI/UX Pro Max for retrieval + Impeccable for direction/refinement + selected Emil skills for motion/craft**. This is an agent-workflow hypothesis, not a proven ranking. The next useful evidence is comparative output testing with the same brief and codebase.
+A plausible non-exclusive composition is **UI/UX Pro Max for retrieval + Impeccable for direction/refinement + selected Emil skills for motion/craft + frontend-visual-qa for rendered verification in Claude Code**. This is an agent-workflow hypothesis, not a proven ranking. Do not install every layer when the project does not need it.
 
 ## Installation decision gate
 
@@ -115,8 +151,8 @@ This negative evidence is valuable: the repository should record why plausible c
 
 ## Candidates requiring further investigation
 
-Several newer repositories surfaced in the 2026-10-05 search (`szilu/ux-designer-skill`, `Impertio-Studio/Frontend-Design-Claude-Skill-Package`, specialist motion/browser-review skills, and various synthesized design packs). They may contain useful ideas, but they should not be promoted from discovery to recommendation until source contents, provenance, executable surfaces, maintenance history, overlap, and real marginal value are inspected. Forks and synthesis repos should be compared to canonical upstreams before installation.
+Several newer repositories surfaced in the 2026-10-05 search (`szilu/ux-designer-skill`, `Impertio-Studio/Frontend-Design-Claude-Skill-Package`, `Krowli/visual-parity`, specialist motion/browser-review skills, and various synthesized design packs). They may contain useful ideas, but they should not be promoted from discovery to recommendation until source contents, provenance, executable surfaces, maintenance history, overlap, and real marginal value are inspected. Cross-LLM claims deserve direct testing rather than syntax-based assumptions. Forks and synthesis repos should be compared to canonical upstreams before installation.
 
 ## Open evidence gap
 
-There is currently much stronger evidence for **what these repositories contain and how they are maintained** than for **how much they improve design output**. Future cycles should build a repeatable benchmark: identical brief + identical starter repo + baseline agent vs one skill vs composed skills, followed by blind or rubric-based rendered evaluation. Without that, popularity and attractive before/after screenshots remain weak proxies for causal value.
+There is currently much stronger evidence for **what these repositories contain and how they are maintained** than for **how much they improve design output**. Future cycles should build a repeatable benchmark: identical brief + identical starter repo + baseline agent vs one skill vs composed skills, followed by blind or rubric-based rendered evaluation. The verification layer itself should also be benchmarked: seed known visual/state/responsive defects and measure detection, false positives, missed states, time/context cost and whether the agent actually opens and reasons about captured evidence. Without that, popularity, attractive before/after screenshots and elaborate audit protocols remain weak proxies for causal value.
