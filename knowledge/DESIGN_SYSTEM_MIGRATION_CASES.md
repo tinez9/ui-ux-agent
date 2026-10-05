@@ -1,10 +1,10 @@
 # Design-system migration cases: when contract and pixels move together
 
-Last reviewed: 2026-10-05
+Last reviewed: 2026-10-06
 
 ## Research question
 
-Does the repository's multi-axis drift model still work when design-system divergence is intentional—temporarily during migration or permanently across brands—rather than evidence that every surface should converge to one appearance?
+Does the repository's multi-axis drift model still work when design-system divergence is intentional—temporarily during migration or permanently across brands—and which accessibility guarantees must be revalidated for every legitimate variant?
 
 ## Case 1: Atlassian's 2024–2025 UI foundations refresh
 
@@ -91,22 +91,78 @@ Before changing code or accepting a baseline:
 
 A practical QA matrix should be risk-shaped rather than the full Cartesian product on every change. Shared invariant changes deserve representative coverage across materially different variants; a brand-token-only change can focus on that brand plus checks that shared semantics were not bypassed.
 
+## Case 3: accessibility is an invariant, but its proof is variant-specific
+
+A clean semantic token architecture does not make every resolved theme accessible automatically. Maersk's five brands × light/dark appearances demonstrate the variant surface; Adobe Spectrum explicitly tells implementers to check text, icon and component contrast for **all color themes** when they diverge from guaranteed token/background pairings. WCAG 2.2 independently constrains text/non-text contrast and focus visibility. The durable distinction is therefore:
+
+- **accessibility requirement = system invariant**;
+- **evidence that the requirement holds = per resolved variant/context**.
+
+Primary sources reviewed:
+- https://www.w3.org/WAI/WCAG22/understanding/non-text-contrast.html
+- https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/
+- https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/forced-colors
+- https://spectrum.adobe.com/foundations/color/color
+- https://spectrum.adobe.com/foundations/icons-and-illustrations/using-icons
+- https://designsystem.maersk.com/foundations/themes/
+
+### What must be validated per variant
+
+At minimum, when a brand/theme can change the relevant resolved values, test:
+
+- text/background contrast for semantic text roles;
+- non-text contrast for controls, boundaries, state indicators and meaningful icons;
+- keyboard focus visibility against each possible component/background state, not merely presence of a focus token;
+- status/error/selection meaning without color as the only carrier;
+- light/dark and brand-specific interactive states (hover, pressed, selected, disabled where applicable), because state mappings can diverge independently from resting colors;
+- text legibility and layout where a brand changes typography metrics, weight or density;
+- content placed on images or custom/brand backgrounds, because a globally valid foreground token is not sufficient evidence for an arbitrary local background.
+
+Do not infer a pass from token names such as `text-primary`, `focus-ring` or `border-interactive`. Semantic naming proves intent and traceability, not the contrast of the values that a particular theme resolves.
+
+### Forced colors is a different rendering regime, not another brand palette
+
+`forced-colors: active` deserves separate treatment from light/dark or brand theming. Browsers can replace author `color`, `background-color`, border/outline colors and SVG fill/stroke at paint time; they can remove `box-shadow`, `text-shadow` and non-URL background images. Native element semantics influence which system colors the browser chooses, whereas adding an ARIA role to a generic element does not produce the same native color mapping.
+
+Consequences for agent QA:
+
+- do not validate forced-colors by comparing it to the brand screenshot; visual divergence is expected;
+- check that controls, focus, selection, errors and boundaries remain perceivable after shadows/background images disappear;
+- prefer native semantics and system colors where adjustments are necessary;
+- treat `forced-color-adjust: none` as an exceptional escape hatch requiring its own contrast proof, not a way to preserve brand fidelity;
+- use `@media (forced-colors: active)` for narrow repairs when the browser's default transformation loses meaning, rather than building a separate branded high-contrast theme.
+
+This exposes a useful failure mode: a component whose boundary exists only as `box-shadow` may look correct in every brand/light/dark screenshot yet lose that boundary in forced colors. A conventional visual-regression matrix can therefore be fully green while accessibility conformance is broken.
+
+### Risk-shaped accessibility matrix
+
+Do not blindly multiply every component × state × brand × mode × browser. Derive coverage from what varies:
+
+1. **Shared structural/semantic change:** test representative brands plus forced-colors and keyboard behavior; expand when failures indicate variant coupling.
+2. **Theme/token change:** test every affected theme mapping and the component states consuming those roles; static token linting can identify consumers but cannot replace rendered checks.
+3. **Brand typography/density change:** test representative long/localized content, zoom/reflow and interactive states for that brand.
+4. **Component-local override:** test that exact component across the backgrounds/modes it can inhabit; do not assume the system token guarantee still applies.
+5. **Forced-colors-specific repair:** test with forced colors actually active; ordinary contrast calculations on authored colors do not describe the browser-painted result.
+
+The objective is **coverage of independent variation**, not maximal screenshot count.
+
 ## Durable conclusion
 
-Three different phenomena must not be collapsed:
+Four different phenomena must not be collapsed:
 
 - **drift**: implementation diverges from its intended contract;
 - **migration**: intended contract changes over time and old/new states may temporarily coexist;
-- **variation**: multiple contracts/renderings are intentionally valid at the same time and may remain so indefinitely.
+- **variation**: multiple contracts/renderings are intentionally valid at the same time and may remain so indefinitely;
+- **accessibility conformance**: shared requirements remain invariant, but must be demonstrated against every materially different resolved rendering regime rather than inherited from architecture alone.
 
-Carbon v10→v11 shows that contract drift can be visually silent. Atlassian shows that visual and contract change can be intentional and staged. Maersk/Spectrum/SAP show that visual divergence can be a permanent system capability rather than a transition state.
+Carbon v10→v11 shows that contract drift can be visually silent. Atlassian shows that visual and contract change can be intentional and staged. Maersk/Spectrum/SAP show that visual divergence can be a permanent system capability. WCAG plus forced-colors behavior show that a semantically correct theme mapping can still fail at the rendered accessibility layer.
 
-For AI coding/design agents, "make everything consistent" is therefore unsafe. The stronger objective is **variant-aware conformance**: preserve shared invariants, apply the correct semantic variant, respect migration state, and only repair divergence that violates the intended contract for that exact context.
+For AI coding/design agents, "make everything consistent" and "the component is accessible once" are both unsafe. The stronger objective is **variant-aware conformance**: preserve shared invariants, apply the correct semantic variant, respect migration state, and re-prove accessibility wherever the resolved values or browser rendering regime materially change.
 
 ## Evidence boundary
 
-The migration material is case-study synthesis from first-party Atlassian documentation. The multi-brand conclusion is supported by first-party Maersk, Adobe Spectrum and SAP design-system documentation. These sources establish real system architecture and supported theming behavior; they do not provide controlled evidence that one token architecture is universally superior or that multi-brand theming improves user outcomes. The proposed adjudication formula and QA strategy are agent-oriented synthesis and should be tested against implementation failures and large multi-brand repositories.
+The migration material is case-study synthesis from first-party Atlassian documentation. The multi-brand conclusion is supported by first-party Maersk, Adobe Spectrum and SAP design-system documentation. Cross-theme accessibility guidance is grounded in W3C WCAG guidance, current browser behavior documented by MDN, and Spectrum/Maersk production-system guidance. These establish requirements, mechanisms and real system architecture; they do not prove that the proposed risk-shaped QA matrix catches every accessibility regression. The matrix is agent-oriented synthesis and still needs validation against failures from large multi-brand products.
 
 ## Next research direction
 
-Investigate **cross-theme accessibility invariants** in multi-brand systems: semantic token mapping can preserve architectural cleanliness while a particular brand palette, typography or density still fails contrast, focus visibility, forced-colors/high-contrast behavior or readability. Determine which accessibility properties must be validated per variant rather than inherited as assumed guarantees from the shared component layer.
+Investigate **automated accessibility validation for theme matrices**: determine which cross-theme failures can be caught reliably with token-graph/static checks, browser automation and axe-like rules, and which still require rendered/perceptual or human review. Focus on false confidence—especially cases where automated contrast checks pass while focus, state differentiation, forced-colors behavior, typography/reflow or semantic meaning still fail.
