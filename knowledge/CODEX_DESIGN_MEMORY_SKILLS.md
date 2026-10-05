@@ -4,16 +4,16 @@ Last reviewed: 2026-10-05
 
 ## Research question
 
-Do Codex-oriented design-memory skills add a distinct capability beyond general critique/retrieval skills, and which current candidates are credible enough to recommend?
+How should agents preserve or extract project design memory without freezing the UI or laundering accidental implementation values into a new source of truth?
 
 ## Core finding
 
-A persistent project design contract is a genuinely separate layer from design advice. Its job is not to make an interface "better" in the abstract; it is to prevent an agent from silently inventing a new visual system on each task.
+A persistent project design contract is a separate layer from design advice. Its job is not to make an interface "better" in the abstract; it is to prevent an agent from silently inventing a new visual system on each task.
 
 The useful pattern is:
 
-1. locate the project's design source before UI work;
-2. distinguish normative tokens/rules from rationale and bounded freedoms;
+1. locate the project's strongest design evidence before UI work;
+2. distinguish normative tokens/rules from observations, rationale, exceptions and bounded freedoms;
 3. prefer existing components/tokens over new abstractions;
 4. make the smallest reasonable choice when the contract is incomplete rather than fabricating a parallel system;
 5. verify the real rendered UI after implementation;
@@ -25,81 +25,93 @@ This complements critique skills such as Impeccable and retrieval systems such a
 
 **Decision:** useful mechanism/reference, but **not a current default-install recommendation**.
 
-### What it actually does
+The inspected skill makes Codex search for a repo-local `DESIGN.md`, read it before touching UI, treat front-matter tokens as normative, preserve existing behavior, reuse project components/tokens, lint the design file when possible, and perform desktop/mobile rendered checks. This turns the document into a repeatable precondition rather than passive documentation.
 
-The inspected `skills/design-system/SKILL.md` makes Codex search for a repo-local `DESIGN.md`, read it before touching UI, treat front-matter tokens as normative, preserve existing behavior, reuse project components/tokens, lint the design file when possible, and perform desktop/mobile rendered checks. It explicitly asks the final response to name the design file and rules applied.
+Its fallback is a risk: when no local source exists it imports a bundled aesthetic starter. For established products, absence of `DESIGN.md` is not permission to import another author's taste; existing code, tokens, screenshots and brand artifacts may be stronger evidence.
 
-This is better than merely placing a design document in the repository and hoping the agent remembers it: the skill turns the document into a repeatable precondition for UI work.
-
-### Important weakness
-
-If no local design source exists, the skill falls back to its bundled starter, which carries a specific aesthetic bias (dark command surfaces, warm editorial support surfaces, one accent, clean borders). That is convenient bootstrap behavior but also a **template-leakage risk**. For an established product, absence of `DESIGN.md` should not be interpreted as permission to import another author's taste; existing code, tokens, screenshots and brand artifacts may be better evidence.
-
-The skill also contains broad stylistic defaults such as avoiding decorative gradients/blobs/nested cards unless the design contract asks for them. Treat these as author heuristics, not universal UX laws.
-
-### Freshness/adoption check
-
-Canonical GitHub metadata inspected 2026-10-05: MIT, unarchived, created 2026-05-09, **last pushed 2026-05-12**, 1 star / 0 forks. GitHub's `updated_at` was 2026-10-05, demonstrating again that metadata/search freshness must not be confused with code maintenance.
-
-The repository includes smoke/browser QA and maintenance material, but the stale `pushed_at` plus minimal adoption prevent promotion. Its strongest contribution is the workflow pattern, not current ecosystem validation.
+Canonical metadata inspected 2026-10-05: MIT, unarchived, last pushed 2026-05-12, 1 star / 0 forks. Useful workflow reference, weak current ecosystem validation.
 
 ## `MaxHan7/frontend-ui-standards-skill`
 
 **Decision:** useful implementation-discipline reference; **not a current default-install recommendation**.
 
-### What it actually adds
+Its strongest operational model separates global design tokens, component-specific metrics and screen-specific layout metrics. It asks agents to inspect existing components first, classify visual values before placing them, encode relationships rather than coordinates, update same-family surfaces and visually sanity-check results. This matters because one-time screenshot fidelity and maintainable design-system implementation are different goals.
 
-The inspected skill is less about visual taste and more about encoding a design system in maintainable frontend code. Its strongest operational model separates:
+Some rules are too categorical to inherit unchanged: immediate abstraction on repetition can be premature, and platform touch-target numbers must remain platform/version scoped.
 
-- global design tokens;
-- component-specific metrics;
-- screen-specific layout metrics.
+Canonical metadata inspected 2026-10-05: MIT, unarchived, last pushed 2026-06-27, 105 stars / 1 fork, but currently only one commit. Adoption is not causal evidence of output quality.
 
-It requires agents to inspect existing components first, classify visual values before placing them, encode relationships instead of copying coordinates, update same-family surfaces, and visually sanity-check the result. It explicitly spans SwiftUI, React/web, React Native and Flutter.
+## Extracting a contract from existing UI: evidence hierarchy
 
-This is useful because screenshot/Figma fidelity and maintainable implementation are different goals. A screen can look correct once while embedding duplicated numbers, local patches and divergent components that make later UI work drift.
+A newly inspected candidate, `KunalKumarkkr01/design-system-extractor`, exposes an important improvement over screenshot-only extraction: it drives real Chrome through the Chrome DevTools MCP, uses the accessibility tree to map structure, reads CSS custom properties and computed styles, captures desktop/mobile screenshots, explores interaction states and secondary pages, then writes an implementation-oriented `design.md`.
 
-### Where it overlaps
+**Decision:** promising mechanism/reference, **not a default-install recommendation**. Canonical metadata inspected 2026-10-05: MIT, unarchived, last pushed 2026-07-20, 1 star / 0 forks. It also has a hard Node + Chrome + Chrome DevTools MCP dependency and can execute page JavaScript through a browser, so its operational/supply-chain surface is much larger than a passive Markdown skill.
 
-Much of the advice overlaps mature design-system/frontend-engineering practice already represented elsewhere in this repository: semantic tokens, component reuse, accessibility states, responsive behavior and visual verification. It does not provide a persistent project design memory by itself, nor does it add a strong visual-direction or critique layer.
+The mechanism suggests a useful evidence hierarchy for extraction:
 
-Some rules are too categorical to inherit unchanged. For example, immediate extraction when a component repeats can create premature abstraction; reuse decisions should consider semantic role, likely evolution and whether shared behavior is genuinely stable. Likewise, fixed platform touch-target numbers need to remain platform/version scoped rather than becoming universal constants.
+1. **Normative source** — maintained tokens/theme files, component contracts, design docs and explicit brand rules. Strongest evidence of intent when known current.
+2. **Repeated rendered/code evidence** — recurring semantic roles, components and relationships across routes/states/modes.
+3. **Computed runtime values** — strong evidence of what ships, but not automatically of what should be normative.
+4. **Screenshots** — strong visual grounding and useful for composition/imagery, weak for exact hidden semantics and causality.
+5. **Single-instance values** — observations or exceptions until corroborated; never promote automatically to global rules.
 
-### Freshness/adoption check
+### Critical correction: runtime truth is not design intent
 
-Canonical GitHub metadata inspected 2026-10-05: MIT, unarchived, created and **last pushed 2026-06-27**, 105 stars / 1 fork. The adoption signal is notably stronger than `design-md-for-codex`, but the repository currently has only one commit and no subsequent code activity. Stars do not compensate for maintenance depth or prove output quality.
+The extractor claims a running page contains the "ground truth" because computed styles expose exact shipped values. That is true only for **rendered implementation truth**. It does not establish **design-system intent**.
+
+A computed `13px` gap may be a deliberate token, an inherited library default, a breakpoint interpolation, a legacy patch or an accidental override. A CSS custom property is stronger evidence when it is semantically named and reused, but even tokens can be deprecated or misapplied. Therefore extraction should not flatten observation into prescription.
+
+A robust generated contract should attach provenance and confidence to important claims:
+
+- `NORMATIVE`: explicitly defined by current project/design source;
+- `REPEATED`: inferred from consistent evidence across representative surfaces;
+- `OBSERVED`: exact shipped value but intent unknown;
+- `APPROXIMATED`: inferred visually or from incomplete evidence;
+- `CONFLICT`: credible sources disagree;
+- `EXCEPTION`: intentional or suspected local deviation, not a global rule.
+
+When confidence is insufficient, preserve the uncertainty rather than silently inventing a rule.
+
+### Route/state coverage is part of extraction quality
+
+Homepage-only extraction is structurally weak. A useful contract needs representative routes, component archetypes, responsive breakpoints, themes and interaction states. The inspected extractor improves on shallow token scrapers by explicitly mapping secondary pages and noting intentional rule breaks. That is valuable, but its output template still cannot prove whether an inconsistency is intentional without product/design provenance.
+
+### Preview validates the contract, not the product
+
+Rendered design-system previews are useful for catching malformed tokens, missing modes and internally inconsistent documentation. They do **not** prove that the extracted contract reproduces the source product, nor that a later implementation is correct. Keep three checks separate:
+
+`source evidence → extracted contract/preview → implementation → rendered QA/parity`
+
+Each transition can introduce error.
+
+## Candidate comparison: extraction mechanisms
+
+Several current repositories advertise `DESIGN.md` generation, but the mechanism matters more than the file name.
+
+- `KunalKumarkkr01/design-system-extractor`: strongest inspected mechanism this cycle for **live-site evidence**, because it combines DOM/computed values, accessibility structure, responsive screenshots, states and routes. Low adoption and non-trivial MCP/browser surface prevent promotion.
+- `simonbloom/design-system-extractor-skill`: advertises source/code/rendered evidence, component inventory, extraction notes with confidence/assumptions/gaps, preview rendering and optional token exports. This provenance model is conceptually strong, but canonical metadata shows no push since 2026-04-25, only 4 stars / 0 forks and no detected repository license; do not recommend installation despite recent search recrawls.
+- Screenshot-first generators remain useful when screenshots are the only evidence available, but exact tokens and hidden state/responsive behavior should be marked approximate rather than laundered into authoritative design rules.
 
 ## Design memory is a contract, not a style preset
 
-A high-value project design memory should preserve **intent** without freezing legitimate evolution. Prefer a contract containing:
+A high-value project design memory should preserve **intent** without freezing legitimate evolution. Prefer a contract containing semantic tokens/theme relationships, typography roles, component/state contracts, identity-critical composition rules, accessibility invariants, product-specific motion principles, explicit no-go decisions with rationale, bounded freedoms, and unresolved conflicts.
 
-- semantic tokens and theme relationships;
-- typography roles rather than isolated sizes;
-- component/state contracts;
-- composition/layout rules that matter to identity;
-- accessibility invariants;
-- motion principles where product-specific;
-- voice/content constraints when they affect UI;
-- explicit no-go decisions with rationale;
-- bounded freedoms: what an agent may reinterpret;
-- unresolved questions/conflicts instead of invented certainty.
-
-Do not turn every observed CSS value into a rule. Existing implementation may contain accidental drift, legacy debt or one-off campaign styling. Extraction needs confidence/provenance and human/product judgment.
+Do not turn every observed CSS value into a rule. Existing implementation may contain accidental drift, legacy debt or one-off styling. Extraction needs provenance, confidence and judgment.
 
 ## Operational recommendation
 
-For projects that already have a coherent visual identity, prefer **repo-local design memory + a thin enforcement skill** over installing another broad aesthetic pack. The memory should belong to the product and be reviewable in version control; the skill should mainly ensure it is found, applied, validated and reported.
+For an existing coherent product, prefer:
 
-A useful composition is:
+`evidence inventory → confidence-aware contract → implementation discipline → critique/refinement → rendered QA`
 
-`project design contract → implementation discipline → critique/refinement → rendered QA`
+If a maintained design source already exists, do not reverse-engineer it from screenshots merely because an extractor is available. Use extraction to fill documented gaps and to detect divergence between declared intent and shipped UI.
 
-The layers can be provided by different tools. Do not make a single skill authoritative merely because it bundles all four.
+For products without a trustworthy source of truth, browser/code extraction can bootstrap one, but generated rules should initially be reviewable hypotheses rather than automatically normative policy.
 
 ## Evidence boundary
 
-This cycle inspected canonical repository metadata and the actual skill instructions for both candidates. It establishes what their mechanisms do and exposes maintenance/overlap risks. It does **not** establish causal improvement over baseline Codex: neither candidate currently provides a same-model, same-task, blinded baseline-vs-skill evaluation sufficient to support that claim.
+This research inspected canonical repository metadata and actual skill instructions. It establishes mechanisms, dependencies and failure modes; it does not establish causal improvement over baseline Codex/Claude, nor does it prove that generated contracts preserve designer intent. No candidate inspected here currently supplies a rigorous same-task comparison of extracted-contract fidelity and downstream implementation quality.
 
 ## Next research direction
 
-Investigate **design-contract extraction/generation** rather than another enforcement skill: compare tools that derive `DESIGN.md` from real code/rendered evidence against hand-authored contracts. The key question is whether extraction can distinguish intentional system rules from accidental implementation values and represent confidence/conflicts without laundering legacy drift into the new source of truth.
+Test **design-contract drift detection**: how agents should compare declared tokens/components against rendered production UI, distinguish legitimate exceptions from accidental divergence, and update either implementation or contract without making the documentation circularly self-validating.
