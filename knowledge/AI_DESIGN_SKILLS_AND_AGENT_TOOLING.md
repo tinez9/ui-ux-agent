@@ -98,6 +98,21 @@ Before adding a skill to a real project:
 6. compare rendered desktop/mobile states, accessibility, task correctness, originality, implementation complexity, and unnecessary churn;
 7. keep it only if the marginal improvement outweighs conflicts and maintenance cost.
 
+## Freshness verification: search result recency is not repository recency
+
+A fresh search hit is not evidence that a skill is actively maintained. Search indexes can recrawl an old repository and make it look current. Verify repository metadata directly before promoting a candidate: `archived`, `pushed_at`, release/commit history, license, executable surface, and whether the README still matches the shipped files.
+
+A 2026-10-05 adversarial pass produced useful counterexamples:
+
+- **`billhector/design-skills`** has an interesting design-system extraction/audit workflow, Tailwind theme generation, WCAG checks, screenshots, and explicit token-cost estimates. However, GitHub currently marks the repository **archived**, with its last push on **2026-04-10**. It also depends on Firecrawl for extraction. Treat it as an implementation reference, not a current install recommendation.
+- **`vmarafetti/crit`** has a thoughtful six-lens audit model (accessibility, motion, UX/dark patterns, UI baseline, AI interaction, agent readability), explicit limitations, severity/effort scoring, and an MIT license. But its last push was **2026-06-01** and adoption is small. Its audit taxonomy may be worth studying; current evidence is insufficient to add it to the recommended stack.
+- **`wonjyou/design-audit`** offers context-aware critique across visual design, heuristics, human factors, copy, IA, screenshots and Figma. Direct metadata shows the last push was **2026-03-28** and GitHub exposes no repository license. Do not recommend installation until maintenance and licensing are clearer.
+- **`fol2/claude-design`** surfaced in current search as a broad craft/design skill, but direct GitHub metadata shows a single short activity window ending **2026-04-25**, zero adoption signal, and no declared repository license. This is a discovery candidate at most, not evidence-backed tooling.
+
+**Operational rule:** discovery can come from search, lists, social posts, or aggregators; promotion must come from canonical-source inspection. `updated_at` is also weak on its own because repository metadata can change without meaningful code maintenance. Prefer `pushed_at` plus commit/release inspection.
+
+This negative evidence is valuable: the repository should record why plausible candidates were *not* recommended, otherwise future agents may repeatedly rediscover and over-promote them from fresh-looking search results.
+
 ## Candidates requiring further investigation
 
 Several newer repositories surfaced in the 2026-10-05 search (`szilu/ux-designer-skill`, `Impertio-Studio/Frontend-Design-Claude-Skill-Package`, specialist motion/browser-review skills, and various synthesized design packs). They may contain useful ideas, but they should not be promoted from discovery to recommendation until source contents, provenance, executable surfaces, maintenance history, overlap, and real marginal value are inspected. Forks and synthesis repos should be compared to canonical upstreams before installation.
