@@ -25,6 +25,27 @@ With declarative `button[popovertarget]`, the platform establishes an invoker re
 
 For modal dialogs, the platform now owns more than a focus trap. W3C's HTML technique H102 documents that a modal `<dialog>` opened with `showModal()` makes outside page content inert, limits keyboard focus to the dialog/browser chrome, supports Escape dismissal, and restores focus to the invoker when it remains available. Start from that native contract before adding framework focus management.
 
+## Modal scope: reason in documents, not framework roots
+
+A useful correction for portal, Shadow DOM, microfrontend, and iframe architectures is that native modal blocking is defined at the **Document** boundary, not at a React root or arbitrary DOM container. The HTML Standard says that while a document is blocked by its topmost modal dialog, every connected node in that document except the dialog and its flat-tree descendants becomes inert.
+
+Consequences:
+
+- **Portals do not inherently require manual background inertness.** If the portal target and modal dialog are in the same `Document`, `showModal()` still supplies document-level modality; framework ownership boundaries are irrelevant to that native rule.
+- **Shadow DOM is not by itself a reason to rebuild modality.** `inert` is defined over flat-tree/shadow-including descendants, and modal dialog blocking is document-level. Test composed focus behavior, but do not assume a shadow root creates a separate modal universe.
+- **An iframe is a real boundary.** MDN explicitly notes that `showModal()` blocks only the dialog's containing document. A modal inside an iframe does **not** make the embedding parent document inert. If the product contract truly requires page-wide modality across frame boundaries, the embedding application must coordinate that state explicitly; do not present an iframe-local dialog as globally blocking.
+- **Independent app roots in one document are not independent modality scopes.** A modal opened by one microfrontend can make sibling roots inert because they share the document. This can be correct for a page-wide modal, but it is the wrong primitive if the intended interaction should block only one local workspace.
+
+Therefore choose the scope before the primitive:
+
+`local region unavailable → deliberate local inert/state model`
+
+`whole document unavailable → native showModal()`
+
+`multiple documents/iframes unavailable → explicit cross-document orchestration + modal semantics per participating context`
+
+Do not add a portal merely to escape `z-index`; top-layer elements already render above ordinary stacking contexts. A portal can still be useful for ownership/lifecycle or library architecture, but it is not the mechanism that makes a native dialog modal.
+
 ## `inert` is an interaction boundary, not an ARIA visibility hack
 
 The HTML `inert` attribute is widely available across browsers (MDN: Baseline since April 2023). An inert subtree and its flat-tree descendants cannot receive focus or click interaction and are excluded from the accessibility tree; browser find-in-page and text selection can also be affected.
@@ -100,6 +121,9 @@ Rendered tests should verify behavior rather than only attributes:
 - focus after dismissal;
 - nested and sibling overlays;
 - modal outside-content inertness;
+- same-document portals and shadow-hosted dialogs do not leak background interaction;
+- iframe-local dialogs do not get mistaken for page-wide modality;
+- local-workspace blocking does not accidentally inert unrelated same-document app roots;
 - no focusable descendants hidden only with `aria-hidden`;
 - visual indication when application regions are deliberately inert;
 - accessible widget role/name/state inside the overlay;
@@ -117,6 +141,9 @@ Popover itself is not sufficient semantics for a menu, listbox, tooltip, dialog,
 - **Popover + custom focus trap:** accidental quasi-modality.
 - **`aria-hidden` as modal background management:** can leave hidden-from-AT content keyboard-focusable.
 - **Manual `tabindex` sweeps instead of native modal behavior:** brittle under dynamic descendants and framework updates.
+- **Treating a portal or Shadow DOM root as a separate native modality scope:** duplicates document-level behavior and can create competing focus/inert owners.
+- **Iframe-local modal presented as page-wide modal:** the parent document remains interactive.
+- **Page-wide `showModal()` for a local workspace lock:** unintentionally disables sibling app roots that share the document.
 - **`inert` with no visual/product cue:** technically unavailable content still looks actionable.
 - **Over-broad `inert`:** suppresses focus, AT exposure, search, selection, and editing beyond the intended interaction boundary.
 - **Custom fixed overlay for every case:** unnecessarily rebuilds top-layer, dismiss, stacking, focus, and AT relationships.
@@ -130,18 +157,19 @@ Popover itself is not sufficient semantics for a menu, listbox, tooltip, dialog,
 
 ## Evidence boundary
 
-Platform and W3C documentation establish behavior, accessibility requirements, and interoperability—not that native overlays always outperform mature component libraries. Floating UI documentation establishes capability and lifecycle costs—not that every product needs them. No comparative outcome study justifies a universal “native always wins” rule. The durable rule is narrower: **start from native interaction, inertness, and geometry contracts; add custom machinery only for product requirements the platform does not satisfy.**
+Platform and W3C documentation establish behavior, accessibility requirements, and interoperability—not that native overlays always outperform mature component libraries. Floating UI documentation establishes capability and lifecycle costs—not that every product needs them. The document/iframe scope rules above are platform behavior, while the recommendation to coordinate cross-document modality is an architectural synthesis that still needs implementation-specific testing. No comparative outcome study justifies a universal “native always wins” rule. The durable rule is narrower: **start from native interaction, inertness, geometry, and document-scope contracts; add custom machinery only for product requirements the platform does not satisfy.**
 
 ## Sources
 
 - MDN, *Using the Popover API*: https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using
 - MDN, *Popover API*: https://developer.mozilla.org/en-US/docs/Web/API/Popover_API
 - MDN, *`<dialog>`*: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog
+- MDN, *`HTMLDialogElement.showModal()`*: https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/showModal
 - W3C WAI, *H102: Creating modal dialogs with the HTML dialog element*: https://www.w3.org/WAI/WCAG22/Techniques/html/H102
 - MDN, *`inert` HTML global attribute*: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/inert
 - W3C WAI ACT, *Element with aria-hidden has no content in sequential focus navigation*: https://www.w3.org/WAI/standards-guidelines/act/rules/6cfa84/
 - W3C WAI, *Understanding SC 2.4.11 Focus Not Obscured (Minimum)*: https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum
-- WHATWG HTML, *Interaction / autofocus*: https://html.spec.whatwg.org/dev/interaction.html
+- WHATWG HTML, *Interaction / modal dialogs and inertness*: https://html.spec.whatwg.org/dev/interaction.html
 - web.dev, *The Popover API is now Baseline Newly available* (2025-02-07): https://web.dev/blog/popover-baseline
 - web.dev, *`<dialog>` and popover: Baseline layered UI patterns*: https://web.dev/articles/baseline-in-action-dialog-popover
 - Open UI, *Invoker Commands explainer*: https://open-ui.org/components/invokers.explainer/
