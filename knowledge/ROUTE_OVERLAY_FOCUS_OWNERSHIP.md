@@ -12,11 +12,30 @@ When should an AI coding agent trust browser/framework focus behavior during cli
 
 Primary evidence:
 - React Router accessibility guidance: https://reactrouter.com/how-to/accessibility
+- Next.js App Router navigation documentation: https://nextjs.org/learn/dashboard-app/navigating-between-pages
+- React Spectrum / React Aria routing examples: https://react-spectrum.adobe.com/SideNav
 - WAI-ARIA APG modal dialog pattern: https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/
-- WAI-ARIA APG button pattern: https://www.w3.org/WAI/ARIA/apg/patterns/button/
 - MDN `<dialog>`: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog
 - MDN Popover API: https://developer.mozilla.org/en-US/docs/Web/API/Popover_API
 - MDN `autofocus`: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/autofocus
+
+## Framework comparison: routing integration is not focus policy
+
+A concrete comparison sharpens the ownership boundary:
+
+- **React Router** explicitly states that once client scripts intercept navigation, it makes no assumptions about the UI after a route change. Its accessibility guidance tells applications to consider focus management and live-region announcements. This is strong evidence that URL transition mechanics and accessibility transition policy are separate responsibilities.
+- **Next.js App Router** documents `<Link>` client-side navigation, route-segment code splitting and prefetching. These features explain how destination UI arrives without a full page refresh; they do not constitute a documented semantic focus-target policy. An agent must not infer `prefetched/streamed destination rendered` → `focus should move`.
+- **React Aria / React Spectrum `RouterProvider` integrations** let component links delegate navigation to an application router while retaining link/component semantics. The routing adapter is not evidence that React Aria has chosen the page-level destination focus or announcement policy for the product.
+
+**Agent rule:** distinguish three capabilities before adding code:
+
+1. **navigation transport** — history update, route matching, prefetching, data loading;
+2. **component interaction semantics** — link, tab, menu, overlay keyboard/focus behavior;
+3. **page-context transition policy** — whether this navigation constitutes a new context, where orientation should begin, and what should be announced.
+
+A framework may solve (1), a component library may solve much of (2), and the product may still own (3). Never treat the presence of a router provider, `<Link>`, prefetching, Suspense boundary, or view-transition option as proof that page-level focus management is solved.
+
+This comparison also weakens a tempting abstraction: there is no evidence here for a universal framework-agnostic `RouteFocusManager` that fires on every location change. Such a component is safe only after the product classifies route changes by semantics.
 
 ## Client-side route transitions are an application-owned boundary
 
@@ -92,6 +111,8 @@ Exercise at least:
 - popover open, light dismiss/Escape, nested/adjacent overlay interactions where used;
 - no-JavaScript/full-navigation behavior when progressive enhancement is a product requirement.
 
+For framework integrations, run the same semantic scenario under at least two arrival conditions: **destination already prefetched/available** and **destination delayed/streamed**. The expected focus policy should be the same unless the product explicitly exposes a pending-state workflow. This catches focus code accidentally coupled to data timing rather than navigation intent.
+
 A route test that only asserts URL and DOM content is incomplete. An overlay test that only asserts `open`/`:popover-open` is incomplete.
 
 ## Auto-fix boundary
@@ -109,6 +130,8 @@ Escalate rather than invent behavior when deciding whether a navigation is a new
 ## Failure modes
 
 - **URL-change heuristic:** every history update focuses the page heading, breaking filters and in-page state.
+- **Router-provider fallacy:** because a component library delegates navigation to the router, the agent assumes destination focus/announcement is also handled.
+- **Prefetch-completion heuristic:** prefetched or streamed content becoming available is mistaken for a semantic transition and steals focus.
 - **Render-complete heuristic:** data arrival steals focus even though the user has moved elsewhere.
 - **Double owner:** router and overlay/component both restore/move focus, causing a visible jump or race.
 - **Modal rules on popover:** non-modal disclosure is trapped as if it were a dialog.
@@ -118,12 +141,12 @@ Escalate rather than invent behavior when deciding whether a navigation is a new
 
 ## Durable rule
 
-**Rendering completion is not user intent.** Let native primitives own the behavior they actually define; let component contracts own local workflows; let the application/router own genuine client-side context changes. Add focus code only when there is a specific semantic transition with one clear owner, and test that transition under asynchronous rendering rather than binding focus to render timing.
+**Navigation transport is not accessibility transition policy, and rendering completion is not user intent.** Let native primitives own the behavior they actually define; let component contracts own local workflows; let the application/router integration own genuine client-side context changes. Add focus code only when there is a specific semantic transition with one clear owner, and test that transition under different asynchronous arrival timings rather than binding focus to render timing.
 
 ## Evidence boundary
 
-React Router's current documentation establishes that client-side routing requires explicit consideration of focus and live announcements but deliberately does not prescribe one universal target. MDN establishes browser behavior for native dialog, popover and autofocus. WAI-ARIA APG supplies recommended dialog workflow semantics, including exceptions to invoker restoration. The route classification and single-owner model above are agent synthesis; they should be validated against real router/framework implementations and browser–AT combinations before being treated as universal framework behavior.
+React Router's current documentation explicitly establishes that client-side routing requires application consideration of focus and live announcements and deliberately does not prescribe one universal target. Current Next.js App Router documentation establishes client-side navigation, route-segment code splitting and prefetching but, in the material reviewed in this cycle, does not document a universal semantic destination-focus policy. React Spectrum/React Aria examples establish router integration for component links; that integration should not be upgraded into a claim about page-level focus ownership without separate evidence. MDN establishes browser behavior for native dialog, popover and autofocus. WAI-ARIA APG supplies recommended dialog workflow semantics, including exceptions to invoker restoration. The three-layer transport/component/page-policy model is agent synthesis and still needs browser–AT and framework-version validation.
 
 ## Next research direction
 
-Compare concrete router/framework implementations and accessibility libraries (React Router, Next.js App Router, Remix-derived routing, React Aria or equivalent) to determine which focus/announcement behaviors are built in versus application-owned, and identify regressions caused by view transitions, scroll restoration, suspense and intercepted/parallel routes.
+Test route focus behavior against actual framework implementations rather than documentation alone: build or inspect minimal React Router and Next.js App Router cases with prefetched vs delayed destinations, search-param-only transitions, browser back/forward, Suspense, scroll restoration and View Transitions; record active element and announcements across browser–AT combinations. This would distinguish documented responsibility from shipped runtime behavior and expose regressions that docs cannot prove.
