@@ -25,6 +25,44 @@ Do not describe compensation as exact reversal when it is not. Microsoft’s cur
 
 For agents, this means a UI affordance must inherit the semantics of the backend mechanism. `Undo` is appropriate for a genuine restoration users can understand as undo; otherwise name the compensating action honestly.
 
+## Optimistic UI is speculation, not confirmation
+
+Optimistic UI can make a mutation visible before the authoritative system has accepted it. Use it when the likely server result is predictable and a rejection can be reconciled without misleading the user or creating disproportionate disruption. Do **not** equate “rendered optimistically” with “completed.”
+
+A practical risk split:
+
+- **Good candidates:** likes/favorites, simple toggles, low-risk list insertion, local ordering, and other fast, predictable mutations whose failure is understandable and recoverable.
+- **Conditional candidates:** edits with server validation, shared/collaborative state, operations that affect several cached views, or mutations that can race. Optimism needs explicit pending identity, reconciliation, and conflict behavior.
+- **Poor candidates:** payments, irreversible deletion, permission/security changes, scarce inventory/reservations, server-generated outcomes, large batch operations, or anything where rollback would be surprising, costly, or technically incomplete. Prefer pending/confirmed state or pessimistic completion.
+
+This is not a ban on optimistic rendering for consequential domains; it is a requirement that the **cost of being wrong** fit the interaction.
+
+### Preserve the pending truth
+
+An optimistic item may look close to committed state, but the system should retain enough distinction to reason about it. Depending on consequence and latency, expose a subtle pending state, disable only conflicting actions, or provide status where the user will need it. Do not announce “Saved”, “Booked”, “Paid”, “Deleted”, or equivalent finality before the confirmation boundary that actually proves it.
+
+TanStack DB makes this boundary explicit: a mutation handler completing proves backend confirmation only if that handler waited for confirmation/read-back. TanStack Query likewise keeps mutations pending until settlement and supports UI-only optimistic placeholders as a simpler alternative to mutating shared cache state.
+
+Accessibility follows the same semantic rule. `aria-busy` can indicate that a region is still being modified and can defer live-region announcements until an update is complete; it is not a substitute for a meaningful failure/recovery message.
+
+### Reconcile; do not merely revert pixels
+
+Optimistic state creates a temporary fork between local intent and authoritative state. Settlement must define how that fork closes:
+
+1. **Success:** replace temporary IDs/server-derived fields with authoritative data and invalidate/refetch when needed.
+2. **Failure with authoritative data available:** reconcile to server truth and preserve enough context to explain/retry the failed intent.
+3. **Failure while authoritative state cannot be fetched:** a stored rollback value may be useful, but do not assume an old snapshot is current truth.
+4. **Concurrent mutations:** identify each pending mutation independently. A late response or rollback must not erase a newer optimistic intent.
+5. **Server transforms:** if the server normalizes, rejects fields, computes values, or applies permissions/business rules, the confirmed representation wins.
+
+TanStack Query’s current guidance demonstrates why optimistic cache writes cancel relevant outgoing refetches before applying the speculative value: otherwise an older refetch can overwrite it. It also exposes `submittedAt`/mutation state for concurrent optimistic operations. These are framework examples of a broader rule: **every optimistic write needs an ordering and reconciliation model**.
+
+### Prefer UI-only optimism when scope is local
+
+If the speculative result only needs to appear in one place, render the pending mutation alongside authoritative data rather than rewriting shared cache state. TanStack Query explicitly recommends this simpler route because it avoids cache rollback machinery. Mutate shared optimistic state only when multiple consumers genuinely need the speculative value and the application can maintain its consistency.
+
+This reduces the blast radius of a failed prediction and is a useful default for generated frontend code.
+
 ## Recovery-window design
 
 Do not cargo-cult a universal 5- or 10-second snackbar. Choose the recovery window from the underlying guarantee:
@@ -79,6 +117,10 @@ Undo and confirmation are not mutually exclusive. A consequential action can jus
 Avoid these patterns:
 
 - adding an `Undo` toast while the backend immediately hard-deletes;
+- displaying optimistic state as final success before the server confirmation boundary;
+- rolling back an old snapshot over a newer concurrent mutation;
+- letting a stale refetch overwrite a speculative write without reconciliation;
+- using optimism for server-generated/validated outcomes the client cannot predict reliably;
 - optimistically announcing restoration while an async compensating request is still pending;
 - restoring an old snapshot over newer collaborative changes;
 - making a transient toast the only recovery route when the backend retains data much longer;
@@ -88,22 +130,24 @@ Avoid these patterns:
 
 ## Agent implementation checklist
 
-Before generating an undo affordance, answer:
+Before generating undo or optimistic mutation behavior, answer:
 
-1. What exactly is retained or inverted?
-2. Is this rollback, delayed finalization, soft-delete, or compensation?
-3. What is the point of no return?
-4. How long is recovery actually guaranteed, and what ends it?
-5. Does recovery survive navigation, refresh, reconnect, and another device when it should?
-6. Can newer/concurrent state make restoration unsafe?
-7. Can the recovery operation itself fail or partially succeed?
-8. Does the UI distinguish pending recovery from completed recovery?
-9. Is there a durable recovery path if the transient affordance disappears?
-10. Would a domain-specific inverse label be more truthful than `Undo`?
+1. What exactly is retained, inverted, or merely predicted?
+2. Is this rollback, delayed finalization, soft-delete, compensation, or optimistic presentation?
+3. What event proves authoritative success?
+4. What is the point of no return?
+5. How long is recovery actually guaranteed, and what ends it?
+6. Does recovery survive navigation, refresh, reconnect, and another device when it should?
+7. Can newer/concurrent state make rollback or restoration unsafe?
+8. Can the mutation/recovery fail or partially succeed, and how is that state surfaced?
+9. If optimistic, can server validation/transformation make the predicted state materially wrong?
+10. Does each concurrent mutation have identity/order sufficient to avoid stale rollback?
+11. Is there a durable recovery path if the transient affordance disappears?
+12. Would a domain-specific inverse label be more truthful than `Undo`?
 
 ## Evidence boundary
 
-Carbon provides mature product/design-system guidance that reversible low-impact deletion can avoid confirmation; it does not establish a universal undo duration. Microsoft’s Azure Architecture Center establishes the technical limits of compensation in long-running/eventually consistent workflows: compensation is domain-specific, can fail, should be resumable/idempotent, and must account for concurrency and points of no return. These architecture constraints support the UX rules above, but exact retention periods, undo windows, and conflict policies remain product/domain decisions requiring validation.
+Carbon provides mature product/design-system guidance that reversible low-impact deletion can avoid confirmation; it does not establish a universal undo duration. Microsoft’s Azure Architecture Center establishes the technical limits of compensation in long-running/eventually consistent workflows. React, TanStack Query, and TanStack DB establish current implementation mechanisms and failure/reconciliation concerns for optimistic state; they do not prove that optimism improves user outcomes in every product. MDN/WAI-ARIA establish `aria-busy` semantics, not a universal presentation rule. Exact optimism thresholds, pending treatments, retention periods, undo windows, and conflict policies remain product/domain decisions requiring validation.
 
 ## Sources
 
@@ -111,5 +155,9 @@ Carbon provides mature product/design-system guidance that reversible low-impact
 - Carbon Design System, *Remove*: https://carbondesignsystem.com/community/patterns/remove-pattern/
 - Microsoft Azure Architecture Center, *Compensating Transaction pattern*: https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction
 - Microsoft Azure Architecture Center, *Saga design pattern*: https://learn.microsoft.com/en-us/azure/architecture/patterns/saga
+- React, *useOptimistic*: https://react.dev/reference/react/useOptimistic
+- TanStack Query, *Optimistic Updates*: https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates
+- TanStack DB, *Mutations*: https://tanstack.com/db/latest/docs/guides/mutations
+- MDN, *ARIA: aria-busy attribute*: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-busy
 
 Last researched: 2026-10-06.
