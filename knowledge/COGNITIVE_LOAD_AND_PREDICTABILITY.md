@@ -56,6 +56,41 @@ WCAG 2.2 SC 3.3.7 requires information previously entered or provided in the sam
 
 Security is not a blanket excuse for memory tests. WCAG 2.2 SC 3.3.8 treats memorization, manipulation, and transcription during authentication as cognitive-function tests and requires an alternative or assisting mechanism unless an exception applies. Password-manager support, paste, and device-based authentication are examples of mechanisms that reduce this burden.
 
+## Error prevention: shape friction to consequence and recoverability
+
+Do not add a confirmation dialog merely because an action is labelled destructive. Choose the safeguard from the **cost of a mistake, reversibility, scope, frequency, and whether the user can meaningfully verify the consequence before committing**.
+
+Use this hierarchy as a design heuristic, not a compliance formula:
+
+| Situation | Prefer | Why |
+|---|---|---|
+| Low impact + reliably reversible | Execute + visible undo/recovery | Avoids repetitive interruption while preserving recovery. |
+| Detectable invalid or contradictory input | Prevent/flag at the point of error + preserve input | The system already knows what is wrong; a generic confirmation adds little. |
+| Consequential but reviewable transaction | Review/summary step with correction path | Users can inspect the facts that determine the outcome before commitment. |
+| Irreversible or high-blast-radius destructive action | Explicit consequence-focused confirmation | A mistaken activation can cause serious loss and recovery is unavailable or costly. |
+| Extremely high-impact deletion where identity/scope confusion is plausible | Consider stronger deliberate confirmation, such as re-entering a resource identifier | Adds friction specifically to verify target/scope; do not cargo-cult typed confirmation onto ordinary deletion. |
+
+WCAG 2.2 SC 3.3.4 is an important boundary: for legal commitments, financial transactions, deletion/modification of user-controllable stored data, and test responses, **reversible, checked, or confirmed** are alternative sufficient strategies at Level AA. W3C explicitly notes that the criterion is not intended to require confirmation for every save or ordinary edit. This supports a broader design principle: **recovery can be a prevention strategy**, and confirmation is not automatically the safest or most usable choice.
+
+### Confirmation quality
+
+When confirmation is justified:
+
+- name the actual action and target (`Delete “Quarterly forecast”`), not generic `Are you sure?`;
+- expose the material consequence and whether recovery exists;
+- make the final action label describe the commitment (`Delete project`, `Pay €240`, `Publish to all customers`), rather than `OK`;
+- include the facts users need to verify inside the confirmation/review surface; do not force them to remember obscured background content;
+- do not rely on danger color alone to communicate consequence;
+- do not use confirmation to compensate for ambiguous labels, tiny targets, unstable layouts, or unsafe defaults—fix the initiating interaction too.
+
+Carbon's current guidance provides a useful production example of consequence-shaped friction: low-impact/reversible deletion may proceed without warning, medium irreversible deletion uses consequence confirmation, and high-impact irreversible deletion may require entering the resource name. Treat that as a design-system policy example, not empirical proof that these exact tiers are universally optimal.
+
+### Repetition changes the trade-off
+
+A confirmation that is appropriate for an exceptional irreversible action can become harmful ritual when placed on a frequent operation: users must repeatedly interrupt their task and may stop inspecting boilerplate. Carbon likewise advises using modals sparingly and moving repeatedly performed work onto the main page when practical. Therefore assess **frequency together with consequence**; never infer safeguard strength from the word “delete” alone.
+
+For repeated low-risk destructive actions, invest in robust undo/recovery, clear post-action feedback, and preserving the user's context. For repeated high-risk operations, do not simply remove safeguards because they are annoying; redesign the workflow so scope and consequences are reviewable with less repetitive modal friction.
+
 ## Progressive disclosure: useful boundary
 
 Use progressive disclosure when secondary controls or explanation are not needed to understand the current state or make the current decision. Keep information visible when hiding it would require users to remember it, repeatedly reopen panels, or lose causal context.
@@ -90,19 +125,25 @@ Before simplifying or reorganizing a workflow, ask:
 - Does progressive disclosure reduce distraction, or merely create navigation/recollection work?
 - Can users paste, select, autofill, or authenticate with a mechanism instead of transcribing/recalling?
 - If a control is disabled, can users discover why and what to do next?
+- For a risky action, what are the actual consequence, reversibility, scope, frequency, and best recovery path?
+- Does a confirmation expose information the user can genuinely verify, or merely demand an extra click?
 - Does an expert workflow benefit more from stable density than from repeated disclosure?
 
 ## Evidence boundary
 
-The strongest evidence here is accessibility standards and W3C cognitive-accessibility guidance. It establishes concrete barriers and conformance requirements, but does **not** justify a universal numeric “cognitive load score,” a maximum number of controls, or a rule that sparse interfaces outperform dense ones. Claims about task speed, error rates, or optimal disclosure depth require context-specific usability evidence.
+The strongest evidence here is accessibility standards and W3C cognitive-accessibility guidance. WCAG establishes concrete requirements for important submissions and explicitly permits reversibility, checking, or confirmation as alternative safeguards. Carbon and GOV.UK provide mature deployed design-system policies that independently shape confirmation friction around consequence/irreversibility. They are not controlled evidence that a particular modal tier, typed-confirmation pattern, or undo duration minimizes errors in every product. Claims about task speed, warning habituation magnitude, optimal undo windows, or exact confirmation thresholds require context-specific usability evidence.
 
 ## Sources
 
 - W3C WAI, *Understanding SC 3.2.4: Consistent Identification* (WCAG 2.2): https://www.w3.org/WAI/WCAG22/Understanding/consistent-identification
 - W3C WAI, *What's New in WCAG 2.2* — SC 3.2.6 Consistent Help, 3.3.7 Redundant Entry, 3.3.8 Accessible Authentication: https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/
 - W3C WAI, *Understanding SC 3.3.8: Accessible Authentication (Minimum)*: https://www.w3.org/WAI/WCAG22/Understanding/accessible-authentication-minimum
+- W3C WAI, *Understanding SC 3.3.4: Error Prevention (Legal, Financial, Data)*: https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data
 - W3C WAI, *Use a Consistent Visual Design* (supplemental cognitive accessibility guidance): https://www.w3.org/WAI/WCAG2/supplemental/patterns/o1p03-consistent-design/
 - W3C WAI, *Provide Human Help* (supplemental cognitive accessibility guidance): https://www.w3.org/WAI/WCAG2/supplemental/patterns/o7p01-human-help/
+- Carbon Design System, *Remove*: https://www.carbondesignsystem.com/community/patterns/remove-pattern/
+- Carbon Design System, *Modal*: https://www.carbondesignsystem.com/components/modal/usage/
+- GOV.UK Design System, *Button* — warning/destructive actions: https://design-system.service.gov.uk/components/button/
 - W3C, *WCAG 3.0 Working Draft*, including consistency/help and disabled-control proposals; draft status means requirements may change: https://www.w3.org/TR/wcag-3.0/
 
 Last researched: 2026-10-06.
