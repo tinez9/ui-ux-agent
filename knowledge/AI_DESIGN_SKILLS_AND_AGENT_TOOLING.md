@@ -168,6 +168,22 @@ Other categories remain worth separating:
 - broad UAT/audit skills: useful only if their journey/accessibility claims survive source inspection.
 - screenshot design-review skills: can overlap heavily with Impeccable unless they add real rendered-state evidence.
 
+## 2026-10-06 platform correction: Codex skills are moving under Plugins
+
+OpenAI's canonical `openai/skills` repository now marks itself **deprecated** and directs current Codex skill/plugin examples to `openai/plugins` plus the Codex “Build plugins” documentation. Treat old `openai/skills` install/catalog instructions as historical even when search results surface them prominently. This is a concrete freshness failure mode: a highly starred official repository can still be the wrong current distribution path.
+
+The deprecated repository's current `skill-creator` remains useful as design evidence for skill architecture, not distribution authority. It makes three durable distinctions worth applying when evaluating design skills:
+
+- **trigger metadata is part of the product:** Codex decides whether to consider a skill from its name/description before loading the body, so trigger quality and false-positive/false-negative behavior deserve evaluation separately from content quality;
+- **progressive disclosure is architectural:** keep core procedure in `SKILL.md`, load detailed references only when needed, and use deterministic scripts for fragile/repeated mechanics rather than bloating always-loaded prose;
+- **degrees of freedom should match fragility:** subjective art direction benefits from high-freedom guidance, while repeatable audits, token validation, screenshot capture and other failure-prone mechanics benefit from constrained scripts/checklists.
+
+This sharpens the evaluation model: a large design “mega-skill” is not automatically more capable. If it loads broad palettes, stacks, accessibility rules and animation guidance for every frontend request, its context cost and conflicting priors may outweigh retrieval value. Conversely, splitting every heuristic into a skill can create trigger competition and orchestration overhead. Evaluate **trigger precision, conditional context loaded, deterministic mechanics, and overlap** in addition to raw content.
+
+Anthropic's current official `frontend-design` skill illustrates the high-freedom side well: it is short, brief-specific, asks for a design plan and self-critique, and explicitly frames its anti-generic tells as defaults that remain legitimate when the brief calls for them. UI/UX Pro Max illustrates the opposite retrieval-heavy architecture: searchable local datasets, explicit domains/stacks and persistent design-system output. They are therefore not interchangeable. The former primarily changes aesthetic judgment; the latter supplies indexed reference candidates and implementation checks. Composing them is plausible only if the retrieval layer does not silently override the product brief or the direction layer.
+
+**Operational consequence for Codex evaluations:** record the current plugin/skill packaging and invocation path as part of the benchmark. A candidate can have excellent design doctrine yet fail in practice because its trigger, packaging or runtime integration is stale.
+
 ## Composition strategy
 
 Do not maximize skill count. A plausible, non-exclusive architecture is:
