@@ -56,6 +56,30 @@ A useful hierarchy is:
 
 Density should be a deliberate product mode or component contract, not an accidental result of shrinking padding.
 
+## Hybrid input: adapt upward, not destructively downward
+
+A device can expose touch, mouse/trackpad, and pen at the same time, and users may switch between them during one task. CSS interaction media queries describe **capabilities**, not a durable statement of what the user will use next:
+
+- `pointer` describes the user agent's current **primary** pointing mechanism.
+- `any-pointer` asks whether **any** available pointing mechanism has a given accuracy. Both `any-pointer: fine` and `any-pointer: coarse` can match simultaneously.
+- these queries say nothing about keyboard availability, and the specification allows the user agent's notion of the primary pointer to change.
+
+Therefore, `@media (pointer: fine) { shrink controls }` is a weak default for a hybrid product. A connected mouse does not make the touchscreen disappear, and a fine pointer does not prove that a user has fine motor control. WCAG's concurrent-input principle likewise argues against unnecessarily restricting an available modality.
+
+A safer adaptation strategy is **monotonic enhancement**:
+
+1. Start from a target geometry that meets the product's required pointer floor without relying on device classification.
+2. If `any-pointer: coarse` is true, enlarge hit areas or spacing where useful; do not let a simultaneous `fine` match override the coarse accommodation merely because the CSS order changed.
+3. Use `hover`/`any-hover` to add hover-only affordances or previews, never to hide functionality required by touch or keyboard.
+4. Use actual `PointerEvent.pointerType` only when the *current gesture* genuinely needs device-specific behavior (for example pen pressure or a touch drag threshold), not to globally flip the interface into a persistent "mouse mode" or "touch mode" after one event.
+5. If a product offers a compact density mode, prefer an explicit, persistent user/product setting over silently oscillating layout density as peripherals connect or the UA changes its primary-pointer classification.
+
+This is especially important on convertible laptops and tablets: changing control geometry while the user alternates between trackpad and touch can create spatial instability and learned-position errors. Capability queries are useful inputs to a policy; they are not the policy themselves.
+
+### Do not confuse two meanings of "primary"
+
+CSS `pointer` means the user agent's **primary pointing mechanism**. `PointerEvent.isPrimary` is different: it identifies a primary pointer **within each pointer type** during active pointer events. With simultaneous mouse and touch, more than one pointer can be `isPrimary === true`. Do not use `isPrimary` as evidence that an event came from the user's globally preferred device.
+
 ## Agent implementation contract
 
 For every interactive component, reason about these independently:
@@ -66,9 +90,11 @@ pointer_hit_bounds
 spacing_to_other_targets
 keyboard_focusability
 focus_indicator_bounds
-input_context
+available_pointer_capabilities
+current_gesture_pointer_type (only when behavior truly depends on it)
 conformance_target (e.g. WCAG 2.2 AA)
 product/platform comfort target
+explicit_density_preference
 ```
 
 Do not derive one field blindly from another.
@@ -82,7 +108,8 @@ Do not derive one field blindly from another.
 5. Preserve compact visuals with padding/hit-area design when safe rather than shrinking interaction geometry.
 6. Test zoom/reflow and narrow layouts: target expansion must not create overlap or clipping.
 7. Test keyboard focus separately; pointer target size does not prove visible or correctly ordered focus.
-8. Test representative touch/pointer environments when interaction density is important.
+8. For hybrid hardware, test coarse and fine pointers **concurrently**, not only as separate device presets.
+9. If media queries alter density, verify that simultaneous `any-pointer: coarse` + `any-pointer: fine` resolves deliberately and that peripheral changes do not produce destructive layout oscillation.
 
 ## Failure modes for AI-generated UI
 
@@ -102,21 +129,38 @@ Glyph size is not target size. Inspect the interactive element's activation box.
 
 Viewport is not input modality. Avoid architecture that assumes `@media (max-width)` reliably means touch.
 
+### "pointer: fine means mouse-only"
+
+It only describes the UA's primary pointing mechanism. A coarse touchscreen may remain available. Do not remove touch-safe geometry or functionality from this signal alone.
+
+### "any-pointer: fine means precise users"
+
+It means at least one fine pointing device is available. It does not establish which device will perform the next action or the user's motor precision.
+
+### "The last pointer event tells us the interface mode"
+
+Switching global density after a mouse/touch event can make controls move between interactions. Scope pointer-type differences to behavior that genuinely depends on the current gesture.
+
 ### "Increase hit area with an invisible absolute overlay"
 
 This can create overlapping or stolen interaction regions. Prefer semantic control padding and explicit layout spacing.
 
 ## Evidence boundary
 
-W3C establishes conformance requirements and exceptions. Apple and Fluent establish platform/design-system guidance and demonstrate that visual and interactive bounds need not be identical. These sources support a layered decision model; they do **not** establish one empirically optimal target size for every user, device, task, or product category.
+W3C establishes conformance requirements, input-capability semantics, and exceptions. Apple and Fluent establish platform/design-system guidance and demonstrate that visual and interactive bounds need not be identical. Media Queries defines what `pointer`/`any-pointer` can tell an agent; Pointer Events defines event-level pointer identity. These sources support a layered decision model and caution against treating capability detection as user intent. They do **not** establish one empirically optimal target size, density adaptation algorithm, or device-switching policy for every user, task, or product category.
 
 ## Sources
 
 - W3C WAI, **WCAG 2.2 — 2.5.8 Target Size (Minimum)** and supporting guidance: https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/
 - W3C WAI, **Understanding 2.5.5 Target Size (Enhanced)**: https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced
+- W3C, **Media Queries Level 4 — interaction media features**: https://www.w3.org/TR/mediaqueries-4/
+- W3C, **Pointer Events**: https://www.w3.org/TR/pointerevents/
+- MDN, **`any-pointer`**: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/any-pointer
+- MDN, **`pointer`**: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/pointer
 - Microsoft, **Fluent 2 — Layout**: https://fluent2.microsoft.design/layout
+- Apple, **Pointing devices**: https://developer.apple.com/design/human-interface-guidelines/pointing-devices
 - Apple, **Design for spatial user interfaces (WWDC23)**: https://developer.apple.com/videos/play/wwdc2023/10076/
 
 ## Research frontier
 
-Useful follow-up evidence would compare target-size and spacing policies under real dense productivity workloads, including coarse-pointer/touch hybrids, stylus use, motor impairments, destructive row actions, and adaptive density. Do not promote device-detection heuristics without outcome evidence.
+The hybrid-input policy is now technically bounded, but outcome evidence remains thin. Useful follow-up research should compare stable generous targets, explicit density modes, and automatic capability-driven adaptation under real dense productivity workloads, including convertible devices, motor impairments, destructive row actions, stylus use, and rapid mouse↔touch switching. Do not promote automatic density switching without evidence that its efficiency benefit exceeds the spatial-instability cost.
