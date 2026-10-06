@@ -1,159 +1,156 @@
-# Native overlay primitives: popover vs dialog
+# Native overlay primitives: popover, dialog, inertness, and positioning
 
 **Last researched:** 2026-10-06
 
 ## Decision rule
 
-Choose the primitive from the interaction contract, not from the desired floating appearance.
+Choose the primitive from the interaction contract, not from floating appearance.
 
-- Use the **Popover API** for non-modal, top-layer UI that should leave the surrounding page interactive: action menus, pickers, teaching UI, contextual controls, and similar transient surfaces.
-- Use **`<dialog>` opened modally** when the interaction must make the rest of the document inert until the dialog is resolved or dismissed.
-- A **`<dialog popover>`** is valid when dialog semantics are useful but modality is not. Do not infer modality from the visual treatment or from the `dialog` element alone.
-- Tooltips are not automatically equivalent to interactive popovers. A hover/focus disclosure has different persistence, input, and semantic requirements from a clickable menu or picker.
+- Use **Popover API** for non-modal top-layer UI that leaves surrounding content interactive: action menus, pickers, teaching UI, contextual controls.
+- Use **`<dialog>.showModal()`** when the rest of the document must become unavailable until the dialog is resolved or dismissed.
+- A **`<dialog popover>`** can provide dialog semantics without modality. `dialog` semantics, top-layer rendering, and modality are separate decisions.
+- Tooltips are not automatically interactive popovers; hover/focus disclosures have different persistence and input requirements.
 
-This distinction matters because native primitives now encode behavior that custom overlay abstractions often have to reconstruct: top-layer rendering, close requests, light dismiss, invoker relationships, focus navigation, and accessibility mappings.
-
-## What native popover gives you
-
-As of 2026, the Popover API is interoperable across current major browser engines; web.dev dates Baseline availability to **2025-01-27**, after a Safari/iOS light-dismiss bug delayed the earlier Baseline claim.
-
-With a declarative invoker such as `button[popovertarget]`, the platform establishes an invoker relationship. Current MDN documentation describes two important effects: the open popover is placed logically after its invoker in sequential focus navigation, and assistive technology receives implicit expanded/details relationships. Keyboard dismissal can return focus to the invoker.
-
-`popover="auto"` provides light dismiss and normally keeps one auto popover open at a time, except for nested popovers. `popover="manual"` deliberately does not provide light dismiss and allows multiple independent popovers. `popover="hint"` has a separate stack intended for lightweight hint-like surfaces and can coexist with auto popovers under defined rules.
-
-**Agent implication:** prefer the declarative invoker relationship when it matches the interaction. Replacing it with unrelated click handlers plus `showPopover()` can discard useful platform knowledge unless the programmatic call explicitly establishes a source/invoker where supported.
-
-## Popover is not a modal-dialog shortcut
-
-Popover surfaces are non-modal: opening one does **not** make the rest of the page inert. They also have no inherent dialog semantics. A surface that blocks interaction with the underlying task therefore needs a modal dialog contract rather than `popover` plus a hand-built backdrop/focus trap.
-
-Conversely, a menu/picker that merely floats above content should not become modal simply because it needs top-layer rendering. Top layer and modality are separate properties.
-
-This yields a useful decomposition:
+A useful decomposition is:
 
 `overlay contract = modality + semantics + dismissal + invoker/focus relationship + stacking/nesting + positioning`
 
-Do not select an overlay component from a single dimension such as “looks like a popup.”
+## Native ownership: do not rebuild what the platform already owns
 
-## Dismissal is product behavior, not decoration
+As of 2026, Popover API is interoperable across current major engines; web.dev dates Baseline availability to **2025-01-27**, after a Safari/iOS light-dismiss bug delayed the earlier claim.
 
-For popovers, `auto`, `hint`, and `manual` encode materially different dismissal/stack behavior. For `<dialog>`, modern `closedby` behavior can distinguish light dismiss, platform close requests (for example Escape/back), and developer-only closing.
+With declarative `button[popovertarget]`, the platform establishes an invoker relationship. Current MDN documentation describes useful consequences: the open popover participates in sequential focus navigation relative to its invoker and assistive technology receives implicit expanded/details relationships. Prefer this relationship when it matches the workflow rather than replacing it with unrelated click handlers plus `showPopover()`.
 
-Before implementation, specify:
+`popover="auto"` provides light dismiss and peer-closing behavior, with defined nesting. `manual` deliberately removes light dismiss and allows independent peers. `hint` has a separate lightweight stack. These modes are interaction behavior, not styling variants.
 
-1. Is outside interaction allowed while open?
-2. Should outside activation dismiss it?
-3. Should Escape/platform close dismiss it?
-4. Can several peers coexist?
-5. Can overlays nest without closing ancestors?
-6. Where should keyboard focus continue after opening and after closing?
+For modal dialogs, the platform now owns more than a focus trap. W3C's HTML technique H102 documents that a modal `<dialog>` opened with `showModal()` makes outside page content inert, limits keyboard focus to the dialog/browser chrome, supports Escape dismissal, and restores focus to the invoker when it remains available. Start from that native contract before adding framework focus management.
 
-If those answers are unknown, choosing a library component or HTML primitive is premature.
+## `inert` is an interaction boundary, not an ARIA visibility hack
+
+The HTML `inert` attribute is widely available across browsers (MDN: Baseline since April 2023). An inert subtree and its flat-tree descendants cannot receive focus or click interaction and are excluded from the accessibility tree; browser find-in-page and text selection can also be affected.
+
+This makes `inert` appropriate when a whole region must genuinely become unavailable, but it is broader than `aria-hidden` and broader than disabling individual form controls.
+
+### Do not substitute `aria-hidden` for inertness
+
+`aria-hidden="true"` removes content from the accessibility tree but does not itself prevent keyboard focus. W3C's ACT rule explicitly treats focusable descendants inside `aria-hidden="true"` as a failure condition because keyboard users can reach content that assistive technology is told does not exist.
+
+Therefore:
+
+- use native modal `<dialog>` when the requirement is modal-dialog behavior;
+- use `inert` when a non-dialog application state intentionally makes an entire region unavailable;
+- use `disabled` for individual controls where disabled semantics are the actual state;
+- use `aria-hidden` only for accessibility-tree visibility, not as a focus-management primitive.
+
+Do not layer `aria-hidden`, manual `tabindex=-1` sweeps, pointer-event blocking, and a custom focus trap merely to imitate a modal that `showModal()` already provides.
+
+### Inertness needs a perceptible state
+
+`inert` has no required visual appearance. MDN warns that authors must make active versus inert regions understandable; this matters especially under zoom or when only part of the viewport is visible. A visually normal region that silently stops responding is a UX failure even if its DOM state is technically correct.
+
+Also avoid applying `inert` to broad application roots casually: because it suppresses focus, AT exposure, find-in-page, selection, and editing, it can disable more capability than the feature intended. A modal `<dialog>` shown with `showModal()` escapes ancestor inertness by platform design; ordinary descendants do not.
 
 ## Focus guidance
 
-Do not add a custom focus trap to a non-modal popover merely because it is visually overlayed. That changes its interaction contract into something modal-like while leaving the rest of the page technically active.
+Do not add a custom focus trap to a non-modal popover. That creates accidental quasi-modality while leaving the surrounding page technically active.
 
-For declaratively invoked popovers, test the browser-provided navigation relationship before adding manual focus movement. Use `autofocus` inside a popover only when immediate focus transfer is actually the intended workflow; the HTML standard scopes `autofocus` to newly shown dialogs/popovers.
+For declaratively invoked popovers, test browser-provided navigation before adding manual focus movement. Use `autofocus` only when immediate focus transfer is the intended workflow; HTML supports it when a dialog or popover is shown.
 
-For modal dialogs, rely on the platform's modal behavior as the baseline and add product-specific initial-focus/restoration policy only when the workflow requires it. Avoid two independent focus owners (native restoration plus framework effect) competing after close.
+For modal dialogs, rely on native modal behavior first. Add product-specific initial-focus/restoration policy only when the workflow requires it. Avoid two independent owners—native restoration plus a framework effect—competing after close.
+
+When testing overlays, also check WCAG 2.2 Focus Not Obscured: an overlay can be non-modal and still create a failure if author-created content completely hides the currently focused component without an applicable exception.
 
 ## CSS Anchor Positioning vs JavaScript positioning
 
-As of October 2026, CSS Anchor Positioning is no longer merely an experimental Chrome-only technique: core anchor association and placement are Baseline 2026 in current browsers, while individual subfeatures have different interoperability dates. Check the exact property rather than treating the whole module as one support bit. In particular, MDN marks `position-try-fallbacks` Baseline since January 2026, `position-try-order` since February 2026, and the current `position-anchor` feature set since September 2026.
+As of October 2026, core CSS Anchor Positioning is broadly usable, but subfeatures have different interoperability dates. MDN marks `position-try-fallbacks` Baseline since January 2026, `position-try-order` since February 2026, and the current `position-anchor` feature set since September 2026.
 
-For ordinary element-anchored menus, pickers, teaching UI, and similar overlays, prefer native CSS when the contract is expressible as:
+For ordinary element-anchored overlays, prefer native CSS when the contract is:
 
 `real DOM anchor + preferred placement + finite fallback placements + optional size relation + visibility rule`
 
-The platform now covers much of the former “positioning library by default” case:
+The platform provides `anchor-name`/`position-anchor`, `position-area`, `anchor()`/`anchor-size()`, fallback placements, space-based try ordering, conditional visibility, and anchored container queries.
 
-- `anchor-name` / `position-anchor` associate positioned content with an element;
-- `position-area`, `anchor()` and `anchor-size()` express placement and sizing relative to that anchor;
-- `position-try-fallbacks` can flip or try explicit alternative areas when the preferred placement overflows;
-- `position-try-order` can prefer the option with more available width/height rather than blindly following declaration order;
-- `position-visibility` can hide positioned content when its anchor is not suitably visible;
-- anchored container queries can adapt descendants such as an arrow when a fallback placement becomes active.
+Two important limits remain:
 
-**Important limitation:** fallback placement is not equivalent to arbitrary collision solving. If no declared try option fits, CSS can fall back to the original overflowing position. A robust native implementation must deliberately enumerate the placements the product accepts and test corners, narrow viewports, zoom, large content, and nested scroll containers.
-
-Repeated components also need anchor scoping. If several elements expose the same `anchor-name`, an unscoped positioned element can bind to the last matching anchor in source order. Use `anchor-scope` or otherwise ensure association is local rather than assuming component boundaries create CSS anchor boundaries.
+1. **Fallback placement is not arbitrary collision solving.** If no declared try option fits, CSS can return to an overflowing original placement. Deliberately enumerate acceptable placements and test corners, zoom, large content, and nested scrolling.
+2. **Repeated anchors need scoping.** Reusing an `anchor-name` without `anchor-scope` can bind a positioned element to another component instance.
 
 ### When a positioning library still earns its cost
 
-Do not remove a library merely because CSS can place one tooltip demo. A library such as Floating UI still provides materially broader geometry/runtime machinery, including:
+A library such as Floating UI remains justified for requirements such as:
 
-- virtual references such as pointer coordinates, selections/ranges, or other objects exposing client rects;
-- explicit clipping-boundary and root-boundary collision detection;
-- shift behavior that slides an overlay within available space instead of only selecting declared fallback placements;
-- middleware-driven flip, auto-placement, size, hide, arrow and custom positioning logic;
-- continuous update orchestration for scroll, resize, layout shift and element resize;
-- portal utilities and higher-level framework integration where the product already depends on them.
+- virtual references (pointer coordinates, selections/ranges, custom client rects);
+- custom clipping/root boundaries;
+- shift/sliding behavior beyond finite placement alternatives;
+- middleware-driven geometry and custom collision policy;
+- coordinated updates for scroll, resize, layout shift, and element resize;
+- framework utilities already relied on by the product.
 
-`autoUpdate()` is useful but not free: Floating UI explicitly warns to install it only while the floating element is mounted/open and clean it up, because leaving many observers/listeners active can cause severe performance degradation.
+`autoUpdate()` should exist only while the floating element is mounted/open; Floating UI warns that leaving observers/listeners active unnecessarily can cause severe performance degradation.
 
-### Decision rule for agents
-
-Treat **overlay behavior** and **overlay geometry** as separate dependency decisions. Popover/dialog may own dismissal, top-layer and focus semantics while CSS Anchor Positioning owns geometry. Do not keep a JavaScript positioning dependency merely because the overlay uses a library component, and do not replace a mature positioning engine when the product genuinely needs virtual anchors, custom clipping boundaries, sliding/complex collision policy, or runtime middleware.
-
-A useful migration gate is:
-
-`Can every required reference be a real element, every acceptable placement be declared, and every collision/resize rule be represented and tested in CSS for the supported browser matrix?`
-
-If yes, native positioning is now a credible default. If not, keep the narrower JavaScript capability that closes the actual gap rather than rebuilding a positioning engine ad hoc.
+Treat **overlay behavior** and **overlay geometry** as separate dependency decisions. Native popover/dialog may own top-layer, dismissal and focus semantics while CSS owns geometry. Retain JavaScript only for requirements the platform does not express adequately for the supported browser matrix.
 
 ## Testing matrix
 
-A rendered test should verify behavior, not only DOM attributes:
+Rendered tests should verify behavior rather than only attributes:
 
 - pointer and keyboard opening;
-- Tab/Shift+Tab continuity relative to the invoker;
-- Escape/platform close behavior;
-- outside-click behavior where light dismiss is intended;
+- Tab/Shift+Tab continuity;
+- Escape/platform close and outside-click behavior;
 - focus after dismissal;
 - nested and sibling overlays;
-- modal inertness when `<dialog>.showModal()` is used;
-- accessible role/name/state appropriate to the actual widget inside the overlay;
+- modal outside-content inertness;
+- no focusable descendants hidden only with `aria-hidden`;
+- visual indication when application regions are deliberately inert;
+- accessible widget role/name/state inside the overlay;
+- focus is not unexpectedly obscured;
 - zoom/reflow and viewport-edge placement;
-- every declared anchor-position fallback at corners and narrow dimensions;
-- repeated components do not accidentally bind to another instance's anchor;
-- scroll/clipping behavior in the product's actual nested containers;
-- fallback or support policy for the product's actual browser matrix.
+- every declared anchor fallback;
+- repeated components bind to their own anchors;
+- scroll/clipping in real nested containers;
+- actual supported-browser fallback policy.
 
-Do not treat `popover` itself as sufficient semantics for a menu, listbox, tooltip, dialog, or combobox. The overlay mechanism and the widget semantics are separate layers.
+Popover itself is not sufficient semantics for a menu, listbox, tooltip, dialog, or combobox. Overlay mechanism and widget semantics remain separate layers.
 
 ## Failure modes
 
-- **Popover + custom focus trap:** creates accidental quasi-modality and conflicts with the non-modal contract.
-- **Custom fixed overlay for every case:** rebuilds top-layer, dismiss, stacking, focus, and AT relationships unnecessarily.
-- **`<dialog>` because the surface looks like a dialog:** can add semantics/modality that the workflow does not need.
-- **`popover="manual"` by default:** silently removes light dismiss and automatic peer-closing behavior.
-- **Programmatic opening with no invoker relationship:** can lose platform focus-navigation/relationship benefits.
-- **CSS anchor positioning with one happy-path placement:** a fallback list is part of the interaction contract; undeclared collision behavior does not appear automatically.
-- **Global repeated anchor names without scoping:** overlays can attach to the wrong component instance.
-- **Replacing Floating UI despite virtual/custom-boundary requirements:** trades a tested geometry engine for bespoke positioning code.
-- **Keeping `autoUpdate()` alive while overlays are closed:** retains unnecessary observers/listeners and can degrade performance at scale.
-- **Assuming Baseline means every subfeature is equally old:** newer states and attributes can have different support histories; check the exact capability being used.
+- **Popover + custom focus trap:** accidental quasi-modality.
+- **`aria-hidden` as modal background management:** can leave hidden-from-AT content keyboard-focusable.
+- **Manual `tabindex` sweeps instead of native modal behavior:** brittle under dynamic descendants and framework updates.
+- **`inert` with no visual/product cue:** technically unavailable content still looks actionable.
+- **Over-broad `inert`:** suppresses focus, AT exposure, search, selection, and editing beyond the intended interaction boundary.
+- **Custom fixed overlay for every case:** unnecessarily rebuilds top-layer, dismiss, stacking, focus, and AT relationships.
+- **`<dialog>` because it merely looks dialog-like:** can add semantics/modality the workflow does not need.
+- **`popover="manual"` by default:** silently removes light dismiss and peer closing.
+- **Programmatic opening with no invoker relationship:** can lose platform navigation/relationship benefits.
+- **One happy-path anchor placement:** collision behavior does not appear automatically.
+- **Global repeated anchor names:** overlays can attach to the wrong instance.
+- **Removing Floating UI despite virtual/custom-boundary needs:** replaces a tested geometry engine with bespoke code.
+- **Keeping `autoUpdate()` alive while closed:** retains unnecessary observers/listeners.
 
 ## Evidence boundary
 
-Primary platform documentation establishes current behavior and interoperability, not that native overlays or CSS Anchor Positioning always outperform mature component libraries. Floating UI documentation establishes capabilities and operational caveats, not that every product needs them. No comparative outcome/performance study was found in this cycle that justifies a universal “remove Floating UI” rule. The durable recommendation is narrower: **start from the native interaction and geometry contracts, then retain JavaScript only for requirements the platform does not express well enough for the product's supported matrix.**
+Platform and W3C documentation establish behavior, accessibility requirements, and interoperability—not that native overlays always outperform mature component libraries. Floating UI documentation establishes capability and lifecycle costs—not that every product needs them. No comparative outcome study justifies a universal “native always wins” rule. The durable rule is narrower: **start from native interaction, inertness, and geometry contracts; add custom machinery only for product requirements the platform does not satisfy.**
 
 ## Sources
 
-- MDN, *Using the Popover API* — `auto`/`manual`/`hint`, light dismiss, nesting, invoker accessibility and focus-navigation behavior: https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using
-- MDN, *Popover API* — non-modal contract, use cases, relationship to `<dialog>`: https://developer.mozilla.org/en-US/docs/Web/API/Popover_API
-- MDN, *`<dialog>`* — modal/non-modal behavior and `closedby`: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog
-- WHATWG HTML, *Interaction / autofocus* — focus behavior when dialogs and popovers are shown: https://html.spec.whatwg.org/dev/interaction.html
-- web.dev, *The Popover API is now Baseline Newly available* (2025-02-07) — cross-engine Baseline date and the earlier Safari/iOS light-dismiss interoperability failure: https://web.dev/blog/popover-baseline
-- web.dev, *`<dialog>` and popover: Baseline layered UI patterns* — top-layer similarity and modality/semantics differences: https://web.dev/articles/baseline-in-action-dialog-popover
-- Open UI, *Invoker Commands explainer* — rationale for declarative invoker relationships and accessibility mappings: https://open-ui.org/components/invokers.explainer/
-- MDN, *Using CSS anchor positioning* — anchor association, `anchor-scope`, placement and sizing mechanics: https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Anchor_positioning/Using
-- MDN, *Fallback options and conditional hiding for overflow* — fallback ordering, combined flips, custom tries and failure behavior: https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Anchor_positioning/Try_options_hiding
-- MDN, *`position-try-fallbacks`* — Baseline 2026 and overflow fallback semantics: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-try-fallbacks
-- MDN, *`position-try-order`* — space-based placement preference and February 2026 Baseline status: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-try-order
-- MDN, *`position-anchor`* — current association semantics and September 2026 Baseline status: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-anchor
-- Floating UI, *computePosition* — middleware capabilities (`shift`, `flip`, `autoPlacement`, `size`, `arrow`, `hide`): https://floating-ui.com/docs/computeposition
-- Floating UI, *detectOverflow* — clipping/root-boundary collision controls: https://floating-ui.com/docs/detectoverflow
-- Floating UI, *Virtual Elements* — point/range/custom reference geometry: https://floating-ui.com/docs/virtual-elements
-- Floating UI, *autoUpdate* — update triggers, lifecycle requirement and performance warning: https://floating-ui.com/docs/autoupdate
+- MDN, *Using the Popover API*: https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using
+- MDN, *Popover API*: https://developer.mozilla.org/en-US/docs/Web/API/Popover_API
+- MDN, *`<dialog>`*: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog
+- W3C WAI, *H102: Creating modal dialogs with the HTML dialog element*: https://www.w3.org/WAI/WCAG22/Techniques/html/H102
+- MDN, *`inert` HTML global attribute*: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/inert
+- W3C WAI ACT, *Element with aria-hidden has no content in sequential focus navigation*: https://www.w3.org/WAI/standards-guidelines/act/rules/6cfa84/
+- W3C WAI, *Understanding SC 2.4.11 Focus Not Obscured (Minimum)*: https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum
+- WHATWG HTML, *Interaction / autofocus*: https://html.spec.whatwg.org/dev/interaction.html
+- web.dev, *The Popover API is now Baseline Newly available* (2025-02-07): https://web.dev/blog/popover-baseline
+- web.dev, *`<dialog>` and popover: Baseline layered UI patterns*: https://web.dev/articles/baseline-in-action-dialog-popover
+- Open UI, *Invoker Commands explainer*: https://open-ui.org/components/invokers.explainer/
+- MDN, *Using CSS anchor positioning*: https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Anchor_positioning/Using
+- MDN, *Fallback options and conditional hiding for overflow*: https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Anchor_positioning/Try_options_hiding
+- MDN, *`position-try-fallbacks`*: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-try-fallbacks
+- MDN, *`position-try-order`*: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-try-order
+- MDN, *`position-anchor`*: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-anchor
+- Floating UI, *computePosition*: https://floating-ui.com/docs/computeposition
+- Floating UI, *detectOverflow*: https://floating-ui.com/docs/detectoverflow
+- Floating UI, *Virtual Elements*: https://floating-ui.com/docs/virtual-elements
+- Floating UI, *autoUpdate*: https://floating-ui.com/docs/autoupdate
