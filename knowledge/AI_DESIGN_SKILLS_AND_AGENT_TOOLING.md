@@ -1,6 +1,6 @@
 # AI Design Skills and Agent Tooling
 
-Last reviewed: 2026-10-05
+Last reviewed: 2026-10-06
 
 ## Purpose
 
@@ -114,6 +114,28 @@ This skill addresses a different problem from critique or QA: translating visual
 
 **Do not use as:** proof of implementation parity, accessibility verification, automated regression, or a substitute for product/design judgment.
 
+### `danieloleary/design-md-for-codex` — thin DESIGN.md consumption habit
+
+**Status:** useful architecture reference; not a default install recommendation.
+
+Direct source inspection on 2026-10-06 shows a deliberately small Codex skill whose main behavior is to locate a repository `DESIGN.md`, read it before UI work, treat YAML token values as normative, preserve existing project components/tokens, and verify changed UI at desktop/mobile widths. This is materially different from a design-judgment pack: it is a **context-consumption policy** that tries to make persistent design memory reliably enter the agent loop.
+
+The important development is upstream rather than this wrapper. Google's `google-labs-code/design.md` is now an open, agent-oriented DESIGN.md specification and CLI. The format combines machine-readable token front matter with explanatory Markdown; the official tool can lint, diff and export to Tailwind and DTCG. As of this review the format is explicitly **alpha**, so it should be treated as emerging infrastructure rather than a settled design-system standard.
+
+**Why the mechanism matters:** persistent design memory and design judgment are separate capabilities. A strong critique skill cannot obey product-specific constraints it never reads; conversely a perfectly consumed `DESIGN.md` can encode mediocre design. A thin “read the local contract first” skill can therefore complement Impeccable/UI-UX guidance without competing with them.
+
+**Important correction to the wrapper's apparent simplicity:** its validation step runs `npx @google/design.md lint DESIGN.md` when Node/npm are available. That executes a registry package and is a different trust surface from merely reading Markdown. For autonomous agents, prefer a pinned/installed official CLI or explicitly approved execution policy rather than treating ad-hoc `npx` as zero-risk. The skill itself is MIT and has no substantial runtime of its own.
+
+**Freshness/adoption caution:** canonical repository metadata inspected 2026-10-06 shows MIT, unarchived, only **1 star / 0 forks**, created 2026-05-09 and last pushed **2026-05-12**. `updated_at` was 2026-10-05, but that does not establish code maintenance. The wrapper therefore has weak maintenance/adoption evidence even though the underlying Google format is active.
+
+**Design-system boundary:** do not let `DESIGN.md` become a second unsynchronized source of truth beside production tokens/components. If both exist, define authority and generate/validate one against the other where possible. A memory file that silently drifts from implementation can increase agent confidence while reducing fidelity.
+
+**Best fit:** Codex projects that already maintain a deliberate `DESIGN.md` and need a lightweight trigger ensuring it is read before frontend edits.
+
+**Do not use as:** a substitute for design-system governance, visual QA, accessibility testing, design critique, or evidence that DESIGN.md itself improves output quality.
+
+**Promotion gate:** first test whether Codex already consumes the project's design contract reliably through existing project instructions. If it does, this wrapper adds little. If it does not, compare baseline vs wrapper on repeated UI edits and measure contract violations, invented tokens/components and rendered regressions. Reassess when the upstream DESIGN.md format leaves alpha or the wrapper resumes substantive maintenance.
+
 ## Rendered verification: separate the jobs
 
 1. **Visual regression:** did an approved baseline change unintentionally?
@@ -121,8 +143,9 @@ This skill addresses a different problem from critique or QA: translating visual
 3. **Rendered visual QA:** does the real state exhibit responsive, visual or journey defects?
 4. **Design critique:** is the direction itself appropriate, coherent, distinctive and usable?
 5. **Visual decision sandbox:** can a human cheaply express token, copy and element-level preferences before implementation?
+6. **Persistent design memory:** did the agent actually consume the project's declared visual contract before editing?
 
-Pixel similarity is not UX quality. A perfect reproduction can preserve a bad design; an intentional improvement can correctly fail regression. A sandbox preview is not evidence that the real application renders equivalently.
+Pixel similarity is not UX quality. A perfect reproduction can preserve a bad design; an intentional improvement can correctly fail regression. A sandbox preview is not evidence that the real application renders equivalently. Contract consumption is not evidence that the contract is good or current.
 
 ### `Krowli/visual-parity` — useful mechanism, not a current install recommendation
 
@@ -149,6 +172,7 @@ Other categories remain worth separating:
 
 Do not maximize skill count. A plausible, non-exclusive architecture is:
 
+- **persistent product design contract:** `DESIGN.md` or equivalent, with explicit authority and drift checks;
 - **knowledge/retrieval:** UI/UX Pro Max;
 - **direction/refinement:** Impeccable;
 - **specialist craft:** selected Emil skills when needed;
@@ -156,7 +180,7 @@ Do not maximize skill count. A plausible, non-exclusive architecture is:
 - **rendered verification:** `frontend-visual-qa` in Claude Code, or another validated target-specific verifier;
 - **Codex orchestration/evaluation:** treat native delegation/profile harnesses as a separate layer, not as evidence that their design doctrine is superior.
 
-This is a workflow hypothesis, not a proven ranking. Install only layers with marginal value for the project.
+This is a workflow hypothesis, not a proven ranking. Install only layers with marginal value for the project. A wrapper whose only job is “read DESIGN.md” is redundant when project-level instructions already enforce that behavior reliably.
 
 ## Installation decision gate
 
@@ -182,13 +206,14 @@ Useful negative evidence already found:
 - `wonjyou/design-audit`: last push 2026-03-28 and no repository license exposed; do not recommend.
 - `fol2/claude-design`: activity ended 2026-04-25, no declared license/adoption signal; discovery candidate only.
 - `Krowli/visual-parity`: last push 2026-06-26 despite fresh search surfacing; useful compact harness, but stale/unadopted and not an automated pixel-diff engine.
+- `danieloleary/design-md-for-codex`: thin and inspectable but last substantive push 2026-05-12 with 1 star / 0 forks; underlying DESIGN.md format is more important than the wrapper.
 
 Negative evidence should remain recorded so future cycles do not repeatedly rediscover and over-promote fresh-looking results.
 
 ## Candidates for focused investigation
 
-Current search surfaced potentially relevant candidates including `danieloleary/design-md-for-codex` (persistent project design memory), `MaxHan7/frontend-ui-standards-skill` (design-system-first Codex implementation), `Enixes/astra-frontend-design` (evaluation-oriented Codex/Astra frontend workflow), `superdesigndev/superdesign-skill` (design workflow plus external CLI/service), and `dobromirdikov/codex-frontend-design-skill`. None should be promoted from README claims alone. Inspect provenance, executable/service dependencies, maintenance, licensing, overlap and actual marginal workflow value first.
+Current search surfaced potentially relevant candidates including `MaxHan7/frontend-ui-standards-skill` (design-system-first Codex implementation), `Enixes/astra-frontend-design` (evaluation-oriented Codex/Astra frontend workflow), `superdesigndev/superdesign-skill` (design workflow plus external CLI/service), and `dobromirdikov/codex-frontend-design-skill`. None should be promoted from README claims alone. Inspect provenance, executable/service dependencies, maintenance, licensing, overlap and actual marginal workflow value first.
 
 ## Open evidence gap
 
-Evidence is much stronger for **what skills contain** than for **how much they improve output**. Build a repeatable benchmark: identical brief + starter repo + baseline agent versus one skill versus composed skills, then blind/rubric rendered evaluation. For Codex-native harnesses, preserve model/version and delegation behavior because syntactic compatibility does not imply behavioral equivalence. For verification skills, seed known responsive/state/visual defects and measure detection, false positives, missed states, time/context cost and whether captured evidence is actually opened and reasoned about. For decision sandboxes, measure whether structured visual feedback reduces clarification turns and implementation churn without increasing divergence from the real app. Popularity, activation rates and attractive before/after examples are weak proxies for causal value.
+Evidence is much stronger for **what skills contain** than for **how much they improve output**. Build a repeatable benchmark: identical brief + starter repo + baseline agent versus one skill versus composed skills, then blind/rubric rendered evaluation. For Codex-native harnesses, preserve model/version and delegation behavior because syntactic compatibility does not imply behavioral equivalence. For verification skills, seed known responsive/state/visual defects and measure detection, false positives, missed states, time/context cost and whether captured evidence is actually opened and reasoned about. For decision sandboxes, measure whether structured visual feedback reduces clarification turns and implementation churn without increasing divergence from the real app. For persistent design-memory wrappers, measure whether they reduce contract violations beyond what ordinary project instructions already achieve. Popularity, activation rates and attractive before/after examples are weak proxies for causal value.
