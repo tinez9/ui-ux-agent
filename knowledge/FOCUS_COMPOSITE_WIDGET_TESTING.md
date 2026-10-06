@@ -13,9 +13,14 @@ When DOM semantics and automated accessibility rules pass, which focus and keybo
 Primary sources reviewed:
 - https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/
 - https://www.w3.org/WAI/ARIA/apg/patterns/tabs/
+- https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/
+- https://www.w3.org/WAI/ARIA/apg/patterns/button/
 - https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/
 - https://www.w3.org/WAI/WCAG22/Understanding/focus-order
 - https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance
+- https://atlassian.design/components/tag-group/
+- https://atlassian.design/components/pragmatic-drag-and-drop/accessibility-guidelines/
+- https://www.carbondesignsystem.com/building-blocks/core/patterns/dialogs
 - https://playwright.dev/docs/aria-snapshots
 - https://www.deque.com/de/blog/support-for-wcag-2-1-in-axe-core/
 - https://www.deque.com/axe/core-documentation/api-documentation/
@@ -69,6 +74,65 @@ A robust test records at least:
 
 This catches semantic state transitions that a screenshot or accessibility-tree snapshot alone can miss.
 
+## Focus recovery after destructive and asynchronous changes
+
+A destructive or asynchronous action can remove, remount, move, disable, virtualize, or otherwise invalidate the element that held focus. APG explicitly warns that when the active element is hidden or removed, unmanaged focus can fall to `body`, effectively losing the user's position. This is not merely a DOM-cleanup problem: the correct destination depends on the workflow that remains.
+
+### Destination hierarchy: preserve workflow before geometry
+
+Do not use a universal “nearest DOM sibling” rule. Resolve the destination in this order:
+
+1. **Preserve the same logical entity/action when it still exists.** If an item is reordered or remounted but remains the user's working object, restore focus to its equivalent control. Atlassian's drag-and-drop guidance explicitly favors returning to the original trigger where possible so repeated actions remain efficient.
+2. **Use an established component contract.** For deletion inside a list-like sequence, APG gives the following list item as a concrete logical destination; Atlassian's removable tags similarly move to the next focusable item, then fall back beyond/behind the removed trigger when needed.
+3. **Follow the resulting workflow when the old context no longer exists.** APG's dialog guidance says returning to the invoker is normal, but not when it was removed or when the completed task logically leads elsewhere. For example, an add-rows dialog can focus the first newly created row instead of its launcher.
+4. **Escalate when several destinations are semantically plausible.** Geometry, DOM proximity, and tab order are evidence, not sufficient intent.
+
+This yields a stronger invariant than “restore focus”: **after a user-triggered state transition, focus should remain persistent, visible, and located at a meaningful continuation point.**
+
+### Deletion is a state transition, not a `.focus()` patch
+
+For a destructive action, capture before mutation:
+
+`focused logical entity + action + collection position + fallback candidates`
+
+Then assert after the committed state:
+
+`old target absent/invalid → chosen logical successor exists → DOM focus/active descendant is coherent → focus visible → user can continue without replaying navigation`
+
+Useful deterministic cases for autonomous repair include:
+- a removable tag/list item where the documented contract says next item, then previous/next external control at the boundary;
+- a deleted tab where the tab pattern defines which remaining tab receives focus, with a separate workflow target when the last tab disappears;
+- a closed dialog whose invoker still exists and whose workflow does not intentionally advance elsewhere;
+- a moved/remounted entity with a stable identity and an equivalent focusable control after the move.
+
+Do **not** infer that the next DOM node is correct when deletion changes the task context, removes an entire view, or completes a workflow.
+
+### Optimistic and asynchronous updates need a commit policy
+
+Optimistic UI creates an extra failure mode: focus can be moved after the optimistic mutation and then become wrong again if the operation rolls back or the server response changes ordering. Treat focus recovery as part of the mutation state machine, not an incidental effect:
+
+`pre-action anchor → optimistic state → committed state OR rollback state`
+
+The product contract should define whether focus follows the optimistic result immediately or waits for commitment. Whichever policy is chosen, browser tests should exercise success and rollback. An agent should not add repeated `setTimeout(...focus)` calls to chase render timing; that masks missing ownership of the transition and is race-prone.
+
+### Virtualized collections require logical identity
+
+When the intended successor is not mounted, DOM adjacency is not a reliable model of collection adjacency. Recovery should be based on stable item identity/index and the collection's own navigation/virtualization API: materialize/scroll the intended item, then apply the widget's focus mechanism. For `aria-activedescendant`, never leave the attribute pointing at an item that was deleted or is no longer validly represented.
+
+APG's grid/treegrid guidance also notes that dynamically materialized rows can make DOM-first/last differ from the backing data's first/last. Agents should therefore avoid deriving semantic endpoints solely from currently rendered nodes.
+
+### Focus and announcement solve different problems
+
+Moving focus communicates location but can also disrupt reading. A status/live-region announcement communicates the result without necessarily moving the user's point of regard. Do not move focus merely to announce that an async operation succeeded. Use focus movement when the old focus target became invalid or the workflow intentionally advances; use status semantics for non-focus-changing feedback where appropriate.
+
+### Browser-test oracle
+
+For destructive/dynamic transitions, a useful regression test records:
+
+`pre-action active entity → action → mutation phase → resulting entity set → expected logical anchor → document.activeElement / aria-activedescendant → visible focus → next keyboard action`
+
+At minimum assert that focus does not silently collapse to `body` when the user should remain in an interactive workflow. Also test boundary cases: first item, middle item, last item, only item, success, rollback, and remount/reorder when those states exist.
+
 ## What each evidence layer can prove
 
 ### Browser interaction tests — strong for deterministic mechanics
@@ -80,6 +144,7 @@ Use browser automation for:
 - roving-tabindex invariants;
 - `aria-activedescendant` references and state changes;
 - focus restoration after transient UI closes;
+- success/rollback focus behavior for asynchronous mutations when the contract defines it;
 - whether hidden/inactive states are actually exercised before axe analysis.
 
 These are good candidates for agent auto-fix **when the intended component pattern is unambiguous and encoded in a design-system contract or established APG/native pattern**.
@@ -112,13 +177,14 @@ WCAG explicitly allows more than one focus order when meaning and operability ar
 
 Use this sequence before auto-fixing a keyboard/focus issue:
 
-1. **Identify the widget contract.** Prefer native HTML behavior; otherwise resolve the design-system/APG pattern and any intentional product deviation.
+1. **Identify the widget and transition contract.** Prefer native HTML behavior; otherwise resolve the design-system/APG pattern, mutation lifecycle, and any intentional product deviation.
 2. **Drive the real interaction.** Do not infer behavior from markup or roles.
-3. **Assert mechanics and semantics separately.** Track DOM focus, active descendant, selected/expanded/checked state, and resulting content/action.
-4. **Verify visible focus separately.** A mechanical pass is not a perceptual pass.
-5. **Run axe on each materially different activated state.** Static initial-state analysis is incomplete for menus, dialogs, expanded regions and other hidden states.
-6. **Auto-fix only deterministic contract violations.** Examples: wrong arrow mapping in a standard tablist, stale `aria-activedescendant`, two `tabindex=0` items in a roving composite, or focus not restored where the component contract explicitly requires it.
-7. **Escalate judgment-sensitive cases.** Do not autonomously rewrite focus order, selection model, or custom interaction when multiple valid behaviors exist or user/AT consequences are uncertain.
+3. **Assert mechanics and semantics separately.** Track logical entity, DOM focus, active descendant, selected/expanded/checked state, and resulting content/action.
+4. **For destructive/async work, test the committed path and rollback where applicable.** Focus recovery belongs to the transition lifecycle.
+5. **Verify visible focus separately.** A mechanical pass is not a perceptual pass.
+6. **Run axe on each materially different activated state.** Static initial-state analysis is incomplete for menus, dialogs, expanded regions and other hidden states.
+7. **Auto-fix only deterministic contract violations.** Examples: wrong arrow mapping in a standard tablist, stale `aria-activedescendant`, two `tabindex=0` items in a roving composite, focus falling to `body` where a documented successor exists, or failure to return to a surviving dialog invoker.
+8. **Escalate judgment-sensitive cases.** Do not autonomously invent a focus destination, rewrite focus order/selection model, or choose among several plausible post-mutation workflows without product intent.
 
 ## Failure cases worth encoding in regression tests
 
@@ -127,18 +193,21 @@ Use this sequence before auto-fixing a keyboard/focus issue:
 - **Attribute-only false positive:** `aria-activedescendant` changes but visible focus/scroll does not follow.
 - **Tab-everything false positive:** all composite children are reachable with Tab but the expected arrow-key interaction is absent.
 - **Selection/focus conflation:** navigating tabs triggers expensive activation when manual activation is the safer contract.
-- **Focus restoration loss:** a transient surface closes and focus falls to body or an unrelated location.
+- **Removed-target collapse:** deletion removes the active control and focus falls to `body` instead of a logical continuation point.
+- **Nearest-sibling semantic error:** automation preserves mechanical proximity but moves users into the wrong workflow.
+- **Optimistic-race loss:** focus is restored for the optimistic state but lost or misplaced after commit/rollback.
+- **Virtualization stale anchor:** focus state or `aria-activedescendant` refers to an item no longer represented after recycling/deletion.
 - **Semantic pass, invisible focus:** automation sees focus but the indicator is absent, obscured, or indistinguishable on the resolved theme/background.
 - **Snapshot pass, AT uncertainty:** accessibility-tree structure matches expected YAML while actual announcement or interaction remains unverified.
 
 ## Durable rule
 
-**Test the focus protocol, not just focusability.** For composites, accessibility is a state machine: input, focus location, semantic state, visual focus and resulting action must remain coherent. Browser automation can verify deterministic transitions; accessibility-tree snapshots can verify structural postconditions; rendered checks verify perceivability; human/AT review remains the boundary for contextual meaning and real assistive experience.
+**Test the focus protocol, not just focusability.** For composites and dynamic UI, accessibility is a state machine: input, logical entity, mutation phase, focus location, semantic state, visual focus and resulting action must remain coherent. Preserve workflow before geometry. Browser automation can verify deterministic transitions; accessibility-tree snapshots can verify structural postconditions; rendered checks verify perceivability; human/AT review remains the boundary for contextual meaning and real assistive experience.
 
 ## Evidence boundary
 
-W3C APG establishes recommended keyboard/focus patterns rather than universal normative implementations for every product. WCAG establishes outcome requirements such as logical focus order and visible focus, which can admit multiple valid implementations. Playwright documents accessibility-tree snapshot capability, not accessibility conformance. Deque documents automation limits and the need to activate hidden states. The agent auto-fix boundary above is synthesis from these sources and still needs validation against production incidents and browser/AT interoperability failures.
+W3C APG establishes recommended keyboard/focus patterns rather than universal normative implementations for every product. Its keyboard-interface guidance explicitly identifies deletion/removal as a focus-persistence hazard and its dialog/button patterns allow workflow-dependent destinations rather than unconditional restoration. Atlassian supplies concrete production design-system conventions for removable tags and moved/remounted entities; Carbon independently supports dialog focus restoration. These sources establish useful patterns but do not prove one universal successor rule for every destructive or asynchronous workflow. The optimistic-update and virtualization lifecycle model above is agent synthesis and needs validation against production incidents and browser/AT combinations.
 
 ## Next research direction
 
-Investigate **focus recovery after destructive and asynchronous UI changes**—item deletion, optimistic updates, virtualized lists, dialogs/popovers, route transitions and streaming content—where the mechanically nearest focus target is not always the most meaningful one. Compare native platform behavior, established design systems and assistive-technology guidance before defining autonomous repair rules.
+Investigate **route transitions, streaming/server-rendered updates, popovers and native dialog focus behavior**: determine where browser/framework primitives already provide safe restoration, where application code must own focus, and which common SPA/RSC patterns accidentally steal or lose focus during navigation and hydration.
