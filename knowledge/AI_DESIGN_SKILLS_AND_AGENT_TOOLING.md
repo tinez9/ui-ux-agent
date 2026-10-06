@@ -184,6 +184,23 @@ Anthropic's current official `frontend-design` skill illustrates the high-freedo
 
 **Operational consequence for Codex evaluations:** record the current plugin/skill packaging and invocation path as part of the benchmark. A candidate can have excellent design doctrine yet fail in practice because its trigger, packaging or runtime integration is stale.
 
+## 2026-10-07: official Product Design plugin — skills become one layer of a larger design runtime
+
+OpenAI's current Product Design plugin clarifies the platform correction above: **skills have not disappeared; they are composed inside plugins with routing and tool-backed workflows**. Evaluate modern design tooling across four separable layers:
+
+1. **design judgment** — the heuristics and critique encoded in focused skills;
+2. **routing/context** — when a capability triggers and what brief/project context it loads;
+3. **tools/evidence** — ImageGen, browser capture, Figma or other integrations that let the workflow inspect or create real artifacts;
+4. **packaging/distribution** — how those pieces are installed, permissioned, updated and exposed by the host.
+
+The official Product Design router is a useful architecture reference because it does **not** treat every UI mention as a design task. It routes explicit design exploration, research, audit/critique, source cloning, design QA and sharing to focused skills, while ordinary implementation stays outside unless explicitly requested. Its `get-context` skill asks only for missing product/goal/surface information, reuses already supplied context, then continues without an approval round-trip. Its ideation workflow requires that minimum brief before generating visual alternatives and can attach product URLs, Figma files, screenshots, codebase paths, Storybook, tokens and brand assets as grounding.
+
+This is stronger orchestration evidence than a monolithic “make UI better” prompt, but it is **not evidence that OpenAI's design output is causally better** than Impeccable, UI/UX Pro Max or Anthropic's `frontend-design`. It demonstrates a maintained first-party workflow architecture. Anthropic's official `frontend-design` remains a contrasting compact pattern: high-freedom aesthetic judgment, anti-template defaults, self-critique and screenshot review when available. These solve different layers and should not be ranked by prompt length.
+
+**Composition consequence:** prefer capability routing over loading every design pack simultaneously. A router should choose the smallest set that changes the current decision: brief/ideation, implementation direction, specialist motion, audit, or rendered QA. Multiple packs with overlapping aesthetic priors should require demonstrated marginal value rather than being stacked by default.
+
+**Evaluation consequence:** benchmark the whole invoked path, not only `SKILL.md`. Record trigger decision, context retrieved, tools called, permissions/external dependencies, artifact produced, rendered QA and final correction loop. A skill can be excellent prose yet deliver little value if routing is noisy or the required tool integration is absent.
+
 ## Composition strategy
 
 Do not maximize skill count. A plausible, non-exclusive architecture is:
