@@ -53,6 +53,38 @@ Presence, cursors, selections, typing indicators and viewport positions are typi
 
 This distinction prevents stale collaborators or old cursor positions from reappearing after reconnect and reinforces the earlier rule: presence can reduce collisions, but it is not the mechanism that makes document state converge.
 
+## Collaborative undo must preserve intent, not restore a snapshot
+
+In a shared document, `Undo` should normally mean **reverse my most recent undoable intent while preserving later independent work**, not “put the document back into the state I saw a moment ago.” A whole-document snapshot rollback can erase remote changes that arrived after the user's edit.
+
+This is not merely theoretical. ProseMirror's history is explicitly selective: it can undo some changes while keeping other later changes intact, which its documentation identifies as necessary for collaborative editing. Yjs exposes the same architectural idea through `Y.UndoManager`: undo is scoped to shared types and can be filtered by transaction `origin`, with local changes tracked by default. These are stronger models for collaborative products than a global stack of serialized document snapshots.
+
+Design the undo boundary deliberately:
+
+- **Personal/local undo:** the usual editing default. Undo operations attributable to the current user/session while preserving collaborators' intervening work.
+- **Shared/global revert:** a different, consequential command. Reverting another person's change or restoring a historical revision affects shared truth and should expose scope/authorship rather than masquerading as ordinary Ctrl/Cmd+Z.
+- **Domain action reversal:** if an edit triggered external effects, permissions, notifications, billing, workflow transitions, or other side effects, document-level undo may be insufficient. Use the domain's compensating/reversal action instead.
+
+Do not infer authorship from the current document value. Preserve operation/transaction origin or equivalent causal metadata. Yjs' `trackedOrigins` is a concrete example: different sources can be included or excluded from an undo manager, allowing programmatic normalization, remote updates, imports, or other changes to stay outside a user's editing history when appropriate.
+
+### Undo grouping is a semantic UX decision
+
+A low-level operation is rarely the right user-visible undo unit. Typing a word, pasting a block, applying formatting, moving an object, or accepting an AI rewrite may each contain many mutations but should often undo as one intention.
+
+Both Yjs and ProseMirror expose explicit grouping boundaries. Yjs merges captured changes within a configurable `captureTimeout` and provides `stopCapturing()`; ProseMirror groups history events and exposes `closeHistory()`. Do not treat their default timing values as universal UX constants. Break groups at semantic boundaries such as explicit commands, focus/context changes, paste, drag completion, AI acceptance, or a change in the object being edited when that better matches user expectation.
+
+### Remote edits must not invalidate positional intent
+
+Selections, cursor positions, comments and undo targets should not be stored only as raw character indexes when concurrent edits can shift the document. Yjs relative positions are designed to remain attached to a logical location as remote changes alter surrounding indexes. The general rule is broader than Yjs: store collaborative anchors in a representation that can be transformed/rebased through concurrent operations.
+
+After undo, restore selection/viewport only when doing so remains meaningful. Yjs allows metadata on undo stack items specifically for information such as cursor location, but restoring stale view state should not unexpectedly jump a collaborator's current context or target a deleted object.
+
+### Version history and undo are different products
+
+`Undo` is an immediate intention-reversal mechanism. Version history is an inspectable record for attribution, audit, comparison, recovery, and possibly restoration. Do not overload one with the other.
+
+A historical restore should normally create a **new revision derived from an older state**, not erase the intervening history. Before restoring shared state, show what period/version is being restored, who made relevant later changes, and what current work would be displaced. In high-consequence domains, restoration may require permission and a fresh concurrency check.
+
 ## A conflict screen must preserve both intents
 
 When an optimistic save is rejected, do not discard the user's draft and do not simply reload server state. Preserve at least:
@@ -131,7 +163,11 @@ Avoid:
 - auto-merging technically separate fields without checking domain invariants;
 - offering “Overwrite” without showing what newer work will be replaced;
 - making the post-conflict overwrite unconditional;
-- restoring whole-object snapshots over newer collaborator changes;
+- implementing collaborative undo by restoring a serialized old document;
+- letting ordinary Ctrl/Cmd+Z silently revert other users' work;
+- grouping undo solely by arbitrary timer when explicit semantic boundaries are available;
+- storing collaborative cursor/comment anchors only as raw indexes;
+- presenting historical restore as ordinary undo or deleting the history between versions;
 - assuming autosave prevents conflicts;
 - reporting “Saved” while the write is still speculative or has been rejected for stale state.
 
@@ -151,16 +187,21 @@ Before implementing collaborative or multi-client editing, answer:
 10. Is overwrite allowed, and does the overwrite itself re-check current state?
 11. Are presence indicators advisory, ephemeral and separate from durable state?
 12. Can late autosave/mutation responses overwrite newer local intent?
-13. Does undo reverse an operation safely or replace a stale snapshot?
-14. After resolution/convergence, is the result revalidated as a whole?
+13. Does ordinary undo reverse the current user's intent selectively while preserving intervening remote work?
+14. What defines one undo unit, and which origins/actions must stay outside that user's history?
+15. Are selections/comments/history anchors transformable through remote edits rather than fixed raw indexes?
+16. Is historical restore a new auditable revision rather than destructive time travel?
+17. After resolution/convergence/undo, is the result revalidated as a whole?
 
 ## Evidence boundary
 
 Microsoft EF Core documentation establishes the mechanics and rationale of optimistic concurrency: stale writes are detected through concurrency tokens and resolution belongs to the application. Microsoft's older ASP.NET concurrency material remains useful for the core failure mode—last-write-wins silently overwrites another user's changes—and for distinguishing optimistic from pessimistic control. Current Power Pages documentation supplies a shipped example of stale-save UX that offers compare/merge/overwrite choices.
 
-Automerge documentation establishes a different architectural boundary: replicas can accept local changes and later synchronize/merge, but concurrent assignments can still retain conflicting values while exposing one deterministic winner; overlapping rich-text marks may likewise resolve consistently but arbitrarily. Its sync documentation establishes exchange/convergence mechanics, not a universal UX policy for offline state, semantic conflict, validation, permissions, or awareness. The UX rules above that distinguish local durability, synchronization, semantic acceptance and ephemeral presence are agent synthesis from those mechanics and should be validated against the product's actual persistence and collaboration architecture.
+Automerge documentation establishes a different architectural boundary: replicas can accept local changes and later synchronize/merge, but concurrent assignments can still retain conflicting values while exposing one deterministic winner; overlapping rich-text marks may likewise resolve consistently but arbitrarily. Its sync documentation establishes exchange/convergence mechanics, not a universal UX policy for offline state, semantic conflict, validation, permissions, or awareness.
 
-None of these sources establishes a universal best conflict UI or proves that CRDT/OT collaboration improves outcomes in every product. Conflict granularity, semantic merge policy, presence design, offline messaging and escalation remain product/domain decisions.
+Yjs and ProseMirror provide independent implementation evidence for **selective, operation-aware collaborative undo** rather than whole-state rollback. Yjs additionally documents origin-scoped undo, semantic capture boundaries, stack metadata, and relative positions; ProseMirror explicitly states that selective history is necessary to undo some changes while preserving later collaborative changes. These APIs establish robust mechanisms, not universal user expectations about undo grouping, retention depth, attribution UI, or historical restore policy.
+
+None of these sources establishes a universal best conflict UI or proves that CRDT/OT collaboration improves outcomes in every product. Conflict granularity, semantic merge policy, presence design, offline messaging, undo grouping, history retention and escalation remain product/domain decisions.
 
 ## Sources
 
@@ -170,5 +211,9 @@ None of these sources establishes a universal best conflict UI or proves that CR
 - Automerge documentation, *Automerge crate / Data Model / Conflicts*: https://automerge.org/automerge/automerge/
 - Automerge documentation, *Sync Protocol*: https://automerge.org/automerge/automerge/sync/index.html
 - Automerge documentation, *Marks*: https://automerge.org/automerge/automerge/marks/struct.Mark.html
+- Yjs documentation, *Y.UndoManager*: https://docs.yjs.dev/api/undo-manager
+- Yjs documentation, *Relative Positions*: https://docs.yjs.dev/api/relative-positions
+- ProseMirror documentation, *Reference manual — history*: https://prosemirror.net/docs/ref/
+- ProseMirror documentation, *Guide — transforms, history and collaborative editing*: https://prosemirror.net/docs/guide/
 
 Last researched: 2026-10-06.
