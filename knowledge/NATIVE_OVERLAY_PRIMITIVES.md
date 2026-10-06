@@ -58,6 +58,50 @@ For declaratively invoked popovers, test the browser-provided navigation relatio
 
 For modal dialogs, rely on the platform's modal behavior as the baseline and add product-specific initial-focus/restoration policy only when the workflow requires it. Avoid two independent focus owners (native restoration plus framework effect) competing after close.
 
+## CSS Anchor Positioning vs JavaScript positioning
+
+As of October 2026, CSS Anchor Positioning is no longer merely an experimental Chrome-only technique: core anchor association and placement are Baseline 2026 in current browsers, while individual subfeatures have different interoperability dates. Check the exact property rather than treating the whole module as one support bit. In particular, MDN marks `position-try-fallbacks` Baseline since January 2026, `position-try-order` since February 2026, and the current `position-anchor` feature set since September 2026.
+
+For ordinary element-anchored menus, pickers, teaching UI, and similar overlays, prefer native CSS when the contract is expressible as:
+
+`real DOM anchor + preferred placement + finite fallback placements + optional size relation + visibility rule`
+
+The platform now covers much of the former “positioning library by default” case:
+
+- `anchor-name` / `position-anchor` associate positioned content with an element;
+- `position-area`, `anchor()` and `anchor-size()` express placement and sizing relative to that anchor;
+- `position-try-fallbacks` can flip or try explicit alternative areas when the preferred placement overflows;
+- `position-try-order` can prefer the option with more available width/height rather than blindly following declaration order;
+- `position-visibility` can hide positioned content when its anchor is not suitably visible;
+- anchored container queries can adapt descendants such as an arrow when a fallback placement becomes active.
+
+**Important limitation:** fallback placement is not equivalent to arbitrary collision solving. If no declared try option fits, CSS can fall back to the original overflowing position. A robust native implementation must deliberately enumerate the placements the product accepts and test corners, narrow viewports, zoom, large content, and nested scroll containers.
+
+Repeated components also need anchor scoping. If several elements expose the same `anchor-name`, an unscoped positioned element can bind to the last matching anchor in source order. Use `anchor-scope` or otherwise ensure association is local rather than assuming component boundaries create CSS anchor boundaries.
+
+### When a positioning library still earns its cost
+
+Do not remove a library merely because CSS can place one tooltip demo. A library such as Floating UI still provides materially broader geometry/runtime machinery, including:
+
+- virtual references such as pointer coordinates, selections/ranges, or other objects exposing client rects;
+- explicit clipping-boundary and root-boundary collision detection;
+- shift behavior that slides an overlay within available space instead of only selecting declared fallback placements;
+- middleware-driven flip, auto-placement, size, hide, arrow and custom positioning logic;
+- continuous update orchestration for scroll, resize, layout shift and element resize;
+- portal utilities and higher-level framework integration where the product already depends on them.
+
+`autoUpdate()` is useful but not free: Floating UI explicitly warns to install it only while the floating element is mounted/open and clean it up, because leaving many observers/listeners active can cause severe performance degradation.
+
+### Decision rule for agents
+
+Treat **overlay behavior** and **overlay geometry** as separate dependency decisions. Popover/dialog may own dismissal, top-layer and focus semantics while CSS Anchor Positioning owns geometry. Do not keep a JavaScript positioning dependency merely because the overlay uses a library component, and do not replace a mature positioning engine when the product genuinely needs virtual anchors, custom clipping boundaries, sliding/complex collision policy, or runtime middleware.
+
+A useful migration gate is:
+
+`Can every required reference be a real element, every acceptable placement be declared, and every collision/resize rule be represented and tested in CSS for the supported browser matrix?`
+
+If yes, native positioning is now a credible default. If not, keep the narrower JavaScript capability that closes the actual gap rather than rebuilding a positioning engine ad hoc.
+
 ## Testing matrix
 
 A rendered test should verify behavior, not only DOM attributes:
@@ -71,6 +115,9 @@ A rendered test should verify behavior, not only DOM attributes:
 - modal inertness when `<dialog>.showModal()` is used;
 - accessible role/name/state appropriate to the actual widget inside the overlay;
 - zoom/reflow and viewport-edge placement;
+- every declared anchor-position fallback at corners and narrow dimensions;
+- repeated components do not accidentally bind to another instance's anchor;
+- scroll/clipping behavior in the product's actual nested containers;
 - fallback or support policy for the product's actual browser matrix.
 
 Do not treat `popover` itself as sufficient semantics for a menu, listbox, tooltip, dialog, or combobox. The overlay mechanism and the widget semantics are separate layers.
@@ -82,11 +129,15 @@ Do not treat `popover` itself as sufficient semantics for a menu, listbox, toolt
 - **`<dialog>` because the surface looks like a dialog:** can add semantics/modality that the workflow does not need.
 - **`popover="manual"` by default:** silently removes light dismiss and automatic peer-closing behavior.
 - **Programmatic opening with no invoker relationship:** can lose platform focus-navigation/relationship benefits.
+- **CSS anchor positioning with one happy-path placement:** a fallback list is part of the interaction contract; undeclared collision behavior does not appear automatically.
+- **Global repeated anchor names without scoping:** overlays can attach to the wrong component instance.
+- **Replacing Floating UI despite virtual/custom-boundary requirements:** trades a tested geometry engine for bespoke positioning code.
+- **Keeping `autoUpdate()` alive while overlays are closed:** retains unnecessary observers/listeners and can degrade performance at scale.
 - **Assuming Baseline means every subfeature is equally old:** newer states and attributes can have different support histories; check the exact capability being used.
 
 ## Evidence boundary
 
-Primary platform documentation establishes current behavior and interoperability, not that native overlays always outperform mature component libraries. Libraries remain valuable when they provide higher-level widget semantics, cross-version normalization, positioning, animation, or product-specific composition. The durable recommendation is narrower: **start from the native interaction contract and preserve platform behavior unless the product has a concrete reason to replace it.**
+Primary platform documentation establishes current behavior and interoperability, not that native overlays or CSS Anchor Positioning always outperform mature component libraries. Floating UI documentation establishes capabilities and operational caveats, not that every product needs them. No comparative outcome/performance study was found in this cycle that justifies a universal “remove Floating UI” rule. The durable recommendation is narrower: **start from the native interaction and geometry contracts, then retain JavaScript only for requirements the platform does not express well enough for the product's supported matrix.**
 
 ## Sources
 
@@ -97,3 +148,12 @@ Primary platform documentation establishes current behavior and interoperability
 - web.dev, *The Popover API is now Baseline Newly available* (2025-02-07) — cross-engine Baseline date and the earlier Safari/iOS light-dismiss interoperability failure: https://web.dev/blog/popover-baseline
 - web.dev, *`<dialog>` and popover: Baseline layered UI patterns* — top-layer similarity and modality/semantics differences: https://web.dev/articles/baseline-in-action-dialog-popover
 - Open UI, *Invoker Commands explainer* — rationale for declarative invoker relationships and accessibility mappings: https://open-ui.org/components/invokers.explainer/
+- MDN, *Using CSS anchor positioning* — anchor association, `anchor-scope`, placement and sizing mechanics: https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Anchor_positioning/Using
+- MDN, *Fallback options and conditional hiding for overflow* — fallback ordering, combined flips, custom tries and failure behavior: https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Anchor_positioning/Try_options_hiding
+- MDN, *`position-try-fallbacks`* — Baseline 2026 and overflow fallback semantics: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-try-fallbacks
+- MDN, *`position-try-order`* — space-based placement preference and February 2026 Baseline status: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-try-order
+- MDN, *`position-anchor`* — current association semantics and September 2026 Baseline status: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-anchor
+- Floating UI, *computePosition* — middleware capabilities (`shift`, `flip`, `autoPlacement`, `size`, `arrow`, `hide`): https://floating-ui.com/docs/computeposition
+- Floating UI, *detectOverflow* — clipping/root-boundary collision controls: https://floating-ui.com/docs/detectoverflow
+- Floating UI, *Virtual Elements* — point/range/custom reference geometry: https://floating-ui.com/docs/virtual-elements
+- Floating UI, *autoUpdate* — update triggers, lifecycle requirement and performance warning: https://floating-ui.com/docs/autoupdate
