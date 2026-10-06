@@ -1,0 +1,24 @@
+# Open Research Questions
+
+Prioritize questions whose answers could materially change future agent behavior.
+
+## Resolved / narrowed this cycle
+The broad question “Which context artifacts most improve visual quality in AI-generated frontend work?” now has a useful first answer for Claude: a brief-grounded design contract plus visual references/rendered inspection and explicit evaluation criteria are supported by Anthropic's current workflow evidence. Remaining comparative questions belong below.
+
+## Current queue
+- How much incremental benefit comes from each context artifact (design contract, screenshot/reference, design-system tokens, real content, acceptance criteria) when isolated experimentally?
+- Which recurring visual traits most strongly make current AI-generated interfaces feel generic across models, rather than only in Claude?
+- When does generative UI outperform fixed interfaces?
+- How should approval/undo thresholds vary by domain, blast radius, reversibility, and user expertise?
+- Which provenance details materially improve verification without overwhelming users?
+- Which products benefit from spatial navigation or direct manipulation?
+- When does spatial continuity measurably improve comprehension or task success versus an instant state change, and for which navigation structures?
+- Which direct-manipulation and drag/drop feedback patterns remain robust across pointer, touch, keyboard, and reduced-motion modes?
+- Under realistic latency, when do skeletons outperform preserved stale content, spinners, or no transitional UI in perceived speed and task success?
+- How should agent activity be visualized for long-running tasks?
+- Which mix of semantic tokens, component contracts, composition rules, rendered references, and real content most improves agent fidelity when tested independently?
+- How should design-system degrees of freedom be encoded so agents preserve brand/system integrity without converging on repetitive layouts?
+- Which patterns show real product adoption versus showcase-only visibility?
+- Which modern browser capabilities enable distinctive UX with acceptable complexity?
+- Which scroll-linked effects measurably improve orientation/comprehension versus adding distraction, and when is a discrete scroll-state query preferable to a continuous timeline?
+- When is an independent visual evaluator worth its latency/token cost for current frontier models?

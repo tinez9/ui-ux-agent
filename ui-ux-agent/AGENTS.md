@@ -25,14 +25,6 @@ You may rewrite weak sections, replace outdated advice, merge duplication, split
 
 Do not append another explanation when the existing explanation should simply be improved.
 
-## Skill boundary
-
-`skills/ui-ux/` is an installable Claude Code skill derived from this knowledge base. It is synced **manually** by the maintainer (see `skill-dev/SYNC.md`).
-
-- Research cycles must **not** modify `skills/` or `skill-dev/`.
-- Keep improving the lab files (`knowledge/`, `research/`, `meta/`, `agent_context/`); the maintainer merges material changes into the skill.
-- Before creating a new knowledge file, check whether an existing file already covers the topic and improve it instead. Duplicate files make the manual sync harder.
-
 ## Research depth and continuous learning
 
 Investigate broadly, deeply, and repeatedly. The repository should represent expertise built through many iterations, not the output of a few intense searches.

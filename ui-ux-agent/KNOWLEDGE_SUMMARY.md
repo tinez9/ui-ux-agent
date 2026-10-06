@@ -1,0 +1,72 @@
+# Knowledge Summary
+
+A compact snapshot of what this repository currently knows and how mature that knowledge is.
+
+**Last assessed:** 2026-09-30  
+**Overall knowledge maturity:** **3.7 / 10**
+
+> The scores measure the maturity and operational usefulness of the **repository's knowledge**, not the intelligence of any AI model and not a percentage of all possible knowledge.
+
+## Scorecard
+
+| Knowledge area | Score | Current summary | What would materially raise the score |
+|---|---:|---|---|
+| Foundations | **3 / 10** | Useful seed principles around hierarchy, feedback, consistency, progressive disclosure, and defaults. | Stronger evidence, cognitive/decision principles, error prevention, mental models, trust, and richer operational examples. |
+| Visual design | **3 / 10** | Initial rules for typography, composition, semantic color, identity, plus first 2026 creative signals. | Deeper art-direction guidance, stronger pattern evidence, responsive composition, typography systems, imagery, density, dark UI, and implementation examples. |
+| UX patterns | **4 / 10** | Operational guidance covers forms/error recovery, result-set control, and loading/progress/empty/error states, including accessible dynamic status and context-preserving async feedback. | Navigation, onboarding, tables/data grids, settings, dialogs, comparison, bulk actions, and stronger cross-domain outcome evidence. |
+| Interaction & motion | **3 / 10** | Operational baseline covers motion purpose, reduced-motion semantics, local/view transitions, high-risk spatial motion, progressive enhancement, and current web primitives. | Direct-manipulation/gesture patterns, performance tradeoffs, interruption testing, and measured evidence for comprehension/task outcomes. |
+| AI-native UX | **5 / 10** | Solid first architecture for risk-shaped autonomy, permissions, approvals, progress, provenance, recovery, undo, and denial handling. | Domain-specific validation, richer agent-state patterns, uncertainty UX, long-running workflows, delegation, and comparative outcome evidence. |
+| Design systems | **4 / 10** | Operational agent-readable architecture now separates invariants from bounded creative freedom and covers semantic tokens, component contracts, composition rules, themes, accessibility, references, and failure modes. | Comparative evidence on which artifact mix improves agent output, automated validation, governance, and richer real-world component/composition examples. |
+| Distinctive product features | **2 / 10** | Admission criteria and promising research directions are defined. | Validated feature patterns with shipped-product evidence, tradeoffs, use cases, implementation guidance, and differentiation value. |
+| Frontend implementation | **3 / 10** | Operational guidance now covers container-responsive components, scroll-state CSS, scroll/view animation timelines, progressive enhancement, reduced-motion boundaries, and CSS-vs-JavaScript decisions. | Broader native UI primitives, semantic HTML/accessibility recipes, performance measurement, testing, and framework-specific integration where useful. |
+| Claude / AI-agent frontend workflows | **5 / 10** | Evidence-backed brief → design contract → render/evaluate → iterate workflow; current context architecture and handoff guidance documented. | Comparative experiments, cross-model validation, stronger visual-evaluation loops, failure recovery, and measured evidence about which context artifacts improve results. |
+| Anti-patterns / generic AI UI | **3 / 10** | A useful watchlist exists and Claude-specific generic-output signals have begun to be identified. | Cross-model evidence, precise causal explanations, contextual exceptions, and strong “do this instead” alternatives. |
+| Trend observatory | **5 / 10** | Operational evidence ladder distinguishes showcase signals, creative/commercial momentum, shipped adoption, and measured outcomes; initial 2026 trends documented. | Broader longitudinal evidence, more product categories, measured behavioral outcomes, and systematic durability tracking. |
+
+## Current strengths
+
+The repository is currently strongest in three areas:
+
+1. **AI-agent control UX** — autonomy is treated as a risk/reversibility problem rather than a binary permission choice.
+2. **Claude/AI-agent frontend workflow** — design intent, explicit evaluation criteria, rendered inspection, and iterative refinement are now operational concepts.
+3. **Trend evidence discipline** — visual popularity is explicitly separated from shipped adoption and measured UX outcomes.
+
+## Largest knowledge gaps
+
+The highest-value gaps are currently:
+
+1. **UX patterns** — the repository needs detailed operational knowledge for common product interactions.
+2. **Distinctive product functionality** — reusable feature patterns need real product evidence and implementation detail.
+3. **Frontend capabilities** — container/scroll capabilities are now operational, but native overlays, semantic primitives, performance and testing still need decision-ready coverage.
+4. **Foundations** — durable UX principles need deeper evidence, decision models, and operational examples.
+5. **Interaction and motion** — the transition/reduced-motion baseline is operational, but direct manipulation and outcome evidence remain thin.
+
+## Scoring rubric
+
+| Score | Meaning |
+|---:|---|
+| **0** | EMPTY — no useful knowledge |
+| **1** | SEED — topic labels or unvalidated notes only |
+| **2** | BASIC — useful fragments with little depth/evidence |
+| **3** | EARLY — usable initial guidance with important gaps |
+| **4** | DEVELOPING — fundamentals understood; major subareas still open |
+| **5** | OPERATIONAL — useful across several scenarios, but substantial gaps remain |
+| **6** | SOLID — repeatedly researched across sources, perspectives, cases, and trade-offs |
+| **7** | STRONG — broad/deep operational coverage with repeated validation and exceptions |
+| **8** | VERY MATURE — numerous investigations over time; few major known gaps |
+| **9** | EXPERT-GRADE — exceptional depth including edge cases, controversies, failures, outcomes, and evolution |
+| **10** | NEAR-EXHAUSTIVE — practically exhaustive within a defined scope; extremely rare |
+
+## Maintenance rules
+
+- Scores are integer expert judgments, not fake measurements.
+- Scores change only when knowledge maturity materially changes.
+- Adding more text or completing another run does not justify a higher score.
+- Broad areas normally require many independent research cycles before meaningful score increases.
+- Scores must reflect remaining unknowns, not only accumulated material.
+- Discovering hidden complexity can justify keeping or lowering a score.
+- Scores can decrease when knowledge becomes stale, contradicted, poorly scoped, or less useful.
+- Levels 8–10 require repeated research over time, cross-context validation, edge cases, competing views, practical evidence, and very few major known gaps; they should be rare.
+- No score makes an area closed to future research.
+- Keep this file compact. Detailed research belongs elsewhere.
+- When a score changes, update the short explanation and the relevant gap at the same time.

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tinez9/ui-ux-agent/skills/ui-ux/schemas/finding.schema.json",
+  "title": "UI/UX finding",
+  "description": "One distinct UI/UX problem or opportunity, with evidence separated from interpretation and recommendation. Written as a YAML block inside audit/review reports.",
+  "type": "object",
+  "required": [
+    "id", "title", "severity", "category", "evidence", "interpretation",
+    "why_it_matters", "recommendation", "verification", "confidence", "basis", "reach", "status"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^(UX|NAV|IA|FORM|STATE|ERR|INT|OVL|MOT|VIS|TYPE|COLOR|LAYOUT|ICON|IMG|CONT|RESP|A11Y|DS|PERF|ONB|AUTH|SET|DATA|AI|TRUST|DIST)-[0-9]{3}$",
+      "description": "Category prefix + 3-digit sequence. Stable across re-audits: a finding keeps its ID until closed."
+    },
+    "title": { "type": "string", "maxLength": 120, "description": "The problem in one line, user-facing terms." },
+    "severity": { "enum": ["critical", "high", "medium", "low", "opportunity"] },
+    "category": {
+      "enum": [
+        "ux-flow", "navigation", "information-architecture", "content", "forms", "states", "error-handling",
+        "interaction", "overlays", "motion", "visual-hierarchy", "layout", "typography", "color", "iconography",
+        "imagery", "responsive", "accessibility", "design-system", "performance-perception", "onboarding",
+        "authentication", "settings", "data-dense", "ai-ux", "trust", "distinctiveness"
+      ]
+    },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "route": { "type": "string" },
+        "component": { "type": "string", "description": "Component name and/or file:line" },
+        "viewport": { "type": "string", "description": "e.g. 390x844, or 'container 320px'" },
+        "state": { "type": "string", "description": "State from the states matrix, e.g. empty, error, focus-visible" },
+        "theme": { "type": "string" }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source", "observation"],
+        "additionalProperties": false,
+        "properties": {
+          "source": { "enum": ["BROWSER", "INTERACTION", "SCREENSHOT", "CODE", "TOOL", "USER"] },
+          "observation": { "type": "string", "description": "What was actually observed. Factual, reproducible, no interpretation." },
+          "artifact": { "type": "string", "description": "Path to screenshot/measurement, file:line, or tool output reference." }
+        }
+      }
+    },
+    "interpretation": { "type": "string", "description": "What the evidence means for users and tasks." },
+    "why_it_matters": { "type": "string", "description": "Concrete user/task/business consequence." },
+    "hierarchy_tier": { "enum": ["T0", "T1", "T2", "T3", "T4"], "description": "Tier of the affected element: T0 safety/state, T1 task anchor, T2 task support, T3 contextual utility, T4 ambient." },
+    "affected_flow": { "type": "string" },
+    "reach": { "enum": ["core", "secondary", "edge"] },
+    "recommendation": { "type": "string", "description": "Direction of the fix (not necessarily implementation detail)." },
+    "verification": { "type": "string", "description": "Observable criterion that proves the fix: what, where (viewport/state), how." },
+    "confidence": { "enum": ["high", "medium", "low"] },
+    "basis": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "enum": ["STANDARD", "RESEARCH", "DESIGN_PRINCIPLE", "HEURISTIC", "INFERENCE"] }
+    },
+    "references": { "type": "array", "items": { "type": "string" }, "description": "e.g. 'WCAG 2.2 SC 1.4.10', 'references/responsive.md#invariants'" },
+    "effort": { "enum": ["s", "m", "l"] },
+    "root_cause": { "type": "string", "pattern": "^RC-[0-9]{2}$" },
+    "related": { "type": "array", "items": { "type": "string" } },
+    "status": { "enum": ["open", "fixed", "partially-fixed", "still-open", "regressed", "needs-verification", "wont-fix"] },
+    "status_note": { "type": "string", "description": "Evidence/explanation for the latest status change." }
+  }
+}
