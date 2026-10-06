@@ -12,10 +12,46 @@ The technical conflict unit and the user's mental unit should be as close as pra
 
 - **Whole-record/version token:** simple and safe, but two independent field edits can conflict unnecessarily.
 - **Field/property-level comparison:** can preserve independent edits, but only if fields are actually independent. Two columns can be semantically coupled even when they differ technically.
-- **Operation-based collaborative model:** appropriate when many concurrent edits must coexist continuously, but it requires explicit ordering/merge semantics rather than eliminating conflicts by magic.
+- **Operation-based collaborative model / CRDT:** appropriate when concurrent local edits and offline work must converge without a central lock, but convergence does not mean every concurrent intention was semantically reconciled.
 - **Pessimistic lock:** useful when concurrent mutation is intolerable or resolution would be prohibitively expensive, but locks create waiting, expiry, abandoned-session, ownership and recovery problems.
 
 Microsoft's current EF Core guidance is a useful architectural baseline: optimistic concurrency allows edits without locking, then rejects a write when the concurrency token no longer matches the version originally read. This prevents silent overwrite but deliberately pushes conflict resolution into the application.
+
+## CRDT convergence is not semantic agreement
+
+Do not market or design a CRDT-backed editor as “conflict-free” in the user-intent sense. CRDTs can guarantee deterministic convergence of replicated state while still producing a result that requires domain or human review.
+
+Automerge documents the boundary directly. Concurrent edits can be made locally and later merged, but some values cannot be merged sensibly. If two actors concurrently assign different values to the same map key, Automerge chooses a deterministic winner while retaining the conflicting values for inspection. Its rich-text marks similarly choose a consistent but arbitrary value for overlapping conflicting marks. A converged document can therefore contain a technically resolved state without proving that the winning meaning is correct.
+
+Design from the data type and domain invariant:
+
+- **Commutative operations:** counters and genuinely independent insertions can often converge without user intervention.
+- **Concurrent scalar replacement:** retain enough conflict/history information to inspect alternatives when the value is consequential; a deterministic winner is not a product decision.
+- **Structured/domain state:** validate the converged candidate against invariants. Two individually valid operations can jointly produce an invalid or surprising business state.
+- **Human-authored meaning:** text may merge structurally while the combined sentence, requirement, policy, or design intent becomes contradictory. Semantic review remains a UX problem.
+
+The useful promise is therefore **replica convergence and local availability**, not “users can never conflict.”
+
+## Offline and reconnect are product states, not transport details
+
+Local-first collaboration permits work while peers are disconnected and synchronization later. Automerge's model explicitly supports independent document instances that can be modified locally and merged later; its sync protocol exchanges missing changes between peers.
+
+That capability should not collapse the UI into a binary online/offline badge. Distinguish states only when they change what the user can safely infer or do, for example:
+
+- **local change recorded:** the user's work is durable on this device/local store;
+- **sync pending/offline:** the work has not yet reached relevant peers or a server-backed durability boundary;
+- **synchronized:** known changes have been exchanged with the intended sync target;
+- **needs attention:** convergence exposed a semantic conflict, rejected invariant, permission change, deleted target, or other condition requiring resolution.
+
+Do not label locally persisted work “Saved to workspace” if it has not crossed the durability/synchronization boundary implied by that phrase. Conversely, avoid persistent alarm styling for ordinary offline editing when local persistence is reliable and no action is required.
+
+Reconnect should preserve authorship and causal history rather than replaying a stale whole-document snapshot. A CRDT merge can make reconnect mechanically safe from classic whole-record overwrite while still requiring product-specific handling for permissions, server validation, side effects, and semantic conflicts.
+
+## Presence and CRDT state have different lifetimes
+
+Presence, cursors, selections, typing indicators and viewport positions are typically **ephemeral awareness**, not durable document truth. Keep them out of the persistent collaborative model unless replaying that state later has real meaning.
+
+This distinction prevents stale collaborators or old cursor positions from reappearing after reconnect and reinforces the earlier rule: presence can reduce collisions, but it is not the mechanism that makes document state converge.
 
 ## A conflict screen must preserve both intents
 
@@ -84,6 +120,11 @@ Use mutation/revision identity so late responses cannot regress newer intent. If
 Avoid:
 
 - unconditional last-write-wins for collaborative records;
+- claiming a CRDT makes user intent “conflict-free”;
+- treating deterministic CRDT winner selection as proof that the chosen meaning is correct;
+- showing “synced” when work is only locally persisted;
+- replaying stale whole-document snapshots after reconnect;
+- persisting ephemeral cursor/presence state as document history without a reason;
 - reloading after a conflict and losing the user's unsaved draft;
 - a generic “Something went wrong” for a known version conflict;
 - treating presence indicators as a data-integrity mechanism;
@@ -99,26 +140,35 @@ Avoid:
 Before implementing collaborative or multi-client editing, answer:
 
 1. What is the conflict unit: document, entity, field, block, operation, or domain aggregate?
-2. What token/revision proves which version the user edited?
+2. What token/revision/causal history proves which state the user edited?
 3. Can independent changes be merged safely, and what domain invariant proves that?
-4. What user work is retained if the save is rejected?
-5. Can the UI show base, mine and latest in a form users can actually compare?
-6. When is automatic merge safe versus explicit review required?
-7. Is overwrite allowed, and does the overwrite itself re-check current state?
-8. What happens if the target was deleted, permissions changed, or validation rules changed?
-9. Are presence indicators advisory rather than authoritative?
-10. Can late autosave/mutation responses overwrite newer local intent?
-11. Does undo reverse an operation safely or replace a stale snapshot?
-12. After resolution, is the merged result revalidated as a whole?
+4. If using a CRDT, which concurrent values are merged semantically and which merely converge deterministically?
+5. What does “saved” mean here: local durability, server receipt, peer synchronization, or domain acceptance?
+6. What happens after offline edits reconnect and server permissions/validation have changed?
+7. What user work is retained if the save is rejected or a converged result needs attention?
+8. Can the UI show base, mine and latest in a form users can actually compare?
+9. When is automatic merge safe versus explicit review required?
+10. Is overwrite allowed, and does the overwrite itself re-check current state?
+11. Are presence indicators advisory, ephemeral and separate from durable state?
+12. Can late autosave/mutation responses overwrite newer local intent?
+13. Does undo reverse an operation safely or replace a stale snapshot?
+14. After resolution/convergence, is the result revalidated as a whole?
 
 ## Evidence boundary
 
-Microsoft EF Core documentation establishes the mechanics and rationale of optimistic concurrency: stale writes are detected through concurrency tokens and resolution belongs to the application. Microsoft's older ASP.NET concurrency material remains useful for the core failure mode—last-write-wins silently overwrites another user's changes—and for distinguishing optimistic from pessimistic control. Current Power Pages documentation supplies a shipped example of stale-save UX that offers compare/merge/overwrite choices. These sources do not establish a universal best conflict UI, field-level merge policy, presence design, or collaboration algorithm. Those remain product/domain decisions and should be validated with representative data and workflows.
+Microsoft EF Core documentation establishes the mechanics and rationale of optimistic concurrency: stale writes are detected through concurrency tokens and resolution belongs to the application. Microsoft's older ASP.NET concurrency material remains useful for the core failure mode—last-write-wins silently overwrites another user's changes—and for distinguishing optimistic from pessimistic control. Current Power Pages documentation supplies a shipped example of stale-save UX that offers compare/merge/overwrite choices.
+
+Automerge documentation establishes a different architectural boundary: replicas can accept local changes and later synchronize/merge, but concurrent assignments can still retain conflicting values while exposing one deterministic winner; overlapping rich-text marks may likewise resolve consistently but arbitrarily. Its sync documentation establishes exchange/convergence mechanics, not a universal UX policy for offline state, semantic conflict, validation, permissions, or awareness. The UX rules above that distinguish local durability, synchronization, semantic acceptance and ephemeral presence are agent synthesis from those mechanics and should be validated against the product's actual persistence and collaboration architecture.
+
+None of these sources establishes a universal best conflict UI or proves that CRDT/OT collaboration improves outcomes in every product. Conflict granularity, semantic merge policy, presence design, offline messaging and escalation remain product/domain decisions.
 
 ## Sources
 
 - Microsoft Learn, *Handling Concurrency Conflicts — EF Core*: https://learn.microsoft.com/en-us/ef/core/saving/concurrency
 - Microsoft Learn, *Implementing Optimistic Concurrency*: https://learn.microsoft.com/en-us/aspnet/web-forms/overview/data-access/editing-inserting-and-deleting-data/implementing-optimistic-concurrency-cs
 - Microsoft Learn, *Edit code with Visual Studio Code for the Web (Power Pages)*: https://learn.microsoft.com/en-us/power-pages/configure/visual-studio-code-editor
+- Automerge documentation, *Automerge crate / Data Model / Conflicts*: https://automerge.org/automerge/automerge/
+- Automerge documentation, *Sync Protocol*: https://automerge.org/automerge/automerge/sync/index.html
+- Automerge documentation, *Marks*: https://automerge.org/automerge/automerge/marks/struct.Mark.html
 
 Last researched: 2026-10-06.
