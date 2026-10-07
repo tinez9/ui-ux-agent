@@ -201,6 +201,24 @@ This is stronger orchestration evidence than a monolithic “make UI better” p
 
 **Evaluation consequence:** benchmark the whole invoked path, not only `SKILL.md`. Record trigger decision, context retrieved, tools called, permissions/external dependencies, artifact produced, rendered QA and final correction loop. A skill can be excellent prose yet deliver little value if routing is noisy or the required tool integration is absent.
 
+## 2026-10-07: `ryktara/design-engineering-skill` — unusually strong evaluation discipline, but precision/recall failure is the lesson
+
+**Status:** high-value research reference and promising context-first specialist; do not promote to the default stack as a general design authority yet.
+
+This Claude Code skill is materially different from catalog-style design packs. It inspects the real repository first, classifies project evidence as KNOWN / INFERRED / UNKNOWN, derives task/platform/mode requirements, retrieves a small guidance bundle from a hand-written ontology, preserves detected design decisions by default, and verifies by rendering. The runtime is local Python 3.10+ standard library with no network/packages; the repository is MIT licensed. This is a comparatively narrow supply-chain surface, though the agent still executes local inspection/retrieval scripts and any later browser/emulator verification has its own trust boundary.
+
+The strongest reason to study it is **negative evidence published by the maintainer**. Phase 6 pre-registered thresholds before its blind held-out set and retained failures rather than tuning the bar after results. On 525 held-out prompts, candidate c4 met only **5/11** thresholds: false-platform assignment (0.025), platform correctness (0.772), mode (0.92), forbidden concepts (0.049) and wrong-screen defects (0.072) passed, while critical-concept recall (0.448), required recall (0.35), human GOOD+PARTIAL (0.72), BAD (0.28), generic defects (0.137) and the pre-registered scope metric failed. Its implemented 32-task/16-codebase round helped 22 tasks and hurt none, but still failed 4/9 gates. The repository therefore labels itself **personal-production-ready, not stable-candidate**.
+
+The durable finding is architectural, not a recommendation to install: **precision-first retrieval can make an agent safer and less generic while simultaneously starving it of necessary guidance**. The project reduced wrong-screen/forbidden contamination, but recall fell across historical held-out sets and 78 v5 cases returned empty bundles. Missing critical concepts dominated PARTIAL/BAD reviews. For design-agent tooling, measure abstention/empty-bundle rate and critical guidance recall alongside false positives and context size; “no guidance beats wrong guidance” is not universally true when a task has common but unstated design obligations.
+
+Its evaluation method is also worth borrowing: freeze candidate hashes; pre-register thresholds; separate development/regression/held-out sets; use independent generation/review sessions; route defects to the earliest wrong layer; retain failed gates; and distinguish deterministic retrieval metrics from implemented-project outcomes. A particularly useful caution is disclosed by the project itself: all held-out generator/reviewer roles were Anthropic Claude sessions, so independence of sessions is not cross-vendor/model independence.
+
+**Best fit:** study or controlled trial when project-context inspection, platform/input-modality discrimination and compact retrieval are more valuable than broad aesthetic ideation. It is especially relevant to multi-platform products where wrong web/mobile/TV assumptions are costly.
+
+**Do not infer:** stable generalization, broad aesthetic superiority, cross-model portability, or causal design uplift from the current evidence. Its own strongest evaluation falsifies those stronger claims.
+
+**Promotion gate:** compare against baseline and existing recommended skills on the same real projects, with critical-concept recall, empty guidance, wrong-platform/wrong-screen guidance, rendered quality, functional regressions and context cost all scored. Preserve its willingness to fail pre-registered gates rather than relaxing thresholds after the fact.
+
 ## Composition strategy
 
 Do not maximize skill count. A plausible, non-exclusive architecture is:
