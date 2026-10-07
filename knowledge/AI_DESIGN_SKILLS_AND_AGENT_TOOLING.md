@@ -1,6 +1,6 @@
 # AI Design Skills and Agent Tooling
 
-Last reviewed: 2026-10-06
+Last reviewed: 2026-10-07
 
 ## Purpose
 
@@ -218,6 +218,21 @@ Its evaluation method is also worth borrowing: freeze candidate hashes; pre-regi
 **Do not infer:** stable generalization, broad aesthetic superiority, cross-model portability, or causal design uplift from the current evidence. Its own strongest evaluation falsifies those stronger claims.
 
 **Promotion gate:** compare against baseline and existing recommended skills on the same real projects, with critical-concept recall, empty guidance, wrong-platform/wrong-screen guidance, rendered quality, functional regressions and context cost all scored. Preserve its willingness to fail pre-registered gates rather than relaxing thresholds after the fact.
+
+## 2026-10-07: OpenAI Skills API makes the trust boundary explicit
+
+OpenAI's current Skills documentation adds an important correction to skill evaluation: a skill is not merely prompt text. In the Responses/Agents runtimes it can be a **versioned bundle of instructions, scripts, references and assets** copied into an execution environment. Discovery exposes only `name`, `description` and `path`; the model then decides whether to load the full instructions. This confirms that routing quality and progressive disclosure are runtime behavior, not just authoring style.
+
+The more consequential finding is security. OpenAI explicitly says to treat skills as **privileged code and instructions** and warns that unvetted skills combined with network access can enable prompt-injection-driven exfiltration or destructive actions. It recommends developer-level integration rather than letting end users attach arbitrary open-catalog skills, plus approvals for sensitive writes. Therefore a public GitHub skill's readable `SKILL.md` is not an adequate security review: inspect bundled scripts/assets, tool/network permissions, runtime mode and update/version policy as one trust boundary.
+
+This changes the installation gate in two practical ways:
+
+- **pin the evaluated artifact, not only the repository name.** Hosted OpenAI skills have explicit versions and `default_version`/`latest_version` pointers; reproducible evaluation should record the exact version or commit rather than silently following latest;
+- **separate local prose from executable/network capability.** A Markdown-only design heuristic, a local deterministic screenshot script, and a plugin skill with MCP/network access are different risk classes even when all use `SKILL.md`.
+
+OpenAI's current plugin guidance reinforces the separation: use skills for workflow/decision logic and MCP servers for live data, authentication, authorization and controlled actions. Plugin manifests can declare skill directories, MCP dependencies and tool approval policies. For design tooling, this means Figma/live-service access, image generation, browser automation and design judgment should be evaluated as composed capabilities rather than attributing the whole result or risk profile to the skill prose.
+
+**Evaluation consequence:** add a trust-boundary record to skill benchmarks: exact skill version/commit, loaded files, scripts executed, network/MCP dependencies, approval mode, secrets/data reachable, and whether the same design value can be obtained with a narrower capability. This is independent of design quality: a visually excellent skill can still be an unjustified security or reproducibility choice.
 
 ## Composition strategy
 
