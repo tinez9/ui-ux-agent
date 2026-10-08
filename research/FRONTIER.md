@@ -36,3 +36,12 @@ Nested confirmation is a separate UX question, not solved by the API. A second m
 **Status:** UNVALIDATED (2026-10-08)
 
 `smukh/a11y-agent-skills` 0.2.0 provides Playwright/axe fixtures for OTP paste, grid focus, async status, stale autocomplete, and chart/table parity. Its own evaluation guide states that no model-uplift benchmark has been published and the scorer cannot represent several of those behaviors. Fixture tests prove the oracle distinguishes broken/repaired cases, not that an agent with the skill outperforms an agent without it. Next: blinded paired repair trials against plain Playwright + axe, hiding repaired source/oracles, retaining negative controls, functional regressions and manual AT review. Sources: https://github.com/smukh/a11y-agent-skills/blob/main/docs/SPECIALIST-EVALUATION.md ; https://playwright.dev/docs/accessibility-testing .
+
+### Superdesign: external canvas versus local design verification
+**Status:** CONDITIONAL / NOT VALIDATED (2026-10-08)
+
+The maintained `superdesigndev/superdesign-skill` routes Claude/Codex and other agents through a logged-in external CLI and branchable design canvas. Its codebase init captures full component/layout source locally, then `--context-file` sends selected UI source and tokens to the design workflow. The upstream instructions explicitly warn that oversized context can return HTTP 400; dropping too much source on retry can yield an invented generic reproduction. Saved context bundles and hashes support resuming designs, but do not prove visual or functional fidelity.
+
+**Decision boundary:** useful candidate for authorized visual exploration, not a default for sensitive/offline repos or accessibility certification. Inspect the exact outbound source bundle, pin/audit CLI separately from the MIT skill, and verify the real app after implementation. An independent July 2026 test stopped at authentication and measured no design quality; do not interpret that as an output-quality failure. Last observed repo push: 2026-08-21. Compare baseline screenshot-driven work against an authenticated Superdesign run, scoring reproduction fidelity, missing states, blind design preference, regressions, data exposure and cost.
+
+Sources: https://github.com/superdesigndev/superdesign-skill/blob/main/skills/superdesign/SKILL.md ; https://github.com/superdesigndev/superdesign-skill/blob/main/skills/superdesign/references/INIT.md ; https://github.com/superdesigndev/superdesign-skill/blob/main/skills/superdesign/references/SUPERDESIGN.md ; https://skillproof.dev/skills/superdesign .
