@@ -6,6 +6,7 @@ Prioritize questions whose answers could materially change future agent behavior
 The broad question “Which context artifacts most improve visual quality in AI-generated frontend work?” now has a useful first answer for Claude: a brief-grounded design contract plus visual references/rendered inspection and explicit evaluation criteria are supported by Anthropic's current workflow evidence. Remaining comparative questions belong below.
 
 ## Current queue
+- On blinded accessibility repairs, do specialized agent skills improve correct behavioral fixes beyond ordinary Playwright + axe, without increasing false-positive edits or regressions? Test OTP paste, focus persistence, stale autocomplete, live status, chart/table parity, and clean controls; keep repair oracles hidden from the agent.
 - How much incremental benefit comes from each context artifact (design contract, screenshot/reference, design-system tokens, real content, acceptance criteria) when isolated experimentally?
 - Which recurring visual traits most strongly make current AI-generated interfaces feel generic across models, rather than only in Claude?
 - When does generative UI outperform fixed interfaces?
