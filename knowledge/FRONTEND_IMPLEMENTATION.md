@@ -90,6 +90,47 @@ Native `<dialog>`, `showModal()`, and `inert` are broadly available in current b
 
 WAI-ARIA APG remains useful for dialog interaction requirements, but its examples explicitly require real assistive-technology testing before production reuse. Prefer semantic HTML behavior where it already supplies the contract rather than reproducing an ARIA example mechanically.
 
+## CSS anchor positioning for overlays — 2026-10-08
+
+**Decision:** choose the widget's semantics and dismissal/focus contract first (dialog, menu, tooltip, listbox, or plain disclosure), then use CSS anchor positioning for **geometry**. The Popover API handles display/top-layer lifecycle, but neither popover nor anchor positioning implements a menu's arrow-key navigation or a tooltip's accessibility contract.
+
+**Support boundary:** MDN marks core anchor-positioning features and `position-try-fallbacks` as Baseline 2026 (January). This is **newly** interoperable, not a promise about older Safari/Firefox/embedded browsers. Test the exact features and provide a usable non-anchored placement. Popover support is older, but `popover="hint"` and adjacent capabilities have separate compatibility considerations.
+
+### Practical contract for coding agents
+
+- A button with `popovertarget` gives its popover an **implicit CSS anchor**. Prefer this over generated global `anchor-name` identifiers for simple invoker-bound overlays. Reset UA popover `inset` and `margin` before applying `position-area`; otherwise default centering can defeat intended placement.
+- For repeated cards/rows using explicit `anchor-name: --name`, **unscoped duplicate names bind to the last matching anchor in source order**. Use component-local `anchor-scope` (where supported), distinct names, or an implicit popover invoker association. `anchor-scope` does **not** govern implicit associations.
+- `position-try-fallbacks` is an ordered list, not a guarantee of visibility. `flip-block, flip-inline` alone can fail at a corner; include the combined `flip-block flip-inline` option and test all edges, small viewports, zoom, dynamic content, RTL and nested scroll containers. If no candidate fits, the original placement may still overflow.
+- `position-visibility` can hide a floating surface when its anchor is offscreen or the surface overflows. That may be correct for a non-interactive hint but can silently conceal **focused controls or an unfinished task**. For interactive surfaces prefer repositioning or a usable alternate layout; test focus and dismissal when the invoker scrolls away.
+- Choose `popover="auto"` for click-triggered light-dismissable surfaces, `manual` when lifecycle must be explicit, and consider `hint` for hover/focus help **only after** checking its support and hover/focus/Escape behavior. `hint` is not an accessibility role. W3C APG's tooltip pattern is still a work in progress; tooltip content should not contain focusable controls. An action menu needs menu semantics and keyboard behavior independent of its positioning.
+
+A small progressive-enhancement pattern (the default fixed placement remains usable if anchoring is unsupported):
+
+```html
+<button type="button" popovertarget="help">Help</button>
+<div id="help" class="help-popover" popover="auto">Short guidance</div>
+```
+
+```css
+.help-popover:popover-open {
+  position: fixed;
+  inset: auto 1rem 1rem auto;
+  margin: 0;
+  max-inline-size: min(22rem, calc(100vw - 2rem));
+}
+@supports (position-area: bottom) {
+  .help-popover:popover-open {
+    inset: auto;
+    position-area: bottom;
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+  }
+}
+```
+
+**Verification:** check keyboard activation, Escape/outside dismissal, focus return, viewport corners, 200–400% zoom, touch/hover, RTL, nested scrollers, and older target browsers. The code above demonstrates **placement**, not a complete menu, tooltip, or dialog implementation.
+
+**Evidence boundary:** browser/standards documentation establishes API mechanics, newly broad support, and failure cases; no measured evidence here that CSS anchoring itself improves task outcomes. Sources: [MDN anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Anchor_positioning/Using), [fallback failure modes](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Anchor_positioning/Try_options_hiding), [anchor-scope](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/anchor-scope), [popover](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using), [WAI-ARIA menu button](https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/), [tooltip pattern caveat](https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/).
+
 ## Scroll-state queries: promising, not a default dependency
 
 Current CSS can query conditions such as whether content remains scrollable, a sticky element is stuck, or a snap target is snapped. This can remove JavaScript observers used only to decorate those states.
