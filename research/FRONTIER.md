@@ -31,3 +31,8 @@ Do **not** promote `closedby` to default stable guidance yet: as of 2026-10-06 M
 Nested confirmation is a separate UX question, not solved by the API. A second modal may be semantically justified when a close request reveals a genuinely consequential unresolved decision, but routinely stacking dialogs for multi-step flows increases context/focus complexity. Research real nested-dialog behavior, topmost close-watcher semantics, focus restoration, Back/Escape behavior, and browser/AT interoperability before recommending nested modals as a general pattern.
 
 **Evidence:** WHATWG HTML dialog algorithms; MDN `<dialog>`, `HTMLDialogElement.requestClose()`, `cancel`, `close()`, and `closedBy` documentation. Platform docs establish mechanics and support, not that nested confirmation improves task outcomes.
+
+### Behavioral accessibility skill uplift
+**Status:** UNVALIDATED (2026-10-08)
+
+`smukh/a11y-agent-skills` 0.2.0 provides Playwright/axe fixtures for OTP paste, grid focus, async status, stale autocomplete, and chart/table parity. Its own evaluation guide states that no model-uplift benchmark has been published and the scorer cannot represent several of those behaviors. Fixture tests prove the oracle distinguishes broken/repaired cases, not that an agent with the skill outperforms an agent without it. Next: blinded paired repair trials against plain Playwright + axe, hiding repaired source/oracles, retaining negative controls, functional regressions and manual AT review. Sources: https://github.com/smukh/a11y-agent-skills/blob/main/docs/SPECIALIST-EVALUATION.md ; https://playwright.dev/docs/accessibility-testing .
