@@ -47,7 +47,7 @@ Test keyboard-only recovery, screen-reader error order, zoom/reflow, mobile keyb
 GOV.UK provides extensively deployed guidance recommending progression-time validation by default, preservation of entered data, specific corrective errors, and error summaries. W3C provides accessibility requirements and implementation techniques. Baymard provides behavioral evidence strongest for commerce/checkout forms. Generalize the mechanisms cautiously; do not universalize checkout-specific percentages or conventions.
 
 ## Next research domains
-Onboarding; settings; tables/data grids; dashboards; feeds; catalogs; authentication; notifications; dialogs/drawers; tabs; comparison; undo/recovery.
+Onboarding; settings; tables/data grids; dashboards; feeds; catalogs; authentication; dialogs/drawers; tabs; comparison; undo/recovery.
 
 ## Search, filtering, and result-set orientation
 
@@ -112,6 +112,33 @@ Test fast/slow responses, offline/network failure, retry, partial/stale data, ba
 
 ## Loading-state evidence boundary
 W3C defines accessibility behavior. Carbon and Atlassian provide mature production guidance separating skeleton, loading, and progress use cases. These sources do not establish a universal wait threshold or prove skeletons always feel faster.
+
+## Notifications and toasts: choose persistence before presentation
+
+Treat a notification as **information with a consequence and an expiration policy**, not a generic floating component. Choose the surface from the user's next required action and whether the message can be recovered.
+
+### Surface and dismissal contract
+
+- **Transient, non-critical confirmation** (for example, a save also reflected in the document): a short non-modal toast/status may auto-dismiss **if the same information remains discoverable elsewhere**. Do not make it the sole proof of success.
+- **Field/task failure:** use a persistent message adjacent to the affected object, with field-level recovery and an error summary when appropriate; a toast alone is insufficient.
+- **Important system-wide condition:** use a persistent banner/notification center entry that remains findable after navigating. Avoid burying outages or unsaved changes in a disappearing corner.
+- **Action required, including Undo:** keep the action available until explicitly resolved/dismissed or provide an equally usable persistent recovery route. Do not make a five-second toast the only way to reverse a consequential operation.
+- **Decision that must interrupt work:** use a properly managed dialog/alert dialog, not an assertive toast that pretends to be modal.
+
+**Timing nuance:** WCAG 2.2 SC 2.2.1 (Level A) explicitly allows a five-second email-arrival toast when the inbox offers another way to discover the same information; if the toast is the **only** way to obtain the information or perform an action, the time limit must satisfy that criterion. This is not a blanket five-second accessibility rule. WAI-ARIA APG separately cautions against automatically disappearing **alerts**; the two recommendations address different consequences. A minimum duration alone does not make a toast accessible.
+
+### Announcements and focus
+
+- For routine completion/progress use a concise `role="status"` (polite). Reserve `role="alert"` (assertive) for urgent, time-sensitive text; frequent alerts interrupt screen-reader work. WCAG 4.1.3 (Level AA) requires status messages to be programmatically determinable without stealing focus.
+- Neither `status` nor `alert` is a substitute for a keyboard-operable interactive component. Do not put buttons inside the **alert text** region and assume the announcement exposes their function. If an actionable notification is used, provide a separately reachable control and explicit focus/return behavior; if a response must interrupt, use an alert dialog.
+- Establish live regions before updating their text where practical; newly mounted populated regions and repeated identical strings may not announce consistently. Test the actual browser/screen-reader combination rather than assuming DOM or axe checks prove an announcement occurred.
+- A persistent actionable toast must be discoverable from the keyboard without requiring pointer hover. React Aria's toast region supports F6 navigation and restores focus; that is a **library implementation**, not a universal native browser shortcut.
+
+### Implementation and failure checks
+
+Specify a single owner for queueing, deduplication, priority, replacement and dismissal; otherwise repeated saves/background jobs can stack overlays and flood live announcements. Avoid obscuring essential controls at narrow widths, 200–400% zoom, mobile keyboards and safe-area insets. Pause any *permitted* auto-dismiss timer on hover/focus (and consider inactive tabs), but **do not use pause as a substitute for persistence** when a unique action or important information is at stake. Verify screen-reader announcement, keyboard reachability and focus restoration, action expiry, repeated identical messages, concurrent errors, offline/retry, navigation, and reduced motion.
+
+**Evidence boundary (reviewed 2026-10-09):** [WCAG 2.2.1](https://www.w3.org/WAI/WCAG22/Understanding/timing-adjustable) supplies the explicit alternative-access exception; [WCAG 4.1.3](https://www.w3.org/WAI/WCAG21/Understanding/status-messages) defines status semantics; [WAI-ARIA APG alert](https://www.w3.org/WAI/ARIA/apg/patterns/alert/) and [MDN live regions](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Guides/Live_regions) explain interruption/announcement pitfalls. Current [Carbon notification patterns](https://www.carbondesignsystem.com/building-blocks/core/patterns/notifications) distinguish persistent actionable toasts from optional timed informational toasts; [React Aria Toast](https://react-aria.adobe.com/Toast) supplies one implemented keyboard/timer model. Carbon's older v10 guidance warns against interactive toasts while its current guidance supports **persistent** actionable notifications: do not treat historical component limitations as a universal prohibition. These are standards/platform and production-design-system mechanisms, not controlled evidence that toasts improve outcomes.
 
 ## Navigation and wayfinding
 
