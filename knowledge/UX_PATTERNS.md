@@ -197,3 +197,34 @@ Test direct entry on deep pages, refresh, browser back/forward, return from deta
 
 ## Navigation evidence boundary
 WCAG 2.x provides normative accessibility requirements for consistent repeated navigation; WCAG 3 material reviewed in October 2026 is still draft and should not be treated as a final requirement. GOV.UK provides current deployed guidance that clearly separates hierarchical breadcrumbs, historical/process Back, and repeated multi-task service navigation. These sources strongly support semantic separation and predictability, but they do not prove one navigation shell, sidebar pattern, or information architecture is universally superior.
+
+## Reordering and drag-and-drop: design the non-drag operation first
+
+**Decision rule (reviewed 2026-10-09):** Model the operation as *move item X to position/group Y* before choosing drag gestures. A draggable UI is an optional input method for that operation, not its sole definition. For a small ordered list, visible **Move up / Move down** buttons may be sufficient without any drag library. For cross-column boards or large lists, offer a click/tap-operable **Move to…** menu or destination chooser as well as dragging. Preserve the same permissions, ordering rules, and outcome across methods.
+
+### Two independent accessibility obligations
+
+- **Keyboard operation** (WCAG 2.1.1) requires a usable keyboard path; a keyboard sensor can help, but keyboard-only drag is not enough.
+- **Single-pointer operation without dragging** (WCAG **2.5.7, Level AA**) separately requires click/tap alternatives for author-controlled drag operations unless the defined exception applies. A drag handle operated by arrow keys alone does **not** satisfy this criterion for someone using touch without a keyboard. A menu or buttons that can be activated by a single pointer can serve both obligations. This distinction is explicit in [W3C's understanding of 2.5.7](https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements) and [technique G219](https://www.w3.org/WAI/WCAG22/Techniques/general/G219).
+
+### Interaction contract
+
+1. **Discoverability:** make movable items identifiable without hover alone. If an item contains links, buttons, text selection, or editable content, use a dedicated drag handle rather than hijacking the entire item's pointer behavior. Expose the equivalent action menu on the item.
+2. **Before moving:** distinguish manual rank from current *display order*. If results are sorted by date/name or filtered, either disable manual reordering with an explanation and a route back to rank order, or define precisely what the change means. Do not silently reorder hidden rows or mutate the wrong canonical sequence. [Jira's April 2026 list rollout](https://confluence.atlassian.com/cloud/blog/2026/04/atlassian-cloud-changes-mar-30-to-apr-6-2026) demonstrates the disable-with-explanation choice (shipped behavior, not measured UX superiority).
+3. **During moving:** show the proposed destination (before/after/on another item or into a group), distinguish *move* from *copy*, and support cancellation without committing changes. Do not use motion or color as the only indicator.
+4. **After moving:** announce a concrete outcome such as “Task A moved from To do to Doing” or “Item B moved to position 2 of 8”; retain or restore focus to a meaningful control for the moved item, including when the item remounts in another parent. Preserve selection and scroll context where sensible. For consequential/remote moves, provide error recovery and a durable undo path.
+5. **Boundaries:** disable impossible moves explicitly (first item up, locked group, invalid drop target). Make failed drops and server rejections visible and reversible; avoid optimistic visual success that silently rolls back.
+
+### Choose the implementation by semantics and ownership
+
+- **Buttons/menus first:** the least complex robust option for basic reorder/move operations, and an essential complement to drag in many richer interfaces.
+- **Atlassian Pragmatic drag and drop:** framework-agnostic, native-browser drag core with optional visuals; **the core does not implement accessible alternatives for you**. Atlassian's [accessibility guidance](https://atlassian.design/components/pragmatic-drag-and-drop/accessibility-guidelines/) favors explicit move menus, live announcements and focus continuation over making arrow-key dragging the only alternative.
+- **React Spectrum:** its [drag-and-drop collections](https://react-spectrum.adobe.com/dnd) include keyboard and screen-reader drag mode, target navigation, announcements and mobile screen-reader interaction. This is a stronger integrated interaction model for supported React collection components, but requires checking the actual version, app integration and AT behavior; it is not a reason to replace a simple move menu.
+- **Raw HTML `draggable`:** [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API) documents drag events and a text-selection tradeoff; setting `draggable=true` does not supply keyboard semantics, single-pointer alternatives, announcements or focus restoration.
+- **WAI-ARIA APG rearrangeable listbox:** [illustrative example](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/examples/listbox-rearrangeable/) combines listbox actions, move buttons and live status. Do not copy its `listbox` role onto an ordinary list of interactive cards: listbox is a selection widget with its own keyboard contract. APG warns its examples need browser/AT testing and are not production-ready components.
+
+**Design disagreement worth preserving:** Atlassian discourages directional-key movement as a general accessibility strategy because it can be awkward for screen readers and complex boards; React Spectrum supports keyboard drag/drop for richer collection navigation; W3C APG shows move-up/down controls for a rearrangeable listbox. These are context-specific approaches, not mutually exclusive universal standards. The common invariant is **equivalent, discoverable operations and recoverable feedback across input modes**.
+
+### Validation / evidence boundary
+
+Test click/tap-only (no dragging or physical keyboard), keyboard-only, screen reader on desktop and touch, item remount/focus, long lists/scroll, zoom, RTL, nested interactive controls, multiple selection, invalid targets, sort/filter changes, async save failure, and drag cancellation. Add file-input alternatives for file upload drop zones. Standards establish required input equivalence; library documentation describes mechanisms; the Jira rollout shows a production constraint. None establishes that dragging improves completion time or satisfaction compared with menus. Measure that separately before adding a gesture-heavy interaction.
