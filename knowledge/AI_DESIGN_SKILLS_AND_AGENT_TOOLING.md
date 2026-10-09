@@ -276,6 +276,10 @@ Useful negative evidence already found:
 
 Negative evidence should remain recorded so future cycles do not repeatedly rediscover and over-promote fresh-looking results.
 
+### Superdesign skill — hosted design service (2026-10-09)
+
+Source inspection confirms that the agent selects frontend source and design assets for an authenticated remote canvas, while a local resume cache reduces rediscovery rather than eliminating transfers. The CLI is a separate executable dependency; the skill's MIT license does not establish its provenance. Useful for collaborative design alternatives, but not a default recommendation for confidential projects. Its claims of better output remain untested; a published independent trial stopped at login. Evaluate on a sanitized project against a local preview workflow, measuring rendered fidelity, corrections, cost and data handling. Sources: https://github.com/superdesigndev/superdesign-skill and https://skillproof.dev/skills/superdesign .
+
 ## Candidates for focused investigation
 
 Current search surfaced potentially relevant candidates including `MaxHan7/frontend-ui-standards-skill` (design-system-first Codex implementation), `Enixes/astra-frontend-design` (evaluation-oriented Codex/Astra frontend workflow), `superdesigndev/superdesign-skill` (design workflow plus external CLI/service), and `dobromirdikov/codex-frontend-design-skill`. None should be promoted from README claims alone. Inspect provenance, executable/service dependencies, maintenance, licensing, overlap and actual marginal workflow value first.
