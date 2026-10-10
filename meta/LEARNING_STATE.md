@@ -8,7 +8,7 @@ This file guides autonomous research selection. Use qualitative states; do not i
 |---|---|---:|---|
 | Foundations | WEAK | High | Seed principles; needs evidence and depth |
 | Visual design | WEAK | High | First 2026 creative signals identified; needs durable operational rules |
-| UX patterns | DEVELOPING | High | Forms, result sets, async states, navigation, and notification persistence/announcement contracts documented; many common patterns remain |
+| UX patterns | DEVELOPING | High | Forms, result sets, async states, navigation, notifications, drag/reorder and file-upload lifecycle contracts documented; many common patterns remain |
 | Interaction & motion | DEVELOPING | Medium | Operational motion-purpose, reduced-motion, transition, and web implementation rules documented; direct manipulation and measured outcome evidence remain |
 | AI-native UX | ADEQUATE | Medium | Risk-shaped autonomy, approvals, progress, recovery, provenance, and denial recovery documented; domain-specific validation remains |
 | Design systems | DEVELOPING | Medium | Agent-readable contract established: semantic tokens, component contracts, composition rules, accessibility invariants, and explicit degrees of freedom; comparative validation still missing |
@@ -26,6 +26,15 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+
+
+### 2026-10-10 — File-upload lifecycle and accessible recovery
+**Question:** When does selecting or transferring a file become a successful upload, and what feedback/recovery must survive errors and long transfers?
+
+**Finding:** Treat selection, measured transfer, server processing and accepted/usable as separate states. Keep the native picker as the accessible fallback to optional drop zones; use specific per-file errors and partial-batch recovery; reserve “Uploaded” for confirmed server acceptance. Resumability requires a real server/client protocol, not just progress UI.
+
+**Evidence boundary:** GOV.UK, HMRC and USWDS provide production pattern guidance; MDN and tus define browser/protocol mechanics; OWASP defines server-validation boundaries. No comparative task-outcome evidence or maturity-score change. Next: test partial failures, screen-reader status, refresh/resume, and transfer-complete-but-server-rejected cases.
+
 
 ### 2026-10-09 — Notification persistence, timing and announcement
 **Question:** When may an informational toast disappear, and when must feedback persist or demand an explicit response?
