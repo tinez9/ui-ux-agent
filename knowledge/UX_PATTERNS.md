@@ -244,3 +244,26 @@ WCAG 2.x provides normative accessibility requirements for consistent repeated n
 ### Validation / evidence boundary
 
 Test click/tap-only (no dragging or physical keyboard), keyboard-only, screen reader on desktop and touch, item remount/focus, long lists/scroll, zoom, RTL, nested interactive controls, multiple selection, invalid targets, sort/filter changes, async save failure, and drag cancellation. Add file-input alternatives for file upload drop zones. Standards establish required input equivalence; library documentation describes mechanisms; the Jira rollout shows a production constraint. None establishes that dragging improves completion time or satisfaction compared with menus. Measure that separately before adding a gesture-heavy interaction.
+
+
+## File uploads: separate selection, transfer and acceptance
+
+**Decision rule (2026-10-10):** A selected file is not an uploaded file; a completed network transfer is not necessarily an accepted file. Model per-file states explicitly: selected → validating → transferring → server processing → accepted, with distinct rejection, failure, cancellation and retry paths. Never announce “Uploaded” solely because a progress indicator reaches 100%.
+
+### Choose the interaction
+- Start with a labelled native `<input type="file">`, descriptive format/size/count hints, and a working non-JavaScript path. Drag-and-drop is optional progressive enhancement; retain the picker for touch, keyboard and assistive technology. GOV.UK introduced an enhanced accessible picker in March 2025, while USWDS documents an outstanding focus-indicator issue in its own enhancement.
+- For distinct required documents, prefer separately labelled controls; for interchangeable batches, allow multi-selection or “Add another”. USWDS notes that multi-selection can be unfamiliar and its file-input component does not upload asynchronously; avoid falsely marking selected files as uploaded.
+- Before upload, identify specific problems: wrong type, size, empty file, count limit or template mismatch. Preserve unaffected files and form data. Let users reuse previously accepted files in the same journey when privacy permits.
+
+### Transfer, processing and recovery
+- Show per-file status and aggregate batch count. Only show determinate percentages when measured; `XMLHttpRequest.upload` provides progress events, but `lengthComputable=false` means a trustworthy percentage is unavailable. Avoid announcing every percentage tick through a live region.
+- Distinguish “Transferring” from “Processing / checking” and “Ready”. HMRC's deployed upload pattern announces success after the file has been received **and scanned**, not merely after bytes have arrived.
+- Provide a clear Cancel/Retry/Remove or Replace operation as appropriate. Client cancellation may not immediately delete partial server data; design status accordingly. On partial batch failure, retain accepted files and retry only affected items. Test same-file re-selection, refresh/navigation, timeouts and slow connections.
+- Resumable upload is a **protocol choice**, not a visual feature. The tus 1.0 specification uses `HEAD` to recover the server-confirmed offset and `PATCH` to continue; mismatched offsets return `409`. Handle expiration, authorization and cleanup before promising recovery after interruption.
+
+### Validation boundary
+The HTML `accept` attribute only guides the file picker; it does not replace server-side checks. Apply file size/type/content validation and safe storage on the server. A thumbnail or client-side parse is not evidence of acceptance. Keep original file names and private previews from being exposed unintentionally.
+
+**Agent checks:** native picker, drop, keyboard/touch, screen reader, mobile file providers, duplicate names, invalid/empty/oversized files, partial batch success, 100%-transfer-then-server-rejection, cancellation, retry, stale progress, focus and status announcements, and no-JS fallback. Measure whether users complete the task; official design-system patterns and platform APIs establish implementation mechanics, not universal UX superiority.
+
+**Primary sources:** [GOV.UK](https://design-system.service.gov.uk/components/file-upload/), [HMRC](https://design.tax.service.gov.uk/hmrc-design-patterns/file-upload/), [USWDS](https://designsystem.digital.gov/components/file-input/) and [its accessibility tests](https://designsystem.digital.gov/components/file-input/accessibility-tests/), [MDN accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/accept), [MDN XHR upload](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/upload), [tus 1.0](https://tus.io/protocols/resumable-upload), [OWASP file upload](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html).
