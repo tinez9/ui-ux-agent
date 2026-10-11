@@ -27,6 +27,9 @@ Record meaningful knowledge-base improvements, not every formatting edit.
 - Made scoring deliberately conservative: successful runs do not automatically raise scores, and discovering new complexity may hold or lower them.
 - Added continuous revalidation of mature areas, explicit contradiction/exception/trade-off hunting, and the principle that research speed is not learning speed.
 
+## 2026-10-11
+- Added Penpot MCP research frontier: design-file editing, setup boundaries, maintenance provenance, and comparative evaluation questions. No score change.
+
 ## 2026-10-05
 - Added an operational iconography system: icon-vs-text decision rules, semantic registry, icon-only clarity test, family/state governance, accessibility/RTL boundaries, and an anti-generic icon-deletion pass. Visual-design maturity intentionally unchanged.
 - Established a design-skill evaluation framework and initial high-confidence shortlist for AI coding/design agents: canonical Impeccable, UI/UX Pro Max, and Emil Kowalski skills, with explicit workflow fit, overlap, provenance, maintenance, security/supply-chain, and evidence boundaries. Added a composition strategy and comparative-testing gate rather than treating GitHub popularity as proof of design quality.
