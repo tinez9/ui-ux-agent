@@ -7,6 +7,12 @@ Keep uncertainty explicit. Record missing evidence. Promote into `knowledge/` on
 
 ## Initial frontier
 
+### Comparison interfaces: differences-only and shared constraints (2026-10-12)
+**Status: RESEARCH-BACKED PATTERN; IMPLEMENTATION EDGE CASES UNVALIDATED.** Baymard testing favors optional “show differences only” in spec-heavy comparison, but its SaaS plan-matrix research warns against truncating full feature lists: difference filtering must be reversible, and shared constraints may still be decision-critical. Standardize attribute meaning, units and missing/not-applicable/false states before comparing; otherwise the table gives false confidence. NN/g recommends retaining simultaneous comparison on mobile (scrollable region, visible cue, persistent headings) rather than requiring users to switch between single-item views. W3C exempts meaningful data tables—not whole pages or individual cell text—from reflow's two-dimensional-scroll restriction. Next: test mobile zoom/AT, mixed measurement bases, stale data and difference-filter recovery.
+
+Sources: https://baymard.com/blog/user-friendly-comparison-tools ; https://baymard.com/research-articles/saas-website-ux-best-practices ; https://www.nngroup.com/articles/mobile-tables/ ; https://www.w3.org/WAI/WCAG22/Understanding/reflow.html .
+
+
 ### Generative interfaces beyond chat
 **Status:** OPEN
 Research when AI-generated or adaptive interface elements outperform fixed UI and what control/recovery patterns are required.
