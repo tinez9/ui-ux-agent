@@ -19,6 +19,11 @@ Research how users should understand plans, progress, tool calls, pending approv
 **Status:** OPEN
 Research which forms of design context most reliably improve agent-generated frontend while preserving room for art direction.
 
+### Vercel web-design-guidelines: source-only audit with mutable rule feed (2026-10-12)
+**Status: CONDITIONAL / NOT BENCHMARKED.** The official `web-design-guidelines` skill loads instructions from a mutable `main/command.md` on each invocation, so a pinned installed skill does not pin its audit criteria. Issues #30 and #316 discuss pinning; the current rules are not known to be malicious. The source checklist also oversimplifies native keyboard handling and autocomplete, while the public guideline inconsistently recommends `maximum-scale=1` despite its own zoom prohibition. Use reviewed/pinned rules and manually validate high-impact findings before code changes. Test planted compliant/noncompliant cases against axe-core and browser/keyboard checks; measure false positives, not just number of warnings.
+
+Sources: https://github.com/vercel-labs/agent-skills/blob/main/skills/web-design-guidelines/SKILL.md ; https://github.com/vercel-labs/agent-skills/issues/316 ; https://vercel.com/design/guidelines ; https://www.w3.org/WAI/WCAG22/Understanding/resize-text .
+
 ### Native dialog close-request policy — revalidated 2026-10-12
 **Status: CONDITIONAL.** `requestClose()` routes a dismissal through `cancel`, unlike `close()`, `command="close"` and `form method="dialog"` (which bypass the veto). `command="request-close"` offers a declarative route where supported. Handle `cancel` synchronously; after explicit confirmation, finish with `close()`, not a recursive `requestClose()` (WHATWG #12347 documents a re-entrancy edge case).
 
