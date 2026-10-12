@@ -19,18 +19,12 @@ Research how users should understand plans, progress, tool calls, pending approv
 **Status:** OPEN
 Research which forms of design context most reliably improve agent-generated frontend while preserving room for art direction.
 
-### Native dialog close-request policy
-**Status:** EMERGING — interoperability split
+### Native dialog close-request policy — revalidated 2026-10-12
+**Status: CONDITIONAL.** `requestClose()` routes a dismissal through `cancel`, unlike `close()`, `command="close"` and `form method="dialog"` (which bypass the veto). `command="request-close"` offers a declarative route where supported. Handle `cancel` synchronously; after explicit confirmation, finish with `close()`, not a recursive `requestClose()` (WHATWG #12347 documents a re-entrancy edge case).
 
-`HTMLDialogElement.requestClose()` is now a useful stable primitive (MDN: Baseline 2025, broadly available since May 2025): unlike `close()`, it routes programmatic dismissal through the cancelable `cancel` event before `close`, matching the dialog close-watcher path used by platform close requests. This suggests a durable ownership rule: when product logic must be allowed to veto a dismissal (for example unsaved work), route dismiss *requests* through one cancelable policy rather than giving Escape, Back, buttons, and application code independent close paths. Reserve `close()` for cases where closure has already been decided and must not be vetoed.
+**Important limit:** the HTML close-watcher algorithm can deliver `cancel` with `event.cancelable === false` after repeated close requests without new history-action activation. A dirty-form confirmation therefore cannot guarantee that dismissal is preventable. Preserve valuable edits with draft recovery/autosave and test repeated Escape/mobile Back. `closedby="any"` adds light dismiss; `closerequest` and `none` differ, but MDN still labels `closedBy` non-Baseline. Nested confirmations and focus restoration remain unvalidated across browsers/assistive technology.
 
-The newer `closedby`/`closedBy` surface separates three dismissal contracts: `any` (including light dismiss), `closerequest` (platform close request plus developer mechanisms), and `none` (developer mechanism only). Modal dialogs without a valid value default to `closerequest`; non-modal dialogs default to `none`. This is promising because dismissal policy becomes declarative instead of being reconstructed from backdrop click handlers and Escape listeners.
-
-Do **not** promote `closedby` to default stable guidance yet: as of 2026-10-06 MDN still marks `HTMLDialogElement.closedBy` as limited availability/non-Baseline. Progressive enhancement and the supported-browser matrix therefore remain part of the decision.
-
-Nested confirmation is a separate UX question, not solved by the API. A second modal may be semantically justified when a close request reveals a genuinely consequential unresolved decision, but routinely stacking dialogs for multi-step flows increases context/focus complexity. Research real nested-dialog behavior, topmost close-watcher semantics, focus restoration, Back/Escape behavior, and browser/AT interoperability before recommending nested modals as a general pattern.
-
-**Evidence:** WHATWG HTML dialog algorithms; MDN `<dialog>`, `HTMLDialogElement.requestClose()`, `cancel`, `close()`, and `closedBy` documentation. Platform docs establish mechanics and support, not that nested confirmation improves task outcomes.
+Sources: https://html.spec.whatwg.org/multipage/interaction.html#close-watcher-request-close ; https://html.spec.whatwg.org/multipage/interactive-elements.html#dialog-request-close ; https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/closedBy ; https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button ; https://github.com/whatwg/html/issues/12347 .
 
 ### Behavioral accessibility skill uplift
 **Status:** UNVALIDATED (2026-10-08)
