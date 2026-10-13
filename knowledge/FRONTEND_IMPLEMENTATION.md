@@ -7,6 +7,23 @@ Keep durable design guidance separate from fast-changing framework details.
 
 Prefer the lowest-complexity platform primitive that preserves the required semantics, accessibility, resilience, and interaction quality. A newer API is not a UX improvement by itself.
 
+## Visual regression is a state-coverage test, not a screenshot pass — 2026-10-13
+
+**Decision:** visual diffs answer “did the rendered pixels change relative to an approved baseline?” They do not answer “is this the correct state, good design, accessible, or functionally complete?” A stable screenshot can be a stable **wrong** state.
+
+For AI coding/design agents, use this capture contract:
+
+1. **Name the target:** route/component, user state, theme, viewport, browser, locale, data fixture, and expected visual outcome. Assert that the *intended* state is rendered (dialog open, error shown, async result settled) **before** capture. Do not let a screenshot replace the state assertion.
+2. **Control determinism:** fix clocks/data/locale and external resources where possible; pin browser/OS/fonts/viewport/DPR. Playwright warns that screenshots differ across rendering environments. Its `toHaveScreenshot()` waits for two consecutive matching captures, which establishes stability, **not correctness**.
+3. **Stabilize narrowly:** Playwright disables CSS/Web Animations and hides carets by default; its `stylePath` and masks can suppress volatile regions. Chromatic pauses CSS animation/video/GIF but cannot automatically stop JS-driven animation. Prefer deterministic fixtures to broad masking or arbitrary sleeps: masking a region can also hide a regression in that region.
+4. **Capture intermediate states deliberately:** Chromatic waits for Storybook `play()` to finish and captures **only its final state**. Create separate stories or explicit E2E snapshots for intermediate loading, validation, menu-open, focus and recovery states. A passing default story does not cover them.
+5. **Treat sensitivity as a trade-off:** permissive pixel/color thresholds suppress noise *and* small real regressions. Review diffs before approving baseline changes; do not automatically bless all snapshots after a code edit. Keep clean controls and known-defect cases in CI to detect false-green configurations.
+6. **Respect the data boundary:** Chromatic can upload published Storybook output or re-renderable E2E archives containing HTML, assets and test data. Its vendor statement that it does not store source code does **not** mean a captured authenticated UI contains no secrets. Use synthetic fixtures, review network/data exposure and access policy, or stay with local Playwright when confidentiality requires it.
+
+**Tool choice:** local `@playwright/test` screenshot assertions suit route/journey checks and constrained environments; Chromatic adds managed cross-browser/story review and baselines where a component-story workflow and cloud data handling are acceptable. Both need explicit state coverage, functional/accessibility tests, and human/agent rendered critique. Neither tool is a standalone design-judgment skill. The open-source Chromatic CLI is MIT, but that license does not make its hosted capture service local or open-source.
+
+**Evidence boundary:** these are documented tool mechanics and an agent testing contract, not a controlled result showing improved visual quality. Primary sources: [Playwright visual comparisons](https://playwright.dev/docs/test-snapshots), [screenshot options](https://playwright.dev/docs/api/class-pageassertions), [Chromatic capture behavior](https://www.chromatic.com/docs/snapshots/), [interaction snapshot timing](https://www.chromatic.com/docs/interactions/), [threshold trade-offs](https://www.chromatic.com/docs/threshold/), [E2E archive contents](https://www.chromatic.com/docs/faq/what-is-archive/), [Chromatic CLI source](https://github.com/chromaui/chromatic-cli).
+
 ## Responsive components: container queries
 
 Use **viewport/media queries for page- or device-level conditions** and **container queries for components whose useful layout depends on the space actually allocated to them**.
