@@ -106,6 +106,14 @@ Use native labelled checkboxes when possible; name the header control with its a
 
 Sources (reviewed 2026-10-12): [Shopify bulk actions](https://shopify.dev/docs/apps/build/app-home/migrate-from-polaris-react/unstable-bulk-actions), [Shopify select-all migration](https://shopify.dev/docs/apps/build/app-home/migrate-from-polaris-react/select-all-actions), [TanStack row selection](https://tanstack.dev/table/v8/docs/guide/row-selection), [MUI X selection](https://mui.com/x/react-data-grid/row-selection), [WAI-ARIA checkbox](https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/), [MDN indeterminate](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/indeterminate), [OWASP authorization](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html).
 
+## Optimistic edits: distinguish provisional UI from saved state — 2026-10-13
+
+A quick visual response is not a confirmed write. For low-risk predictable changes, provisional rendering can improve responsiveness; for consequential actions or complex server validation, prefer visible pending state until confirmation. Distinguish local draft, durable offline queue, sending, server-confirmed, and needs-attention states. Do not label a locally queued change “Synced.”
+
+React's `useOptimistic` supplies temporary rendering, not persistence. TanStack Query offers pending-variable rendering as a simpler alternative to shared-cache mutation; concurrent mutations and refetches can make naive rollback display stale data. Server-side version checks (`If-Match` / HTTP 412) protect against lost updates; optimistic rendering alone does not. Browser `navigator.onLine` is unreliable, and Background Sync is not universal. Preserve edits after rejection, provide recovery, and test concurrent updates, timeout-after-commit, offline restart, and accessible status announcements.
+
+Sources: https://react.dev/reference/react/useOptimistic ; https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates ; https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query ; https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-Match .
+
 ## Loading, progress, empty, and error states
 
 Treat asynchronous UI as a **state machine**, not a spinner decoration. Define idle, pending, success-with-data, success-with-no-data, and failure; add stale/refreshing, partial, queued, or cancelled states when real.
