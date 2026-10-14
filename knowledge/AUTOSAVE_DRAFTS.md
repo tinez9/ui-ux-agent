@@ -103,6 +103,19 @@ Offline capability needs an explicit queue/reconciliation model:
 - do not silently discard queued edits after authentication expiry or permission changes;
 - surface conflicts that cannot be reconciled safely.
 
+**Critical correction (2026-10-14): browser-local is not permanent.** IndexedDB, Cache Storage and other origin storage can be evicted under storage pressure; private browsing typically clears it at session end, and users can clear site data. WebKit's documented ITP policy additionally removes script-writable storage after seven days without website interaction in Safari; installed Home Screen web apps have a specific exemption from that *ITP rule*, not immunity from all data loss. Treat an offline-only draft as **device-local and at risk**, not a guaranteed backup.
+
+For valuable offline work:
+
+1. Wait for the **IndexedDB transaction's `complete` event**, not merely an individual request's `success`, before claiming local persistence. Even `complete` is not a guarantee against sudden power loss: browsers may use relaxed disk-flush durability. Keep operations atomic at the meaningful unit and test interrupted writes.
+2. Query `navigator.storage.persisted()` and consider `persist()` where supported and justified. Check the boolean result: requesting persistence is not receiving it. Persistence reduces pressure-based eviction risk; it does not prevent user deletion, private-session cleanup or every browser-specific policy. `estimate()` is advisory, not reserved capacity.
+3. Provide export/backup or a verified server-sync path when the only local copy would be costly to lose. A **Saved locally** badge must not imply that another device can recover it.
+4. Treat `navigator.onLine` as a hint, not proof the server is reachable. Base `synced` on an actual acknowledged request/revision, and keep an explicit retry path.
+5. Do not rely on service-worker Background Sync for guaranteed delivery. The API is not Baseline across major browsers, and browsers may stop background work; retry on app reopen/foreground as well. Handle auth expiry, quota failures, partial uploads, and replay of non-idempotent actions.
+6. Test offline edit → tab/process kill → reopen, storage quota rejection, private mode, cleared/evicted origin, long Safari absence, network restoration without server reachability, and concurrent remote edits. Verify user-facing status at every durability boundary.
+
+**Evidence boundary:** MDN documents storage, IndexedDB transaction and network/API mechanics; WebKit documents the Safari ITP rule and Home Screen exception. This is a correctness/reliability requirement, not comparative evidence that offline-first UX is preferable for every product.
+
 Do not promise offline editing merely because an already-open page keeps accepting keystrokes.
 
 ## Multiple tabs, devices, and collaborators
@@ -234,6 +247,13 @@ If these questions are unanswered, adding a debounce and a `Saved` label is not 
 Browser lifecycle guidance is current platform documentation. Microsoft Office supplies shipped-product evidence that autosave, offline persistence, synchronization, recovery, and versioning are distinct concerns. HTTP semantics and MDN establish version preconditions as a concrete mechanism for preventing lost updates. Firestore provides current production documentation for optimistic/pessimistic contention behavior and retry boundaries. These sources support the architecture and failure boundaries; they do **not** establish a universal debounce interval, conflict granularity, merge algorithm, save-status wording, or whether a product should use locking versus optimistic concurrency. Those remain product- and data-model-specific.
 
 ## Sources
+
+- MDN — Storage quotas and eviction: https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria
+- MDN — StorageManager persistence: https://developer.mozilla.org/en-US/docs/Web/API/StorageManager
+- MDN — IndexedDB transaction durability: https://developer.mozilla.org/en-US/docs/Web/API/IDBTransaction
+- MDN — Navigator.onLine reliability: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/onLine
+- MDN — Background Synchronization API (limited availability): https://developer.mozilla.org/en-US/docs/Web/API/Background_Synchronization_API
+- WebKit — Tracking Prevention (seven-day rule and Home Screen exemption): https://webkit.org/tracking-prevention/
 
 - MDN — `beforeunload`: https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event
 - MDN — `unload`: https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event
