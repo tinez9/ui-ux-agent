@@ -49,6 +49,47 @@ As of 2026, the web platform has materially improved here:
 
 Treat View Transitions as progressive enhancement. Older/unsupported clients and reduced-motion users still need a complete state change.
 
+### Native overlay entry/exit transitions — verified 2026-10-15
+
+**Decision:** use native `<dialog>` or `popover` for the correct *interaction and focus lifecycle* first; add entry/exit motion only as progressive enhancement. A visual fade is not a second open/closed state, and CSS animation must never decide whether a save, cancellation, or dismissal actually succeeded. See [native overlay semantics and dismissal](FRONTEND_IMPLEMENTATION.md#native-overlay-decision-model-semantics-before-floating-geometry).
+
+**Why a fade-out often fails:** hidden dialogs/popovers normally use `display: none` and leave the top layer. A transition on `opacity` alone cannot make exit visible. `@starting-style` supplies entry values after a hidden-to-visible change; transitioning `display` with `allow-discrete` retains visible rendering until exit completes; transitioning the **browser-controlled** `overlay` property can defer removal from the top layer so the panel/backdrop remain stacked correctly. Authors cannot set `overlay` directly. These are separate mechanisms with separate compatibility.
+
+```css
+/* Optional enhancement for an already functional <dialog> opened with showModal(). */
+dialog.motion-example {
+  opacity: 0;
+  transform: translateY(0.35rem);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    display 160ms allow-discrete,
+    overlay 160ms allow-discrete;
+}
+dialog.motion-example:open {
+  opacity: 1;
+  transform: translateY(0);
+}
+@starting-style {
+  dialog.motion-example:open {
+    opacity: 0;
+    transform: translateY(0.35rem);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog.motion-example { transition: none; transform: none; }
+}
+```
+
+**Compatibility boundary:** MDN marks `@starting-style` and `transition-behavior` Baseline 2024, but `overlay` is **not Baseline** as of this review. Support for the individual declarations does not prove that a given browser can animate `display` or preserve top-layer stacking on exit. Where unsupported, accept an instant close rather than adding timers that delay focus return or leave a supposedly dismissed control interactive. An `@supports (transition-behavior: allow-discrete)` check alone is not a complete feature test.
+
+**Interaction and QA contract:**
+- Do not delay `dialog.close()` / popover dismissal until `transitionend`; that event may not fire (reduced motion, removed node, interrupted/replaced transition). The browser's logical open state and focus policy take priority over decorative timing.
+- Avoid `transition: all` for overlays; explicitly list animated properties. For modal dialogs, test backdrop behavior and stacking against another open top-layer surface; a non-modal popover should not visually imply that background content is inert.
+- Test rapid open→close→reopen, Escape during entry, backdrop dismissal, focus restoration, dirty-form close veto, nested overlays, reduced motion, 400% zoom and the real browser matrix. Verify both `open`/`:popover-open` state and the actual visual frame; a screenshot alone cannot prove correct focus or dismissal semantics.
+
+**Evidence boundary:** MDN establishes CSS rendering/compatibility mechanisms, not measured UX benefit. W3C technique C39 supports disabling non-essential interaction-triggered motion; it does not prescribe this animation. Sources: [MDN dialog animation](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog#animating_dialogs), [MDN popover animation](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using#animating_popovers), [starting-style](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@starting-style), [discrete transitions](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/transition-behavior), [overlay support](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overlay), [W3C C39](https://www.w3.org/WAI/WCAG22/Techniques/css/C39.html).
+
 ### Scroll-linked and large spatial motion
 
 Parallax, large zoom/pan, persistent scroll-driven transformations, and depth simulation have a higher vestibular and distraction risk. Use them only when they add task-relevant orientation or storytelling value that survives a reduced-motion alternative.
