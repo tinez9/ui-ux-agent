@@ -27,6 +27,15 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-15 — Dark themes as semantic and accessible reading conditions
+**Question:** How should AI agents implement dark mode without conflating system color-scheme behavior, WCAG contrast, user comfort, and forced-colors accessibility?
+
+**Finding:** Use semantic light/dark token pairs and test rendered surfaces, focus states, browser-painted controls, images, and forced colors independently. WCAG 2.2 ratios remain the conformance baseline; APCA is not a WCAG 3 substitute because the September 2026 working draft has not selected a contrast algorithm. Platform guidance differs on manual theme overrides, and reading-polarity studies conflict when luminance is controlled.
+
+**Evidence boundary:** W3C/MDN establish standards/platform mechanics; Apple/Material/Carbon provide production conventions; task-specific studies do not prove universal theme superiority. Broad visual-design maturity remains WEAK and 3/10. Next: test mixed-mode embeds, forced-colors regression and measured reading performance.
+
+
+
 
 ### 2026-10-10 — File-upload lifecycle and accessible recovery
 **Question:** When does selecting or transferring a file become a successful upload, and what feedback/recovery must survive errors and long transfers?
