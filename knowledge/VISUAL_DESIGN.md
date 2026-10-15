@@ -150,5 +150,43 @@ A chart is useful when it makes a **comparison, trend, distribution, relationshi
 
 **Primary sources:** [ONS axes and gridlines](https://service-manual.ons.gov.uk/data-visualisation/guidance/axes-and-gridlines), [ONS interactive charts](https://service-manual.ons.gov.uk/data-visualisation/guidance/interactive-charts-and-animations), [USWDS data visualizations](https://designsystem.digital.gov/components/data-visualizations/), [W3C use of color](https://www.w3.org/WAI/WCAG22/Understanding/use-of-color), [W3C non-text contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast), [Highcharts accessibility](https://www.highcharts.com/docs/accessibility/accessibility-module), [Highcharts tables](https://www.highcharts.com/docs/accessibility/tables), [MDN forced colors](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/forced-colors).
 
+## Dark themes: semantic polarity, contrast, and forced colors — 2026-10-15
+
+**Decision:** dark mode is a separate **semantic color mapping and tested reading condition**, not an RGB inversion or proof of superior accessibility. Respect system preference by default; a product-level light/dark/system override can be useful for cross-device workflows, but adds preference persistence and QA cost. Apple generally discourages app-specific appearance controls, while Carbon encourages them: choose from product context, not a universal mandate.
+
+### Build roles and pairs, not an inverted palette
+
+- Define roles for **canvas/surface, raised or container surface, primary/secondary text, link, focus, border, control, status, and data series**. Assign light/dark values to the same roles; do not invert photos, brand assets, data colors, or shadows mechanically. Material 3's `surface`/`surface-container`/`on-surface` pairings and Carbon's themed tokens are concrete examples, not mandatory palette recipes.
+- Test **foreground/background pairs in the rendered context**, including hover, selected, disabled, focus, error, text over imagery, and nested overlays. A token that passes on one surface may fail on another, especially with transparency, dynamic color, or compositing. Preserve hierarchy without relying on barely different charcoal layers; outlines, spacing and labels can carry structure.
+- WCAG 2.2 AA still requires **4.5:1 for ordinary text, 3:1 for large text**, and **3:1 for essential non-text UI/graphic information**, subject to each criterion's exceptions. Passing a ratio does not establish comfortable reading, and disabled controls are exempt from those specific contrast checks, not from being understandable in context. Do not promote APCA's polarity-sensitive `Lc` recommendations as WCAG conformance: the **10 September 2026 WCAG 3 working draft has not chosen its contrast algorithm**.
+- Do not assert “dark is easier to read” or “light is always better.” Some controlled proofreading studies favor dark text on light backgrounds; another found that advantage disappeared after equalizing overall display luminance. Task, ambient conditions, vision, font rendering and user preference matter. For long-form reading, measure comprehension, speed and fatigue rather than choosing from aesthetics alone.
+
+### Web implementation contract
+
+`prefers-color-scheme` expresses a user/browser preference; `color-scheme` declares which schemes an element supports so browser-painted controls, scrollbars and form widgets can adapt. They are **not interchangeable**. `light-dark()` can select paired tokens when the used `color-scheme` is set. Example (use actual reviewed accessible token pairs, not the illustrative names as validated colors):
+
+```css
+:root { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+:root {
+  --surface: light-dark(var(--surface-light), var(--surface-dark));
+  --text: light-dark(var(--text-light), var(--text-dark));
+}
+body { background: var(--surface); color: var(--text); }
+```
+
+Provide a usable default for older target browsers if `light-dark()` is unsupported. If offering a manual override, model **system/light/dark** distinctly; initialize it before first paint where practical to avoid a wrong-theme flash, avoid hydration mismatch, and update `color-scheme` as well as custom tokens. Do not let a stored preference silently override forced-colors accessibility settings.
+
+### High-contrast is not merely a third dark palette
+
+In `forced-colors: active`, the browser substitutes system colors for many foreground/background/border properties, removes `box-shadow` and many gradients, and may add text backplates. A button outlined **only** by shadow can disappear. Keep native control semantics, use a real border/outline or appropriate system colors where needed, and avoid broad `forced-color-adjust: none` (it disables essential overrides). ARIA `role="button"` on a `div` does **not** grant native button system-color behavior. `prefers-contrast: more` and forced colors are distinct signals; test them separately.
+
+### Agent QA gate
+
+Test light, dark, OS-auto switching **while the app is open**, optional manual override, high contrast/forced colors, increased contrast, zoom/text spacing, transparent overlays, disabled/focus/selection states, SVGs, images with white backdrops, charts, and embedded widgets. Include at least one long reading task and one dense-data task. Run contrast checks on actual rendered combinations and inspect focus and system-color behavior; screenshots and automated ratios alone cannot establish legibility or preference.
+
+**Evidence boundary:** W3C/MDN define conformance and browser behavior; Apple, Material 3 and Carbon offer competing but valid platform/system conventions; display-polarity studies are task- and luminance-dependent. No controlled evidence here establishes a universal preferred theme or a single dark-surface luminance. Sources: [Apple Dark Mode](https://developer.apple.com/design/human-interface-guidelines/dark-mode), [Material 3 color roles](https://m3.material.io/styles/color/the-color-system), [Carbon color guidelines](https://www.carbondesignsystem.com/building-blocks/foundations/color/guidelines), [MDN color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color-scheme), [MDN light-dark](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/light-dark), [MDN forced colors](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/forced-colors), [W3C text contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum), [W3C non-text contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast), [WCAG 3 September 2026 draft](https://www.w3.org/TR/2026/WD-wcag-3.0-20260910/), [Buchner & Baumgartner 2007](https://pubmed.ncbi.nlm.nih.gov/17510822/), [Buchner et al. 2009](https://pubmed.ncbi.nlm.nih.gov/19562598/).
+
 ## Research queue
 Editorial composition; expressive typography; variable fonts; image-led interfaces; 3D/shader aesthetics; texture/materiality; dark-interface readability; multilingual typography and script-specific behavior; measured density outcomes and adaptive density.
