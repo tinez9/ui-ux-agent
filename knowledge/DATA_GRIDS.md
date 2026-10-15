@@ -88,6 +88,19 @@ Virtualization is a performance technique, not a UX feature. When only part of a
 
 Prefer pagination or bounded rendering when it meets the task and materially reduces focus/virtualization complexity.
 
+### Virtualized-grid semantic contract (reviewed 2026-10-15)
+
+**Absolute positions are not focus management.** When only a subset of rows is mounted, W3C APG says to put `aria-rowcount` on the `table`/`grid`/`treegrid` (include header rows; use `-1` if total unknown), and a **1-based absolute** `aria-rowindex` on *every* rendered row, including headers. Indices must increase in DOM reading order and remain within the known total. If columns are omitted, use `aria-colcount` and absolute `aria-colindex`: the index can be on each row for a contiguous visible span, but must be on **each cell** when visible columns are noncontiguous (for example pinned identity columns plus distant horizontally scrolled cells). Missing/inconsistent indices can make screen-reader navigation skip or stop. Do not invent a total for server-side datasets whose count is unknown. These attributes describe logical position; they do **not** mount off-screen cells, preserve focus, or make missing rows navigable.
+
+**Different libraries mitigate different failures; do not treat them as accessibility certification:**
+
+- **AG Grid 36.2:** its own accessibility guide documents DOM-order and sticky-group announcement problems. It recommends `ensureDomOrder`, `suppressGroupRowsSticky`, and—when complete page-row/column screen-reader access is needed—**pagination with row/column virtualization disabled** (`suppressRowVirtualisation`, `suppressColumnVirtualisation`). That increases DOM/memory cost and can conflict with animations. The guide also acknowledges limitations with grouped-column names, focused-cell state announcements and unknown server-side row counts.
+- **MUI X (current docs):** marking a meaningful identity column `rowHeader: true` gives its cells `rowheader` semantics and keeps them mounted during **horizontal column** virtualization. This does not solve vertical row recycling or prove screen-reader support. MUI's overscan can help arrow-key focus into an adjacent column, but high-speed scrolling can ignore buffer hints; disabling virtualization has substantial performance cost.
+
+**Acceptance tests for the installed version:** inspect accessibility-tree totals/indices after vertical and horizontal scroll; navigate to logical first/last cells; scroll an edited/focused cell out of the render window and back; exercise pinned columns, sticky groups, sorting, server-side unknown totals, zoom and screen-reader announcements. Assert both the resulting UI state and focus destination—not just a successful automation command or a passing axe scan. Compare with a paginated native table before accepting the complexity.
+
+Evidence: [W3C APG grid/table properties](https://www.w3.org/WAI/ARIA/apg/practices/grid-and-table-properties/) (authoring guidance and explicit warnings); [AG Grid 36.2 accessibility](https://www.ag-grid.com/react-data-grid/accessibility/) (vendor-documented mitigations/limitations); [MUI X accessibility](https://mui.com/x/react-data-grid/accessibility/) and [virtualization](https://mui.com/x/react-data-grid/virtualization/) (vendor mechanics). No controlled cross-library AT/task-outcome comparison was performed; these are testable contracts, **not** evidence that all virtualized grids fail or that one library is universally superior.
+
 ## Responsive behavior preserves relationships, not desktop geometry
 
 Do not make every desktop column microscopic. Rank columns by task importance and choose deliberately among:
