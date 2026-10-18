@@ -27,6 +27,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-18 — Figma Code Connect v2 design-to-code handoff
+**Question:** Can Figma's official Code Connect skill give AI agents trustworthy production-component mappings, and which version/verification traps matter?
+
+**Finding:** Code Connect binds published design components to real code, but does not verify rendered fidelity. CLI v2.0.0 (2026-08-18) ended normal publishing support for legacy parser files; v2.0.2 (2026-10-14) documents limited Professional-plan publishing despite older official skill/Help gating. Use parserless templates, preview representative variants, verify Dev Mode and the rendered app. The official skill's source read-back is not a runtime check.
+
+**Evidence boundary:** Figma's own source/changelog establishes mechanics and version changes; individual issue reports show possible failure modes, not prevalence. No paired agent trial proves uplift. Design-systems maturity remains DEVELOPING / 4/10. Next: benchmark no mapping vs simple mapping vs templates on hallucinated props, variants, stale mappings and visual QA.
+
+
 ### 2026-10-15 — Dark themes as semantic and accessible reading conditions
 **Question:** How should AI agents implement dark mode without conflating system color-scheme behavior, WCAG contrast, user comfort, and forced-colors accessibility?
 
