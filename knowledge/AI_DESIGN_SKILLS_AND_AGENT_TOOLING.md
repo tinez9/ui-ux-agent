@@ -90,6 +90,16 @@ Its strongest idea is falsifiable evidence: build success, DOM presence and unin
 
 Sources: https://storybook.js.org/docs/11/ai/mcp/overview ; https://storybook.js.org/docs/11/ai/manifests ; https://storybook.js.org/docs/ai/mcp/api ; https://storybook.js.org/docs/writing-tests/accessibility-testing ; https://github.com/storybookjs/storybook/tree/next/code/addons/mcp ; https://github.com/storybookjs/storybook/tree/next/agent-eval ; https://github.com/storybookjs/storybook/tree/next/code/lib/codex-plugin ; https://github.com/storybookjs/mcp/issues/214 .
 
+### `GoogleChrome/modern-web-guidance` — current browser guidance (reviewed 2026-10-18)
+
+**Conditional recommendation for frontend implementation, not visual judgment.** Google Chrome's preview skill uses a small trigger and local semantic CLI retrieval of specific browser-platform guides, including CSS, dialogs, performance, accessibility and compatibility fallbacks. It supports Claude Code and Codex via official plugin installation paths. Published package version: 0.0.194; Node >=20; Apache-2.0 code and CC-BY-4.0 guide content. Its authoring repository is separate from the published package.
+
+**Evidence:** the maintainers' 2026-10-09 paired browser-assertion evaluations report Codex 58%→77% and Claude Code 59%→87% on 153 tasks. This is promising but self-evaluated: guides and graders were developed together, and passing implementation assertions does not certify accessible, usable UI. For example, the published navigation-drawer guide sets `main.inert` but its close callback does not explicitly restore invoker focus. Verify real keyboard/AT/browser behavior and clean controls.
+
+**Operational boundary:** retrieve only relevant guides, honor project browser requirements, and prefer pinned/reviewed versions to executing `npx ...@latest` repeatedly. Search queries and guide IDs are sent as telemetry by default; `DISABLE_TELEMETRY=1` opts out. Its “MANDATORY” trigger is vendor guidance, not project policy. Compare Vercel React skills for framework performance, Storybook MCP for actual component contracts, and Playwright for rendered verification. Do not use it as a substitute for design critique.
+
+Sources: https://github.com/GoogleChrome/modern-web-guidance ; https://github.com/GoogleChrome/modern-web-guidance-src ; https://github.com/GoogleChrome/modern-web-guidance/blob/main/skills/modern-web-guidance/guides/ui-components/navigation-drawer.md .
+
 ## Promising but not yet recommended
 
 ### Penpot MCP — bidirectional design-file agent bridge (reviewed 2026-10-16)
