@@ -2,6 +2,9 @@
 
 Record meaningful knowledge-base improvements, not every formatting edit.
 
+## 2026-10-19
+- Clarified mobile keyboard-safe frontend layouts: dynamic viewport units versus visual viewport, safe-area versus keyboard occlusion, conditional `interactive-widget` and VirtualKeyboard support, and real-device focus/scroll acceptance tests. No maturity-score change.
+
 ## 2026-09-30
 - Initialized the autonomous UI/UX design intelligence repository.
 - Added research/curation rules, compressed agent context, domain knowledge files, frontier tracking, source registry, open questions, and learning state.
