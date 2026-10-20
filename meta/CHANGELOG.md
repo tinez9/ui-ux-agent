@@ -2,6 +2,9 @@
 
 Record meaningful knowledge-base improvements, not every formatting edit.
 
+## 2026-10-20
+- Corrected native dialog close-request guidance against the WHATWG close-watcher algorithm: programmatic requests remain vetoable, but platform Escape/Back may deliver noncancelable `cancel`; added draft-recovery and regression-test boundaries. No maturity-score change.
+
 ## 2026-10-19
 - Clarified mobile keyboard-safe frontend layouts: dynamic viewport units versus visual viewport, safe-area versus keyboard occlusion, conditional `interactive-widget` and VirtualKeyboard support, and real-device focus/scroll acceptance tests. No maturity-score change.
 
