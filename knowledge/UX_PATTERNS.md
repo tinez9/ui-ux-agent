@@ -65,6 +65,27 @@ GOV.UK provides extensively deployed guidance recommending progression-time vali
 ## Next research domains
 Onboarding; settings; tables/data grids; dashboards; feeds; catalogs; authentication; dialogs/drawers; tabs; comparison; undo/recovery.
 
+## Onboarding: first successful task before a feature tour — 2026-10-21
+
+**Decision:** treat onboarding as the shortest supported path to a user's *first meaningful outcome*, not a mandatory explanation of the interface. Start with an understandable primary action and contextual help; introduce a tour only when a genuinely unfamiliar interaction benefits from guided practice. Never infer activation from tour completion.
+
+### Choose the learning mechanism by the task
+
+- **Conventional, immediately usable workflow:** show the actual task, clear labels, a useful empty state and discoverable help. Avoid first-launch feature carousels or a compulsory tour that delays the user's goal. NN/g reports that out-of-context tutorials are often skipped or forgotten; this is a default, **not a ban**.
+- **Novel spatial/gesture workflow:** offer an optional, replayable *hands-on* tutorial where users perform the action on a safe sample. Explain the result rather than listing controls. NN/g explicitly identifies novel paradigms as a possible exception; an 18-participant Paint 3D eye-tracking study also reports onboarding benefits, but cannot establish which pattern wins across products.
+- **True prerequisites** (device pairing, security setup, required permissions, importing essential data): use a focused step-by-step task flow with honest progress, back/retry/help, preserved inputs and recovery after interruption. Do not offer a fake Skip when the service cannot function without the step; distinguish required setup from optional education. Device reconnection may need the same guidance as first setup.
+- **Feature discovery after activation:** surface brief, dismissible cues at the point of use, with a persistent way to rediscover help. Microsoft Fluent explicitly recommends relevant, non-distracting, optional, benefit-focused teaching. Do not repeatedly resurface a dismissed cue merely because a user hasn't clicked the promoted feature.
+
+### Implementation and accessibility contract
+
+- Model `not-started → in-progress → completed`, plus `dismissed` for optional teaching, and `blocked/retry` for actual prerequisites. Persist meaningful task progress, not just which slides were seen; scope persistence to account/device as appropriate. Allow users to restart optional guidance and continue work without it.
+- Anchor a cue to a stable, visible target; when responsive layout, permissions or personalization remove the target, omit or relocate the cue rather than pointing into empty space. Don't cover the very control being taught or hijack scrolling to follow it.
+- A spotlight with actions is **not** a tooltip. Use appropriate dialog/popover semantics and test Escape, initial focus, Tab order, return focus, zoom, touch, screen-reader announcements and small viewports. If modal, follow the WAI-ARIA APG modal focus contract; do not use a modal solely to force reading promotional copy.
+- Atlassian's current Spotlight guidance favors one step, at most three for its tours, and a first-focusable dismiss control; this is a **component-specific heuristic**, not a universal cognitive limit. Its older `@atlaskit/onboarding` package is deprecated in favor of `@atlaskit/spotlight`; current `@atlaskit/spotlight` uses subpath imports, so verify version/API rather than copying legacy examples.
+- **Falsification:** compare no tour, contextual help and optional hands-on guidance using first-task completion/time, error/recovery, later feature use, help rediscovery, and interruption cost; include returning users, keyboard/AT, mobile, slow loading, target removal and clean controls. Vendor design-system rules are implementation guidance, not causal evidence that a tour increases retention.
+
+**Evidence:** [NN/g tutorial vs contextual help (2023)](https://www.nngroup.com/articles/onboarding-tutorials/); [NN/g smart-device setup (2025)](https://www.nngroup.com/articles/smart-device-onboarding/); [Microsoft Fluent onboarding](https://fluent2.microsoft.design/onboarding/); [Atlassian Spotlight](https://atlassian.design/components/spotlight/code) and [changelog](https://atlassian.design/components/spotlight/changelog); [WAI-ARIA APG modal dialog](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/); [Megyeri & Szabó, Paint 3D study (2021, n=18)](https://doi.org/10.1177/10648046211026028). No cross-product controlled outcome study was established in this cycle.
+
 ## Date entry: choose by user task, not picker fashion — 2026-10-20
 
 **Decision:** ask what the date *means* before choosing a control or storage type. A known birthday, a date copied from a document, an approximate month, a booking date, and a time-zone-specific appointment are different tasks. A calendar is not automatically more usable than typed fields.
