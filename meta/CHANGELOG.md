@@ -3,6 +3,7 @@
 Record meaningful knowledge-base improvements, not every formatting edit.
 
 ## 2026-10-22
+- Documented chart-accessibility parity traps across Chart.js, Highcharts and Datawrapper, with W3C structured-description guidance and agent QA. No maturity change.
 - Evaluated Chrome DevTools MCP first-party skills against Playwright: scoped Chrome diagnosis, corrected historical accessibility-skill mismatch, remaining audit/snapshot blind spots, dialog auto-accept, and privacy/install boundaries. Maturity unchanged.
 - Added a settings persistence decision contract distinguishing immediate preferences, coupled explicit-save transactions, sensitive changes, and draft autosave; contrasted conflicting first-party guidance and added concurrency, failure, accessibility and recovery tests. Maturity unchanged.
 
