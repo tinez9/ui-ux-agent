@@ -100,6 +100,18 @@ Sources: https://storybook.js.org/docs/11/ai/mcp/overview ; https://storybook.js
 
 Sources: https://github.com/GoogleChrome/modern-web-guidance ; https://github.com/GoogleChrome/modern-web-guidance-src ; https://github.com/GoogleChrome/modern-web-guidance/blob/main/skills/modern-web-guidance/guides/ui-components/navigation-drawer.md .
 
+### Chrome DevTools MCP official skills — diagnostic complement, not UX certification (2026-10-22)
+
+**Conditional trial:** Google's Apache-2.0 `ChromeDevTools/chrome-devtools-mcp` (v1.12.0, 2026-10-22) ships MCP/CLI plus `chrome-devtools`, `a11y-debugging`, `debug-optimize-lcp`, and `memory-leak-debugging` skills. They route agents to real Chrome snapshots, CSS cascade, console/network, Lighthouse, traces and optional heap analysis. Use for **root-cause diagnosis after reproducing a defect**, not visual design judgment. Playwright MCP/tests better serve repeatable cross-browser journeys; DevTools officially targets Chrome/Chrome for Testing, not Safari.
+
+**Source-tested boundaries:** Issue #3006 demonstrated that the older a11y skill confused default Lighthouse 0–100 text scores with opt-in structured 0–1 scores and expected absent console contrast warnings. The current skill and v1.12.0 changelog document the correction; do not label it an ongoing bug. Its remaining contrast helper is approximate (transparency/gradients/background images), and its target-size helper measures dimensions without spacing/overlap. Canvas/WebGL interfaces may expose almost no accessibility-tree nodes (#3225): inspect screenshots and accessibility opt-in rather than concluding the UI is blank. W3C explicitly warns that automated audits cannot certify accessibility.
+
+**Automation fidelity:** `navigate_page` defaults `handleBeforeUnload` to `accept`, and `evaluate_script` defaults dialog handling to accept. Test unsaved-form warnings with explicit dismiss/accept branches or the agent can mask the bug. Use screenshots plus keyboard/focus assertions, not only snapshot or Lighthouse pass.
+
+**Installation/risk:** Claude/Copilot/Gemini plugin routes exist; MCP clients can connect but cross-agent quality is unproven. Pin versions and keep skill/tool schemas aligned. Use isolated profiles and trusted hosts; remote debugging exposes browser state. Usage telemetry is opt-out (`--no-usage-statistics`), while CrUX requests may transmit traced URLs (`--no-performance-crux`). The CLI skill documents unrestricted filesystem access by default; scope or sandbox it. Avoid authenticated production sessions. No controlled evidence yet of incremental agent quality; benchmark seeded cascade, contrast, canvas, LCP and beforeunload defects against a no-skill baseline.
+
+Sources: https://github.com/ChromeDevTools/chrome-devtools-mcp ; https://github.com/ChromeDevTools/chrome-devtools-mcp/blob/main/docs/tool-reference.md ; https://github.com/ChromeDevTools/chrome-devtools-mcp/blob/main/CHANGELOG.md ; https://github.com/ChromeDevTools/chrome-devtools-mcp/issues/3006 ; https://github.com/ChromeDevTools/chrome-devtools-mcp/issues/3225 ; https://www.w3.org/WAI/test-evaluate/tools/selecting/ ; https://playwright.dev/mcp/introduction .
+
 ## Promising but not yet recommended
 
 ### Penpot MCP — bidirectional design-file agent bridge (reviewed 2026-10-16)
