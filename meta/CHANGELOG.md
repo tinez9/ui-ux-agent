@@ -2,6 +2,9 @@
 
 Record meaningful knowledge-base improvements, not every formatting edit.
 
+## 2026-10-22
+- Added a settings persistence decision contract distinguishing immediate preferences, coupled explicit-save transactions, sensitive changes, and draft autosave; contrasted conflicting first-party guidance and added concurrency, failure, accessibility and recovery tests. Maturity unchanged.
+
 ## 2026-10-20
 - Corrected native dialog close-request guidance against the WHATWG close-watcher algorithm: programmatic requests remain vetoable, but platform Escape/Back may deliver noncancelable `cancel`; added draft-recovery and regression-test boundaries. No maturity-score change.
 
