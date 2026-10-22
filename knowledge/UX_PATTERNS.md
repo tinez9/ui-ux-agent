@@ -46,6 +46,34 @@ Test keyboard-only recovery, screen-reader error order, zoom/reflow, mobile keyb
 ## Evidence boundary
 GOV.UK provides extensively deployed guidance recommending progression-time validation by default, preservation of entered data, specific corrective errors, and error summaries. W3C provides accessibility requirements and implementation techniques. Baymard provides behavioral evidence strongest for commerce/checkout forms. Generalize the mechanisms cautiously; do not universalize checkout-specific percentages or conventions.
 
+## Settings save behavior: commit scope before choosing autosave — 2026-10-22
+
+**Decision:** a settings page is not one transaction by default. Classify each change by **scope, consequence, coupling and reversibility** before choosing immediate application, per-field autosave, explicit Save, or draft persistence. Do not equate an instantly updated control with a server-confirmed preference.
+
+### Choose the transaction boundary
+
+- **Independent, low-risk, reversible preference** (theme, units, a local display option): immediate application can fit a switch/segmented control. Explain whether it applies **on this device, to this account, or across an organization**; preview locally if useful, but do not say “Saved” until the intended persistence succeeds. Give a recoverable failure path.
+- **Coupled settings** (e.g. multiple notification rules, role permissions, integration credentials): edit as **one explicit transaction** with a named Save/Cancel boundary. Saving each field independently can persist an invalid or partially configured policy. Keep original values for Cancel; retain draft values and errors if Save fails.
+- **High-impact or hard-to-reverse change** (visibility/privacy, security, billing, deletion, sharing scope): require deliberate activation and appropriate review/confirmation or reversal; do not autosave on an incidental control change. WCAG 3.3.4 offers **reversible, checked or confirmed** paths for covered consequential submissions; it does **not** demand a confirmation for every routine save.
+- **Long-form draft**: autosave *draft progress* when losing work is costly, but label it “Draft saved”, not “Published” or “Applied”. Avoid silently persisting passwords, tokens, or sensitive draft data. Explicit publication remains a separate action.
+
+**Why not a universal autosave rule?** First-party systems disagree: Microsoft Windows settings recommends immediately reflecting changes; GitHub Primer defaults to explicit saving for declarative form controls and instant saving for imperative switches; GitLab Pajamas allows per-input autosave in long forms with persistent inline failure/retry; Octopus Deploy deliberately prefers explicit Save for resource edits. These are context-specific product policies, **not** controlled evidence that one method wins universally. In particular, Primer warns that arrow-key exploration of radio/native-select options can unintentionally apply changes if selection immediately commits. Test the actual control/browser/AT behavior.
+
+### Persistence, failure and accessibility contract
+
+1. Track **displayed/draft value**, **pending write**, **confirmed persisted value**, **version** and **failure/conflict** separately. For optimistic changes, make the pending state legible; on rejection preserve the user's intended value for retry/reconciliation instead of silently reverting or endlessly claiming success. If retries are possible, handle timeout-after-commit and idempotency.
+2. For account/team preferences edited in multiple tabs/devices, use server-side versioning or conditional updates (e.g. strong ETag + `If-Match`; conflict response `412`) to prevent silent lost updates. A per-field patch does not automatically solve cross-field invariants; the server owns validation/authorization.
+3. Keep the save boundary discoverable: do **not** mix auto- and manual-save semantics **inside the same form**. If different independent sections behave differently, label that distinction clearly. A Save button should name its scope; an unchanged/invalid Save may remain focusable with explanation rather than be silently removed. Primer recommends keeping it enabled; Octopus disables unchanged Save—test discoverability and error recovery rather than universalizing either policy.
+4. Use an inline **Saving… / Saved / Couldn't save — Retry** status near the affected section when the result is not otherwise obvious; keep failures visible until resolved. Avoid repeated toast storms and do not rely on a transient toast for a required retry or undo action. Use an appropriate status/alert announcement without moving focus unnecessarily.
+5. **Autosave is not automatically a WCAG 3.2.2 violation**: that criterion concerns unexpected *changes of context*, not every content or persistence update. But selecting a preference must not unexpectedly navigate, move focus or substantially recontextualize the page without prior warning. Test keyboard selection and screen-reader browsing as well as pointer/touch.
+6. Treat unsaved navigation, tab close, offline restart and cross-device conflict as **recovery problems**, not just confirmation-dialog problems. A `beforeunload` warning is best-effort; preserve recoverable drafts when justified and avoid storing secrets casually.
+
+**Agent acceptance matrix:** independent switch vs coupled form vs sensitive setting vs long draft; pointer, keyboard/native-select arrows, screen reader, 400% zoom; save success, 500/timeout-after-commit, validation rejection, offline, two tabs/devices, rapid A→B→A toggles, navigation mid-write, stale response arriving after a newer write, cancel, and permissions changed by another actor. Assert what the user believes was saved against the server's actual state and scope.
+
+**Evidence boundary (reviewed 2026-10-22):** design-system guidance demonstrates real competing product policies, not comparative task outcomes. W3C defines accessibility constraints; HTTP conditional-write documentation establishes a concurrency mechanism, not a complete synchronization strategy. The choice of transaction granularity and whether autosave improves success remain hypotheses for matched task tests.
+
+Sources: [GitHub Primer saving](https://primer.github.io/design/ui-patterns/saving/), [GitLab Pajamas saving and feedback](https://design.gitlab.com/patterns/saving-and-feedback/), [Microsoft app settings](https://learn.microsoft.com/en-us/windows/apps/design/app-settings/guidelines-for-app-settings), [Octopus saving](https://www.octopus.design/latest/patterns/ui-patterns/workflows/saving-sgsT3Qgn), [WCAG 3.2.2](https://www.w3.org/WAI/WCAG22/Understanding/on-input), [WCAG 3.3.4](https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data.html), [MDN If-Match](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-Match).
+
 ## Passkeys and accessible authentication: preserve the complete sign-in path — 2026-10-15
 
 **Decision:** a passkey is a phishing-resistant credential, **not** a complete sign-in/recovery experience. Optimize the journey from discovery → enrollment → sign-in → fallback → recovery → credential management, not just the happy-path biometric prompt.
@@ -63,7 +91,7 @@ GOV.UK provides extensively deployed guidance recommending progression-time vali
 **Evidence boundary:** W3C defines the accessibility requirement; MDN and passkeys.dev document browser/protocol behavior and interoperability; Google's first-party UX guidance supplies shipped design patterns, **not** universal causal conversion uplift. Recovery strength and fallback risk are threat-model decisions, not blanket prohibitions. Sources (reviewed 2026-10-15): [WCAG 3.3.8](https://www.w3.org/WAI/WCAG22/Understanding/accessible-authentication-minimum.html), [MDN passkeys](https://developer.mozilla.org/en-US/docs/Web/Security/Authentication/Passkeys), [passkeys.dev device support, updated 2026-09-21](https://passkeys.dev/device-support/), [passkeys.dev bootstrapping](https://passkeys.dev/docs/use-cases/bootstrapping/), [Google passkey journeys](https://developers.google.com/identity/passkeys/ux/user-journeys), [Google passkey use cases](https://developers.google.com/identity/passkeys/use-cases).
 
 ## Next research domains
-Onboarding; settings; tables/data grids; dashboards; feeds; catalogs; authentication; dialogs/drawers; tabs; comparison; undo/recovery.
+Settings outcome validation; dashboards; feeds; catalogs; dialogs/drawers; tabs; comparison; undo/recovery.
 
 ## Onboarding: first successful task before a feature tour — 2026-10-21
 
