@@ -7,6 +7,40 @@ Keep durable design guidance separate from fast-changing framework details.
 
 Prefer the lowest-complexity platform primitive that preserves the required semantics, accessibility, resilience, and interaction quality. A newer API is not a UX improvement by itself.
 
+## Interaction responsiveness: optimize the next paint, not just the event handler — 2026-10-23
+
+**Decision:** treat interaction responsiveness as a measurable product contract. A button can have correct semantics, attractive animation, and a successful API response while still *feeling broken* if the first visual response is blocked. Conversely, a fast INP does **not** prove the requested operation completed quickly or correctly.
+
+### Diagnose the phase before prescribing a fix
+
+- **Interaction to Next Paint (INP)** measures eligible clicks/taps/keyboard interactions from input through the next presented frame; it does not measure the eventual network result, and scrolling/zooming are not INP interactions. Google's Core Web Vitals guidance defines **≤200 ms good, >500 ms poor**, assessed at the **75th percentile of page visits**, separately for mobile and desktop. It is a field distribution target, **not** a promise that every interaction will finish within 200 ms. An interaction-free visit has no INP.
+- Split a slow interaction into **input delay** (the main thread was busy before handlers could start), **processing duration** (handlers), and **presentation delay** (rendering/paint). Do not “optimize the click handler” when the real cause is earlier analytics work, a large DOM/layout change, or a third-party script. A fast Lighthouse load score or LCP is not evidence of responsive *later* interactions.
+- **Field first, lab second:** use a consent-appropriate RUM sample or CrUX for real-user distributions, and the maintained `web-vitals/attribution` build for interaction target/phase diagnostics where supported. Register `onINP` once per page lifecycle, deduplicate reports, and do not assume a callback fires without an interaction. Attribution's `reportAllChanges` reports changes to the *worst metric*, **not every click**. Avoid collecting raw input values, sensitive URLs, user-identifying selectors, or entire DOM snapshots. In Chrome DevTools reproduce the affected journey on constrained CPU/device and inspect the INP breakdown, long tasks, forced reflows, and expensive style/layout work.
+- The **Event Timing API** is newly broadly supported on modern browsers (MDN Baseline 2025), but **Long Animation Frames (LoAF)** script attribution and the **Scheduler API** remain limited-availability. Feature-detect them; absent LoAF attribution does not mean there was no long frame. `web-vitals`/CrUX coverage is not a substitute for direct Safari, Firefox, keyboard, touch and assistive-technology checks.
+
+### Choose the remedy by the bottleneck
+
+| Observed bottleneck | Appropriate intervention | Misleading shortcut |
+|---|---|---|
+| Input delay from competing long tasks | Remove unnecessary startup/third-party work; move suitable pure computation to a worker; chunk background tasks with real task-boundary yields. | Adding a spinner inside the delayed handler (it cannot paint before the handler starts). |
+| Handler processing blocks paint | Keep urgent state feedback small; defer unrelated heavy work; partition computation into bounded chunks. | `await Promise.resolve()`: microtasks do **not** yield a rendering opportunity. |
+| Presentation delay from rendering | Profile style/layout/paint, reduce synchronous DOM churn, avoid layout read/write thrashing, scope large updates. | Moving heavy work into `requestAnimationFrame`: callbacks run **before** paint and can delay INP. |
+| Expensive React update competes with typing | Update controlled input synchronously; use `useDeferredValue` or a Transition for **non-urgent dependent rendering** when appropriate. | Putting controlled-input state in `startTransition`, or assuming Transitions defer arbitrary synchronous CPU work. |
+| Network/server operation is slow | Paint an honest pending state, keep usable context, support cancellation/retry and distinguish accepted from saved/completed. | Treating a good INP or immediate optimistic animation as proof of persistence. |
+
+**Scheduling boundary (2026-10-23):** `scheduler.yield()` can yield to a prioritized continuation **where supported**, but is not Baseline; use feature detection and a tested task-boundary fallback (e.g. a timer) when chunking is necessary. Do not replace it with `navigator.scheduling.isInputPending()`: MDN marks that older API **deprecated** because it can return false and miss reasons to yield. Yielding does not turn CPU-heavy synchronous loops into worker threads, and overly frequent yields can increase total completion time. Prefer less work over clever scheduling.
+
+### Agent regression gate
+
+1. Reproduce a realistic **slow interaction** and a **clean control** at startup, after load, and after a long session; include slow device, large dataset, background work and a third-party-script variant.
+2. Capture the triggering control, route/state, interaction type, phase attribution, long-task/LoAF evidence where available, and the actual **first visible feedback**. Re-test keyboard activation, screen-reader announcement, focus, and the eventual success/error path.
+3. Compare before/after **field INP distribution** when possible, plus reproducible lab traces and user-visible task completion. Reject “improvements” that merely hide the wait, drop events, lose input, freeze a progress indicator, or trade away accessibility/correctness. Do not certify a change from one fast local trace.
+4. Keep telemetry privacy- and consent-aware; log aggregated timings and safe component identifiers, not typed text or unreviewed selectors.
+
+**Evidence boundary:** Chrome/web.dev defines INP and practical diagnostics; MDN documents browser/API limits; React documents Transition constraints; Shopify independently describes real storefront main-thread competition. These are implementation/measurement sources, **not** a controlled trial showing that any one optimization improves every app. No local browser benchmark was run in this cycle.
+
+**Primary references:** [web.dev INP](https://web.dev/articles/optimize-inp), [web.dev long tasks](https://web.dev/articles/optimize-long-tasks), [Chrome INP breakdown](https://developer.chrome.com/docs/performance/insights), [web-vitals attribution and reporting](https://github.com/GoogleChrome/web-vitals), [MDN Event Timing](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceEventTiming), [MDN LoAF](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceLongAnimationFrameTiming), [MDN scheduler.yield](https://developer.mozilla.org/en-US/docs/Web/API/Scheduler/yield), [MDN isInputPending deprecation](https://developer.mozilla.org/en-US/docs/Web/API/Scheduling/isInputPending), [React transitions](https://react.dev/reference/react/useTransition), [Shopify INP](https://shopify.dev/docs/storefronts/themes/best-practices/performance/understanding-inp).
+
 ## CSS cascade boundaries for agent-authored interfaces — 2026-10-23
 
 **Decision:** use **cascade layers to declare precedence between style sources** and **`@scope` to constrain which descendants a selector can match**. They solve different problems; neither is a security boundary, Shadow DOM substitute, design-system contract, or guarantee against regressions. Before an agent adds another selector or `!important`, inspect the computed declaration's **origin → importance → layer → specificity → scoping proximity → source order**.
