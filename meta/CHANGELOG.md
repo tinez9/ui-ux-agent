@@ -2,6 +2,9 @@
 
 Record meaningful knowledge-base improvements, not every formatting edit.
 
+## 2026-10-23
+- Added a PWA service-worker update decision contract: waiting versus controlling versus reloaded clients, cross-tab version risks, draft preservation, plugin-specific auto-update traps and falsifiable real-device tests. No maturity change.
+
 ## 2026-10-22
 - Documented chart-accessibility parity traps across Chart.js, Highcharts and Datawrapper, with W3C structured-description guidance and agent QA. No maturity change.
 - Evaluated Chrome DevTools MCP first-party skills against Playwright: scoped Chrome diagnosis, corrected historical accessibility-skill mismatch, remaining audit/snapshot blind spots, dialog auto-accept, and privacy/install boundaries. Maturity unchanged.
