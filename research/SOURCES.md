@@ -1,5 +1,14 @@
 # Source Registry
 
+## Consent-choice parity, runtime enforcement and country exceptions — regulators (2026-10-23)
+- **EDPB taskforce (2023):** https://www.edpb.europa.eu/system/files/2023-01/edpb_20230118_report_cookie_banner_taskforce_en.pdf — majority position on missing rejection, no pre-ticks, misleading visual contrast; explicit minimum-position/national-law disclaimer.
+- **EDPB deceptive design (2023):** https://www.edpb.europa.eu/documents/guideline/guidelines-032022-on-deceptive-design-patterns-in-social-media-platform_en — consent withdrawal, obstruction, transparency; social-media scope.
+- **CNIL cookie FAQ (updated 2026-04-29):** https://cnil.fr/fr/cookies-et-autres-traceurs/regles/cookies/FAQ — choice design, refusal/withdrawal and non-prescriptive recommendations.
+- **CNIL cross-device guidance (2026-01-16):** https://www.cnil.fr/fr/cookies-et-autres-traceurs-quelles-conditions-consentir-en-une-fois-pour-plusieurs-appareils — symmetrical scope for accept/reject/withdraw across linked devices.
+- **ICO final storage/access guidance (2026-04-29):** https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/guidance-on-the-use-of-storage-and-access-technologies/ ; https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/guidance-on-the-use-of-storage-and-access-technologies/how-do-we-manage-consent-in-practice/ — choice parity and actual enforcement.
+- **ICO narrow UK exceptions (2026):** https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/guidance-on-the-use-of-storage-and-access-technologies/what-are-the-exceptions/ — statistical/appearance exceptions with free objection, not a broad advertising exemption.
+- **Evidence boundary:** Official regulator guidance is jurisdiction- and purpose-scoped. The repository's implementation tests are synthesis, not a compliance certification or measured user-outcome study.
+
 ## Saved-view security and export-scope exceptions — primary product docs (2026-10-23)
 - **Airtable URL filters:** https://support.airtable.com/articles/3784973334-shared-view-url-filters — viewer URL predicates can be removed and do not limit the original shared-view dataset.
 - **Airtable sharing/export:** https://support.airtable.com/articles/4130354023-Using-the-view-share-menu-in-Airtable — August 2026 guidance: CSV ignores viewer-added filters; hidden-field exceptions, expanded-record exposure, link access/revocation.
