@@ -27,6 +27,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-23 — Figma MCP first-party skills: design handoff versus stale instructions
+**Question:** Are Figma's current agent skills a trustworthy, low-friction design-to-code/write-back capability, and can their preflight instructions be treated as authoritative?
+
+**Finding:** Inspected the actively maintained official plugin (2.2.163, updated 2026-10-20) and actual `figma-design-to-code`, `figma-use`, `figma-generate-design`, `figma-code-connect`, and `figma-code-workflows` skills. The workflow usefully distinguishes structured design context, visual reference, production component mapping, editable Figma nodes and runnable code. But the Code Connect skill incorrectly excludes Professional Full/Dev seats relative to Figma's current official help; the repository README's 6/month low-tier limit conflicts with the current 20/month rate-limit page. Current service docs/tool responses take precedence over copied skill/README entitlements. Privileged Plugin API execution, beta write quality, mutable pricing and client allowlisting make this a conditional trial, not a blanket recommendation.
+
+**Evidence boundary:** Direct GitHub source/commit/tree inspection plus Figma developer/help documentation (2026-10-23); no live Figma authorization, install test, output-fidelity benchmark or write-back experiment. No maturity-score change. Next: matched screenshot/context/Code Connect implementation trials with stale mappings, sparse frames, assets and an isolated write-back test.
+
 ### 2026-10-23 — Vercel web-design-guidelines skill: checklist versus conformance
 **Question:** Can a widely adopted first-party code-review skill safely serve as a frontend UX/accessibility gate?
 
