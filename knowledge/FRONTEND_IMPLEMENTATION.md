@@ -7,6 +7,45 @@ Keep durable design guidance separate from fast-changing framework details.
 
 Prefer the lowest-complexity platform primitive that preserves the required semantics, accessibility, resilience, and interaction quality. A newer API is not a UX improvement by itself.
 
+## CSS cascade boundaries for agent-authored interfaces — 2026-10-23
+
+**Decision:** use **cascade layers to declare precedence between style sources** and **`@scope` to constrain which descendants a selector can match**. They solve different problems; neither is a security boundary, Shadow DOM substitute, design-system contract, or guarantee against regressions. Before an agent adds another selector or `!important`, inspect the computed declaration's **origin → importance → layer → specificity → scoping proximity → source order**.
+
+### Layer contract: make ownership and override intent explicit
+
+- Define named layer order once, before any stylesheet creates those names. For normal author declarations, **later layers win over earlier layers regardless of selector specificity**. **Unlayered normal declarations beat every layered normal declaration**, even if they appear first. For `!important`, layer precedence reverses: earlier important layers beat later important layers, and layered important declarations beat unlayered important ones. Do not assume “later stylesheet wins” or that a more specific component selector beats a utility in a later layer.
+- A small project can use `@layer reset, vendor, base, components, utilities, overrides;` if that matches its *actual* CSS pipeline. Put third-party styles in a deliberately lower-priority layer when feasible; do not scatter unlayered “quick fixes,” which silently outrank normal layered styles. An explicit `overrides` layer should be exceptional, not the default destination for agent patches. Inspect built CSS: first creation establishes layer order, and later `@layer` statements do **not** reorder existing layers.
+- `@import "vendor.css" layer(vendor);` can place a stylesheet into a layer, but CSS `@import` must precede ordinary rules and may add a request dependency; prefer a bundler-supported integration when appropriate. Avoid creating layers conditionally under `@media`/`@supports`, because first-creation order can then vary with the environment.
+- **Framework version matters:** Tailwind v4 uses *native CSS cascade layers*; its official Preflight example declares `theme, base, components, utilities`, and custom utilities use `@utility`. Tailwind v3's `@layer` was a **build-time directive** with different relocation/purging behavior. Do not paste v3 layer recipes into v4 or declare a competing global order without inspecting generated output and the framework version. CSS Modules and scoped component styles can coexist with layers; their name isolation does not establish cross-source cascade priority.
+
+```css
+/* Example for a project that owns this stylesheet and is not importing
+   a framework with its own layer order. */
+@layer reset, vendor, base, components, utilities, overrides;
+
+@layer components {
+  @scope (.result-card) to (.embedded-content) {
+    .title { font-weight: 650; }
+    :scope { border: 1px solid var(--border-subtle); }
+  }
+}
+```
+
+### Scope contract: selector reach is not style isolation
+
+- `@scope (.result-card) to (.embedded-content)` matches descendants within the card **except** the lower-bound subtree. It is useful for nested/reused components and rich user content that must not receive internal selectors. **Inherited properties** (e.g. `color`, `font-family`, custom properties) still cross that boundary; a donut scope does not reset them.
+- A scoped selector like `.title` does **not** automatically match the scope root itself. Use `:scope` to style the root; `:scope` adds pseudo-class specificity, whereas the scope prelude itself does not increase specificity. Be cautious with nested `&`: MDN documents engine/version differences in its specificity inside scoped blocks.
+- **Proximity is a tie-breaker, not a superpower.** A nearer scope wins only after origin, importance, layer and specificity are tied. If a more specific rule or higher-precedence layer wins, proximity cannot rescue the nested component.
+- `@scope` is Baseline *newly available* as of March 2026, not a safe assumption for all deployed devices. Unsupported browsers ignore its block: keep essential layout/control usability in broadly supported fallback selectors, then use `@scope` for enhancement where appropriate. A documented Safari **26.0–26.3** regression affected scoped styling of inputs/textareas with UA shadow roots; the compatibility report says it was fixed in **26.4**. Test the actual support matrix rather than relying only on feature-family badges.
+
+### Verification and limits
+
+For a new agent patch, inspect **computed styles and matched-rule origins/layers** for: nested cards, third-party widgets, light/dark themes, user-generated content, form controls, hover/focus-visible/disabled states, and a high-contrast/forced-colors configuration. Test a deliberate specificity conflict, an unlayered declaration, an important declaration, and a scope-boundary inheritance case; capture before/after visuals at narrow and wide sizes. Do not “fix” a failure by removing focus outlines, overriding user-important styles, or broad `all: unset` resets. `revert-layer` rolls back the current cascade layer, **not** necessarily to browser defaults; verify its result in DevTools. A passing build or screenshot cannot establish correct cascade behavior across states.
+
+**Evidence boundary:** MDN and browser-vendor docs establish the cascade, scoping and support mechanics; Tailwind's versioned docs establish its integration. The Safari regression is an issue/compatibility report with a reproducer, not a cross-browser benchmark. The proposed layer order and agent QA gate are synthesis, not experimentally proven improvements to AI output. No runtime browser matrix or comparative agent experiment was executed in this cycle.
+
+**Primary sources (reviewed 2026-10-23):** [MDN cascade layers](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Cascade_layers), [MDN `@layer`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40layer), [MDN `@scope`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40scope), [Chrome scope selector-isolation warning](https://developer.chrome.com/docs/css-ui/at-scope), [MDN `revert-layer`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/revert-layer), [Tailwind v4 Preflight](https://tailwindcss.com/docs/preflight), [Tailwind v4 upgrade semantics](https://tailwindcss.com/docs/upgrade-guide), [Tailwind v3 layer behavior](https://v3.tailwindcss.com/docs/adding-custom-styles), [Safari scope regression report](https://github.com/mdn/browser-compat-data/issues/29259).
+
 ## Bidirectional UI and RTL: direction is not translation — 2026-10-23
 
 **Decision:** treat localization as three independent contracts: **human language** (`lang`), **base text direction** (`dir`), and **interface geometry/interaction** (logical CSS, direction-aware controls). Translating strings or setting a locale in a test runner does not, by itself, make a correct RTL interface. This is a durable internationalization gap in agent-generated frontends.
