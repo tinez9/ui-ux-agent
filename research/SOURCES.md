@@ -1,5 +1,13 @@
 # Source Registry
 
+## Accessibility agent-audit skills: automation, side effects and conformance limits (2026-10-23)
+- **masuP9 upstream skill and package:** https://github.com/masuP9/a11y-specialist-skills ; https://github.com/masuP9/a11y-specialist-skills/blob/main/skills/auditing-wcag/SKILL.md ; https://github.com/masuP9/a11y-specialist-skills/blob/main/skills/a11y-knowledge/references/checks-axe.md — six linked skills, criterion-specific evidence/NT rules, installation, compatibility and audit scope.
+- **Executable source and CI:** https://github.com/masuP9/a11y-specialist-skills/blob/main/packages/a11y-audit/src/cli.ts ; https://github.com/masuP9/a11y-specialist-skills/blob/main/packages/a11y-audit/src/playwright/runChangeOnInputCheck.ts ; https://github.com/masuP9/a11y-specialist-skills/blob/main/packages/a11y-audit/src/playwright/runPointerCancellationCheck.ts ; https://github.com/masuP9/a11y-specialist-skills/blob/main/.github/workflows/ci.yml — CLI zero-exit conditions, active input/press side effects, declared tests; code inspected, not executed.
+- **Comparator:** https://github.com/airowe/claude-a11y-skill/blob/main/skill.md — thin axe/JSX wrapper with CDN-loaded axe 4.8.4 and WCAG 2.1 tag scope; one-commit upstream.
+- **Playwright official:** https://playwright.dev/docs/accessibility-testing ; https://playwright.dev/docs/aria-snapshots — axe integration, state-specific scanning, snapshot structure and explicit limits.
+- **W3C WAI:** https://www.w3.org/WAI/test-evaluate/tools/selecting/ ; https://www.w3.org/WAI/test-evaluate/ ; https://www.w3.org/WAI/WCAG22/Understanding/conformance — tools assist but cannot determine conformance alone; full pages and complete processes matter.
+- **Evidence boundary:** Direct source inspection + standards/official documentation; no execution, independent benchmark, accessibility conformance certification or observed CI run. Upstream adoption signal is not effectiveness evidence.
+
 ## Interaction responsiveness, INP phases and scheduler limits — primary docs (2026-10-23)
 - **Chrome/web.dev (updated 2025-09-02):** https://web.dev/articles/optimize-inp — INP definition, ≤200 ms / >500 ms thresholds, p75 page visits, three diagnostic phases, field-to-lab workflow.
 - **Chrome/web.dev (updated 2024-12-19):** https://web.dev/articles/optimize-long-tasks — main-thread tasks, >50 ms long-task boundary, yielding/chunking trade-offs.
