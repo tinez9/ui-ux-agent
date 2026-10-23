@@ -27,6 +27,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-23 — Webfont fallback as a visible typography state
+**Question:** Which loading and fallback policies preserve reading flow, brand intent and layout stability under slow or failed font delivery?
+
+**Finding:** The CSS Fonts 4 Working Draft recommends `fallback` for long body text while Next.js defaults to `swap`; neither is a universal winner. Design and test first-paint fallback, metric matching, browser support, selective preload and multilingual glyph coverage rather than assuming a loaded-font screenshot or framework defaults are sufficient.
+
+**Evidence boundary:** W3C draft, MDN, web.dev and Next.js establish proposed semantics, platform mechanics and framework defaults, not comparative user outcomes. Visual-design maturity stays 3/10. Next: matched cold-network trials of `swap` + calibrated fallback, `fallback`, `optional` and system-only, including CLS/LCP and reading/task continuity.
+
+
 ### 2026-10-18 — Figma Code Connect v2 design-to-code handoff
 **Question:** Can Figma's official Code Connect skill give AI agents trustworthy production-component mappings, and which version/verification traps matter?
 
