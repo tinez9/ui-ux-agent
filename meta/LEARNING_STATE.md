@@ -27,6 +27,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-23 — APCA skills and contrast authority
+**Question:** Can contrast-checking skills for Claude Code/Codex be trusted as a release gate, and has WCAG 3 adopted APCA?
+
+**Finding:** The September 2026 W3C WCAG 3 draft explicitly leaves its contrast algorithm undecided. Two inspected installable skills illustrate why primary-source checking matters: `apca-cli` correctly calculates a separate WCAG 2 ratio but markets APCA as the WCAG 3 foundation and prioritizes APCA on disagreements; `oklch-skill` reverses APCA sign conventions and misstates WCAG's large-text pixel threshold. Added a WCAG-first dual-metric review contract and documented installer/global-instruction supply-chain risk.
+
+**Evidence boundary:** Direct inspection of skill, CLI, installer and upstream source plus W3C standards/draft; no comparative testing or adoption evidence. Visual-design and agent-workflow scores unchanged. Next: controlled tests with known contrast pairs, alpha compositing, OKLCH/P3, light/dark polarity and browser-verified rendering; assess whether a narrowly scoped contrast skill actually improves agent fixes versus native axe/Playwright workflows.
+
+
 ### 2026-10-23 — RTL and bidirectional content as separate contracts
 **Question:** What do coding agents miss when they equate localized strings with a correct right-to-left UI?
 
