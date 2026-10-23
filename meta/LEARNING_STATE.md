@@ -27,6 +27,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-23 — shadcn/ui official skill and registry MCP: source-level capability versus semantic overreach
+**Question:** Does the official shadcn agent skill/MCP provide unique, safe project-grounded UI implementation guidance beyond direct CLI/docs and component inspection?
+
+**Finding:** Official v4.22.1 source separates a project-aware skill (config, primitive-base-specific patterns, design-system/CLI references) from a seven-tool MCP server that browses registry items and **returns install commands**, not direct installation. Useful conditionally for existing shadcn projects, especially with custom aliases/multiple registries; MCP adds limited value if CLI/docs are already accessible. Inspected skill contains a contradictory categorical `2–7 choices → ToggleGroup` rule despite its own `single choice → RadioGroup` guidance: choose by semantics, not count. Registry Health tests operational availability/schema/installability, not safety or design quality. Universal/GitHub registries can distribute instructions/workflows and transitive dependencies; pin/review payloads before any agent shell installation.
+
+**Evidence boundary:** Official skill/MCP/CLI source, shadcn registry docs, W3C radio/toggle patterns, npm package-script docs. No install, benchmark or AT trial; no score change. Next: compare CLI-only, skill-only and skill+MCP using Base/Radix projects, custom aliases, radio-vs-toggle controls, stale APIs and hostile registry fixtures.
+
+
 ### 2026-10-23 — Figma MCP first-party skills: design handoff versus stale instructions
 **Question:** Are Figma's current agent skills a trustworthy, low-friction design-to-code/write-back capability, and can their preflight instructions be treated as authoritative?
 
