@@ -3,6 +3,7 @@
 Record meaningful knowledge-base improvements, not every formatting edit.
 
 ## 2026-10-23
+- Added an RTL/bidirectional UI implementation contract: semantic language vs direction, dynamic-value isolation, logical CSS, selective icon mirroring, technical-token exceptions and locale/keyboard/accessibility test gates. No maturity-score change.
 - Added a webfont-loading decision contract: CSS Fonts 4 draft body-text guidance vs Next.js swap default, role-specific display choices, fallback metric/browser limits, preload and multilingual failure modes, and falsifiable cold-network/blocked-font tests. Visual-design maturity unchanged.
 - Established a comparison decision contract: reconciled differences-only filtering for spec-heavy products with full feature disclosure for SaaS plans; added data normalization, responsive semantics, accessibility and decision-accuracy tests. UX-pattern maturity unchanged.
 - Evaluated agent-browser dogfood against Playwright MCP/CLI: repro-first black-box QA, clean-control false-positive risk, opt-in browser security, install/credential boundaries, and comparative promotion test. Agent-workflow maturity unchanged.
