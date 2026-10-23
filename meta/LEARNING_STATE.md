@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-23 — Saved-view filters versus exports and real access control
+**Question:** When do filtered screens, shared-view links, exported data and field permissions disagree in ways that can mislead users or expose more than the visible subset?
+
+**Finding:** Airtable's current docs explicitly confirm that temporary URL filters do not restrict the original shared-view dataset and that a viewer's CSV download ignores those added filters; grouped/cover fields and expanded-record settings also defeat assumptions about hidden fields. In contrast, Notion's genuine property-level access rules can make views referencing restricted fields unavailable to recipients, including agents inheriting limited permissions. GitHub Projects documents view-based TSV export; export scope must be checked per product, not generalized. Agents must distinguish authorization, base-view membership, temporary filters and export scope; disclose mismatches and test low-privilege exports and links.
+
+**Evidence boundary:** First-party product behavior/docs (Airtable last updated August 2026, Notion, GitHub) plus an agent-facing implementation/test contract. No exploit or runtime test was performed; these are documented product-specific exceptions, not universal security claims. Distinctive-feature maturity remains **2/10**. Next: test matched view/share/export workflows with actual lower-privilege accounts and permission changes.
+
 
 ### 2026-10-23 — Cascade-layer and scoped-selector boundaries for AI frontend edits
 **Question:** When do native `@layer` and `@scope` reduce style regressions, and where can they create false confidence?
