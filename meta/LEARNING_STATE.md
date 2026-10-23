@@ -27,6 +27,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-23 — Cascade-layer and scoped-selector boundaries for AI frontend edits
+**Question:** When do native `@layer` and `@scope` reduce style regressions, and where can they create false confidence?
+
+**Finding:** Layers order competing CSS *sources* before specificity; `@scope` limits selector matching but not inherited styles. Unlayered normal rules outrank layered normal rules, while important layer order reverses. Scoping proximity resolves only otherwise tied declarations. Tailwind v3 and v4 use materially different `@layer` semantics. Safari 26.0–26.3 had a documented `@scope` form-control regression fixed in 26.4. Agents should inspect built CSS and computed declarations rather than escalating specificity or adding `!important`.
+
+**Evidence boundary:** MDN, Chrome and Tailwind first-party documentation plus a Safari compatibility issue establish mechanics and known pitfalls. Proposed layer architecture and QA matrix are agent synthesis; no empirical agent-output uplift or cross-browser runtime tests were conducted. No maturity-score change. Next: seeded CSS conflict benchmark across layered/unlayered, nested scope, framework version and browser variants.
+
+
 ### 2026-10-23 — Visual-to-source feedback: React Grab versus Agentation
 **Question:** Which browser-to-agent feedback tool adds useful source localization and review intent without creating false confidence or unsafe autonomous edits?
 
