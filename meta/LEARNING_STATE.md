@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-23 — Consent UX versus actual tracking and jurisdiction-specific exceptions
+**Question:** Can an AI agent infer a correct consent experience from “Accept/Reject” button parity, and when does a blanket opt-in rule become wrong?
+
+**Finding:** A consent interface needs independent purpose classification, comprehensible choice/scope, and enforced storage/access behavior. EDPB taskforce and CNIL guidance expose deceptive choice and withdrawal patterns, but the UK's final April 2026 ICO guidance now recognizes narrow statistical and appearance exceptions with a simple free objection rather than consent, subject to strict purpose/data-use limits. France's January 2026 cross-device guidance requires refusal and withdrawal to match the reach of acceptance. A generic “all analytics off until opt-in everywhere” rule is overbroad; a generic “analytics is exempt” rule is dangerous. Added purpose inventory, cross-device scope, and pre-choice/reject/withdraw network-storage test matrix.
+
+**Evidence boundary:** Official regulator guidance (EDPB, CNIL, ICO) establishes jurisdiction-scoped rules and examples, not legal clearance or a verified CMP implementation. No live test, comparative UX experiment or legal review. UX-pattern maturity unchanged (4/10). Next: instrument real CMP configurations for pre-consent calls, refusal persistence, tag-manager races and cross-device propagation; compare UK statistical-exception eligibility against EU country-specific requirements.
+
 ### 2026-10-23 — Saved-view filters versus exports and real access control
 **Question:** When do filtered screens, shared-view links, exported data and field permissions disagree in ways that can mislead users or expose more than the visible subset?
 
