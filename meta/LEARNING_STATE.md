@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-23 — Storybook MCP: component manifests are fallible, and plugin setup can change agent instructions
+**Question:** When does Storybook's first-party component context help agents reuse UI correctly, and when does generated documentation or the plugin itself create false authority?
+
+**Finding:** The official 10.6 manifests guide treats component metadata as derived from CSF/MDX and docgen, not guaranteed-complete types. A still-open issue (#34710) shows manifest error entries instead of prop documentation; a named-alias issue (#35778) was closed via #36661 on 2026-10-15, so its older reproduction must not be presented as a current unresolved bug. In experimental docgen-server mode, dev JSON manifest endpoints intentionally 404 while the debugger remains available. Current addon source allows no-Origin MCP clients and only requires auth for specific composition configurations; the experimental Codex plugin can update a marked `AGENTS.md` section during setup/upgrade. Agent instructions should **verify manifest errors against source**, protect test side effects and review instruction-file changes.
+
+**Evidence boundary:** Official Storybook docs, canonical addon/plugin source and issue history; no installed runtime or agent benchmark. Maturity stays **5/10 for agent workflows** and **3.7/10 overall**. Next: pinned-version seeded-error/clean-control benchmark for props, latency, testing side effects and design outcomes.
+
 ### 2026-10-23 — Accessibility audit skills: no-violation exit codes can conceal untested criteria and active side effects
 **Question:** Does a WCAG-oriented Claude Code/Codex audit skill add genuine decision value beyond Playwright+axe, and is its CLI safe to run as an autonomous conformance gate?
 
