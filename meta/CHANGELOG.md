@@ -1,5 +1,8 @@
 # Knowledge Changelog
 
+## 2026-10-24
+- Inspected Argos's current PR-review/CLI agent skills and Playwright SDK/reporter; added an evidence-first visual-regression decision guide, identified unsafe recurrence/ignore/approval heuristics and screenshot/trace privacy boundaries, corrected older no-MCP claims, and compared local Playwright, Chromatic and Percy. No empirical benchmark or maturity change.
+
 Record meaningful knowledge-base improvements, not every formatting edit.
 
 ## 2026-10-23
