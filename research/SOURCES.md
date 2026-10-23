@@ -1,5 +1,13 @@
 # Source Registry
 
+## Agent-readable visual regression: Argos skills vs Playwright/Chromatic/Percy (2026-10-24)
+- **Canonical skill/source inspection:** https://github.com/argos-ci/argos-javascript/blob/main/skills/argos-pr-review/SKILL.md ; https://github.com/argos-ci/argos-javascript/blob/main/skills/argos-cli/SKILL.md ; https://github.com/argos-ci/argos-javascript/blob/main/skills/argos-pr-review/references/baseline.md ; https://github.com/argos-ci/argos-javascript/blob/main/skills/argos-pr-review/references/flaky-fixes.md — PR-intent review, review/ignore commands, baseline semantics, stabilization workarounds; heuristic flakiness claims require adversarial validation.
+- **Implementation, license and upload boundary:** https://github.com/argos-ci/argos-javascript/blob/main/packages/playwright/src/screenshot.ts ; https://github.com/argos-ci/argos-javascript/blob/main/packages/playwright/src/reporter.ts ; https://github.com/argos-ci/argos-javascript/blob/main/packages/playwright/package.json ; https://github.com/argos-ci/argos ; https://github.com/argos-ci/argos-playwright — v7.8.0/Node >=22/MIT, optional ARIA captures, screenshot/trace uploads; old integration repository archived.
+- **Current agent access / freshness contradiction:** https://argos-ci.com/blog/visual-testing-mcp-servers (2026-10-15), https://argos-ci.com/ai-agents , https://argos-ci.com/blog/review-builds-ai-agents (2026-05-19), vs https://argos-ci.com/blog/playwright-mcp-visual-testing (2026-08-27, stale "no MCP" claim). Current remote MCP supports scoped read/write; older article is superseded.
+- **Independent alternatives and limits:** https://playwright.dev/docs/test-snapshots ; https://playwright.dev/docs/api/class-pageassertions ; https://www.chromatic.com/docs/browsers/ ; https://www.chromatic.com/docs/unstable-tests/ ; https://www.browserstack.com/docs/percy/advanced-snapshots/responsive-dom . Local PNG baselines, per-browser cloud baselines, flaky capture and DOM-responsive constraints.
+- **Evidence boundary:** First-party code, documentation and vendor comparisons establish mechanisms and risks, not measured agent accuracy or causal product outcomes. No runtime benchmark or third-party security audit performed.
+
+
 ## Storybook MCP revalidation: generated contracts, docgen defects and agent trust (2026-10-23)
 - **Storybook 10.6 manifests:** https://storybook.js.org/docs/ai/manifests — generated from stories/docgen; types/JSDoc limits; debugger and experimental docgen-server JSON-404 exception; faster but less detailed parser fallback.
 - **Storybook 10.6 MCP API:** https://storybook.js.org/docs/ai/mcp/api — `dev/docs/test` toolset controls, default enabled; Vitest-dependent `test-run`; preview API.
