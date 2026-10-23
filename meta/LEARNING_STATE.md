@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Argos visual-regression agent skills: diff evidence versus baseline authority
+**Question:** Do installable visual-regression review skills materially improve agent QA, and can their flakiness and approval advice be trusted?
+
+**Finding:** Source inspection of Argos `argos-pr-review`, `argos-cli`, SDK and reporter found a real complement to browser-only inspection: deterministic CI snapshots, structured baseline/current/diff URLs, trace metadata and PR-intent review. Argos now has remote MCP (October 2026), contrary to its older August article. The review skill's recurrence/flakiness heuristics can wrongly dismiss persistent defects; `change ignore` suppresses checks, and approval makes a build eligible for future baselines. Read-only agents should triage and report; baseline-affecting writes need explicit human authorization. Reporter uploads screenshots and failure traces, creating a privacy boundary. Compared with local Playwright snapshots, Chromatic per-browser baselines and Percy DOM capture; no tool is a UX oracle.
+
+**Evidence boundary:** Actual upstream skills/package/source and primary docs, no live evaluation. Maturity **unchanged** (3.7 overall; 5 agent workflows). Next: seeded BUG/CLEAN PRs across local Playwright, Argos and Chromatic; test false approvals, false positives, missing states, suppressed regressions, cost and sensitive-data leakage.
+
 ### 2026-10-23 — Storybook MCP: component manifests are fallible, and plugin setup can change agent instructions
 **Question:** When does Storybook's first-party component context help agents reuse UI correctly, and when does generated documentation or the plugin itself create false authority?
 
