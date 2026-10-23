@@ -1,5 +1,12 @@
 # Source Registry
 
+## Saved-view security and export-scope exceptions — primary product docs (2026-10-23)
+- **Airtable URL filters:** https://support.airtable.com/articles/3784973334-shared-view-url-filters — viewer URL predicates can be removed and do not limit the original shared-view dataset.
+- **Airtable sharing/export:** https://support.airtable.com/articles/4130354023-Using-the-view-share-menu-in-Airtable — August 2026 guidance: CSV ignores viewer-added filters; hidden-field exceptions, expanded-record exposure, link access/revocation.
+- **Notion property permissions:** https://www.notion.com/help/database-property-access — restricted columns can make a view fail to open, and inherited agent access may hide the column entirely; plan-scoped feature.
+- **GitHub Projects export:** https://docs.github.com/en/issues/planning-and-tracking-with-projects/managing-your-project/exporting-your-projects-data — documents TSV export of a view, illustrating product-specific export contracts.
+- **Evidence boundary:** first-party documented behaviors, not an independent penetration test, causal UX study or guarantee of current runtime behavior across accounts. Recheck fast-changing permissions/export details before implementation.
+
 Maintain useful, traceable sources without creating an undifferentiated link dump.
 
 ## CSS cascade layers and scoped selectors — standards and implementation references (2026-10-23)
