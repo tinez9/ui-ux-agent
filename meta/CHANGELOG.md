@@ -3,6 +3,7 @@
 Record meaningful knowledge-base improvements, not every formatting edit.
 
 ## 2026-10-23
+- Established an agent-oriented CSS cascade contract for `@layer` versus `@scope`: precedence/importance reversal, unlayered overrides, selector-versus-inheritance boundaries, scoping proximity, Tailwind v3/v4 differences, Safari form-control regression and computed-style regression gates. Frontend maturity unchanged.
 - Compared React Grab and Agentation as visual-to-source feedback tools using their actual agent skills, MCP/setup docs, license terms, issue reports and a maintainer-associated source-retrieval benchmark; distinguished file lookup from design quality, flagged source-map/sync/security failure modes and defined a real-app validation gate. Agent-workflow maturity unchanged.
 - Evaluated Apple's first-party Safari 27 MCP against Playwright WebKit and Chrome DevTools: identified real Safari browser-fidelity value, 17-tool diagnostic scope, macOS/iOS and audit limitations, local-server versus agent-data trust boundaries, and a seeded-defect promotion test. No maturity change.
 - Evaluated shadcn/ui official skill and registry MCP from implementation source: differentiated project-aware composition guidance from command-returning MCP tools; challenged categorical ToggleGroup rules against radio semantics, and established registry health/supply-chain and install-review gates. No maturity change.
