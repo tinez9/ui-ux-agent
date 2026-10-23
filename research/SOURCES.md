@@ -2,6 +2,13 @@
 
 Maintain useful, traceable sources without creating an undifferentiated link dump.
 
+## CSS cascade layers and scoped selectors — standards and implementation references (2026-10-23)
+- **Primary docs:** https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Cascade_layers ; https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40scope ; https://developer.chrome.com/docs/css-ui/at-scope
+- **Framework integration:** https://tailwindcss.com/docs/upgrade-guide ; https://tailwindcss.com/docs/preflight ; https://v3.tailwindcss.com/docs/adding-custom-styles
+- **Regression report:** https://github.com/mdn/browser-compat-data/issues/29259
+- **Why it matters:** Layer precedence outranks specificity; scope proximity is a later tie-breaker and selector scoping does not stop inheritance. Tailwind v3/v4 and Safari 26.0–26.3 exceptions can invalidate agent-generated CSS fixes.
+- **Evidence type/boundary:** browser and framework documentation plus a tracked Safari compatibility issue; not a measured UX or agent-quality improvement. Reviewed 2026-10-23.
+
 ## Anthropic Engineering — Harness design for long-running application development
 - **URL:** https://www.anthropic.com/engineering/harness-design-long-running-apps
 - **Type:** first-party engineering experiment
