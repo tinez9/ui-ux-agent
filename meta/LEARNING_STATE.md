@@ -27,6 +27,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-23 — RTL and bidirectional content as separate contracts
+**Question:** What do coding agents miss when they equate localized strings with a correct right-to-left UI?
+
+**Finding:** Correctness requires independent language (`lang`), direction (`dir`), bidi isolation of dynamic values, logical layout, selective directional-icon mirroring and keyboard/focus validation. Browser-locale emulation alone does not assert application `dir`, translations or interactive behavior. The frontend implementation guide now includes a concrete decision/test contract and W3C/Mozilla/React Aria/Playwright primary references.
+
+**Evidence boundary:** Standards and platform/vendor guidance, not user-outcome or cross-device validation. Frontend maturity unchanged (3/10). Next: paired RTL/LTR E2E tests with mixed-script content and screen readers, including pseudo-RTL vs actual Arabic/Hebrew and keyboard navigation.
+
+
 ### 2026-10-23 — Webfont fallback as a visible typography state
 **Question:** Which loading and fallback policies preserve reading flow, brand intent and layout stability under slow or failed font delivery?
 
