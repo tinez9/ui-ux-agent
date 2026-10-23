@@ -3,6 +3,7 @@
 Record meaningful knowledge-base improvements, not every formatting edit.
 
 ## 2026-10-23
+- Adversarially revalidated Storybook MCP: corrected the closed named-union bug status, documented open docgen manifest errors and intentional dev JSON 404s, inspected alpha.8 addon/plugin source for no-Origin/auth and `AGENTS.md` rewrite boundaries, and added a seeded-failure agent evaluation gate. Maturity unchanged.
 - Evaluated a WCAG 2.2 Claude Code/Codex accessibility skill from its actual package and check source: separated manual/NT judgment from axe results, exposed CLI exit-0 false assurance and active input/press checks that can mutate production data, and defined a safe staging/benchmark gate. Agent-workflow maturity unchanged.
 - Established a phase-driven interaction-responsiveness contract: INP field versus lab interpretation, input/processing/presentation attribution, React/animation-frame scheduling traps, deprecated `isInputPending`, browser/telemetry limits, and honest async feedback regression checks. Frontend maturity unchanged.
 - Established a jurisdiction-aware consent UX/runtime contract: distinguished visual accept/reject parity from pre-choice tracker behavior, challenged blanket opt-in claims with the UK's April 2026 narrow statistical/appearance exceptions, and incorporated CNIL 2026 cross-device refusal/withdrawal symmetry plus adversarial storage/network tests. UX-pattern maturity unchanged.
