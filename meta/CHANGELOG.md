@@ -3,6 +3,7 @@
 Record meaningful knowledge-base improvements, not every formatting edit.
 
 ## 2026-10-23
+- Audited official Figma MCP plugin/skills (v2.2.163): distinguished design-to-code, Code Connect and editable write-back; corrected first-party Professional-plan and low-tier quota contradictions against live Figma docs; documented client/permission, beta write, asset and benchmark gates. Agent-workflow maturity unchanged.
 - Critically audited Vercel web-design-guidelines skill against its mutable remote checklist and W3C/MDN: identified native-control keyboard false positives, naming/live-region overspecification, contradictory zoom guidance, virtualization conflation and blanket performance rules. Added conditional triage and seeded-defect validation protocol; maturity unchanged.
 - Audited two APCA/OKLCH agent contrast skills against the September 2026 WCAG 3 draft and WCAG 2.2: corrected false APCA-standard claims, reversed Lc polarity and large-text units, and documented a WCAG-first contrast QA and supply-chain decision gate. Visual-design and agent-workflow maturity unchanged.
 - Added an RTL/bidirectional UI implementation contract: semantic language vs direction, dynamic-value isolation, logical CSS, selective icon mirroring, technical-token exceptions and locale/keyboard/accessibility test gates. No maturity-score change.
