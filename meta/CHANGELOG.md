@@ -3,6 +3,7 @@
 Record meaningful knowledge-base improvements, not every formatting edit.
 
 ## 2026-10-23
+- Evaluated agent-browser dogfood against Playwright MCP/CLI: repro-first black-box QA, clean-control false-positive risk, opt-in browser security, install/credential boundaries, and comparative promotion test. Agent-workflow maturity unchanged.
 - Added a PWA service-worker update decision contract: waiting versus controlling versus reloaded clients, cross-tab version risks, draft preservation, plugin-specific auto-update traps and falsifiable real-device tests. No maturity change.
 
 ## 2026-10-22
