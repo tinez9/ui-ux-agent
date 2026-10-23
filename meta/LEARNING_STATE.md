@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-23 — INP is next-paint responsiveness, not task completion
+**Question:** How should AI coding agents diagnose and repair sluggish interaction without mistaking immediate animation, React scheduling, or a good load score for actual responsiveness?
+
+**Finding:** INP combines input delay, handler processing, and presentation delay; remedies must target the measured phase. The official `web-vitals` attribution build reports changes in worst-case INP, not every interaction, and a visit without eligible interactions has no INP. React Transitions cannot control text inputs; `requestAnimationFrame` runs before paint; `Promise.resolve()` does not create a task boundary. The newer `scheduler.yield()` needs a compatibility fallback, while MDN now deprecates `isInputPending()`. Added an agent-oriented measurement/diagnosis matrix that also preserves honest pending/success semantics and protects telemetry privacy.
+
+**Evidence boundary:** Google Chrome/web.dev, MDN, React and Shopify document mechanics and operational constraints. No field RUM data, cross-browser performance experiment or measured outcome uplift was produced. Frontend maturity remains 3/10. Next: seeded slow-interaction fixtures with input-delay, processing, layout, React-input and async-network variants; compare baseline fixes against phase-aware diagnosis on mobile and desktop, with false-positive/clean controls.
+
 ### 2026-10-23 — Consent UX versus actual tracking and jurisdiction-specific exceptions
 **Question:** Can an AI agent infer a correct consent experience from “Accept/Reject” button parity, and when does a blanket opt-in rule become wrong?
 
