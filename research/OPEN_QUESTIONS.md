@@ -38,3 +38,4 @@ The broad question “Which context artifacts most improve visual quality in AI-
 - Which modern browser capabilities enable distinctive UX with acceptable complexity?
 - Which scroll-linked effects measurably improve orientation/comprehension versus adding distraction, and when is a discrete scroll-state query preferable to a continuous timeline?
 - When is an independent visual evaluator worth its latency/token cost for current frontier models?
+- Compare full plan matrices, optional differences-only filtering, and single-option switching on matched product/SaaS decision tasks; measure missed critical constraints, false absence inferences, decision accuracy, screen-reader comprehension and recovery before optimizing scan time.
