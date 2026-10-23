@@ -1,5 +1,17 @@
 # Source Registry
 
+## Interaction responsiveness, INP phases and scheduler limits — primary docs (2026-10-23)
+- **Chrome/web.dev (updated 2025-09-02):** https://web.dev/articles/optimize-inp — INP definition, ≤200 ms / >500 ms thresholds, p75 page visits, three diagnostic phases, field-to-lab workflow.
+- **Chrome/web.dev (updated 2024-12-19):** https://web.dev/articles/optimize-long-tasks — main-thread tasks, >50 ms long-task boundary, yielding/chunking trade-offs.
+- **Chrome DevTools:** https://developer.chrome.com/docs/performance/insights — INP breakdown, forced reflow and related performance diagnostics.
+- **GoogleChrome/web-vitals (current upstream README):** https://github.com/GoogleChrome/web-vitals — maintained `onINP`, attribution build, reporting lifecycle, no-interaction absence, `reportAllChanges` caveat and telemetry examples.
+- **MDN Event Timing:** https://developer.mozilla.org/en-US/docs/Web/API/PerformanceEventTiming — modern API and default event-duration threshold; compatibility caveats.
+- **MDN Long Animation Frames:** https://developer.mozilla.org/en-US/docs/Web/API/PerformanceLongAnimationFrameTiming ; https://developer.mozilla.org/en-US/docs/Web/API/PerformanceLongAnimationFrameTiming/scripts — limited-availability LoAF and attribution gaps for cross-origin frames/workers.
+- **MDN scheduler.yield and deprecated isInputPending:** https://developer.mozilla.org/en-US/docs/Web/API/Scheduler/yield ; https://developer.mozilla.org/en-US/docs/Web/API/Scheduling/isInputPending — limited scheduler support, prioritized continuation, explicit deprecation of the older input-pending check.
+- **React official:** https://react.dev/reference/react/useTransition ; https://react.dev/reference/react/startTransition — non-urgent state rendering versus synchronous controlled input; no blanket fix for blocking JavaScript.
+- **Shopify official storefront guidance:** https://shopify.dev/docs/storefronts/themes/best-practices/performance/understanding-inp — independent shipped-platform description of third-party/main-thread competition and INP phases.
+- **Evidence boundary:** Platform guidance and API docs, not independent comparative agent-performance evidence. The 2026 contract is synthesis; no real-user or cross-browser benchmark was performed.
+
 ## Consent-choice parity, runtime enforcement and country exceptions — regulators (2026-10-23)
 - **EDPB taskforce (2023):** https://www.edpb.europa.eu/system/files/2023-01/edpb_20230118_report_cookie_banner_taskforce_en.pdf — majority position on missing rejection, no pre-ticks, misleading visual contrast; explicit minimum-position/national-law disclaimer.
 - **EDPB deceptive design (2023):** https://www.edpb.europa.eu/documents/guideline/guidelines-032022-on-deceptive-design-patterns-in-social-media-platform_en — consent withdrawal, obstruction, transparency; social-media scope.
