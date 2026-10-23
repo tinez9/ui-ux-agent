@@ -27,6 +27,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-23 — Safari 27 MCP: actual Safari versus patched WebKit
+**Question:** Does first-party Safari MCP provide unique value to coding/design agents beyond Playwright WebKit and Chrome DevTools MCP?
+
+**Finding:** Safari 27's bundled macOS `safaridriver --mcp` exposes 17 documented browser interaction/inspection tools, enabling actual branded Safari reproduction where Playwright's patched WebKit may diverge. It complements rather than replaces cross-browser Playwright regression suites or Chrome-specific tracing. No dedicated iOS-device control, accessibility audit, or CI assertion runner was established from the tool inventory. Local MCP transport does not prevent page content/screenshots reaching the model or browser interactions from causing side effects; use isolated test state.
+
+**Evidence boundary:** First-party WebKit release/tool documentation and Playwright browser documentation establish capabilities and limitations, not superior defect detection. No Mac/Safari execution or benchmark was run. Next: compare actual Safari MCP, Playwright WebKit and manual Safari on seeded Safari-only defects and clean controls, including iOS-only counterexamples. Maturity unchanged.
+
+
 ### 2026-10-23 — shadcn/ui official skill and registry MCP: source-level capability versus semantic overreach
 **Question:** Does the official shadcn agent skill/MCP provide unique, safe project-grounded UI implementation guidance beyond direct CLI/docs and component inspection?
 
