@@ -3,6 +3,7 @@
 Record meaningful knowledge-base improvements, not every formatting edit.
 
 ## 2026-10-23
+- Established a phase-driven interaction-responsiveness contract: INP field versus lab interpretation, input/processing/presentation attribution, React/animation-frame scheduling traps, deprecated `isInputPending`, browser/telemetry limits, and honest async feedback regression checks. Frontend maturity unchanged.
 - Established a jurisdiction-aware consent UX/runtime contract: distinguished visual accept/reject parity from pre-choice tracker behavior, challenged blanket opt-in claims with the UK's April 2026 narrow statistical/appearance exceptions, and incorporated CNIL 2026 cross-device refusal/withdrawal symmetry plus adversarial storage/network tests. UX-pattern maturity unchanged.
 - Adversarially revisited saved views: Airtable documents viewer-filtered CSV exporting the *original* shared view and hidden-field/expanded-record exceptions, while Notion's actual property ACL can break restricted-field views. Added explicit authorization/view/filter/export scopes, user-facing disclosure and lower-privilege regression fixtures. Distinctive-feature maturity unchanged.
 - Established an agent-oriented CSS cascade contract for `@layer` versus `@scope`: precedence/importance reversal, unlayered overrides, selector-versus-inheritance boundaries, scoping proximity, Tailwind v3/v4 differences, Safari form-control regression and computed-style regression gates. Frontend maturity unchanged.
