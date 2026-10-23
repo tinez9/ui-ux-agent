@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-23 — Accessibility audit skills: no-violation exit codes can conceal untested criteria and active side effects
+**Question:** Does a WCAG-oriented Claude Code/Codex audit skill add genuine decision value beyond Playwright+axe, and is its CLI safe to run as an autonomous conformance gate?
+
+**Finding:** Inspected `masuP9/a11y-specialist-skills` (six skills, criterion-specific judgment lines, 22 Playwright/axe checks plus page snapshot, npm 0.16.1) against a thin alternative and official W3C/Playwright guidance. Its distinction between confirmed findings and NT/manual review is useful. However, the CLI exits 0 despite `incomplete`/skipped checks when no violations occur; it runs fresh initial-page contexts rather than a complete authenticated journey; and source-confirmed change/press checks can trigger real autosaves or submissions. A zero exit is **not** WCAG conformance and the all-checks mode belongs on isolated fixtures, not production accounts.
+
+**Evidence boundary:** Inspected actual skill, CLI, input/press check source, package manifest and CI workflow; compared W3C full-page/process requirements and Playwright guidance. No runtime experiment, security audit, agent performance benchmark or maturity-score increase. Next: matched seeded/clean fixtures comparing direct Playwright+axe with the skill, measuring false assurance, manual queue quality, missed states and irreversible side effects.
+
 ### 2026-10-23 — INP is next-paint responsiveness, not task completion
 **Question:** How should AI coding agents diagnose and repair sluggish interaction without mistaking immediate animation, React scheduling, or a good load score for actual responsiveness?
 
