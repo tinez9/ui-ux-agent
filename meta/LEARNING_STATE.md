@@ -27,6 +27,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-23 — Visual-to-source feedback: React Grab versus Agentation
+**Question:** Which browser-to-agent feedback tool adds useful source localization and review intent without creating false confidence or unsafe autonomous edits?
+
+**Finding:** React Grab targets immediate rendered-element → source-context lookup; Agentation adds structured human feedback and optional MCP acknowledgment/resolution. A maintainer-associated, reproducible 330-case synthetic retrieval benchmark reports 86% baseline versus 96% for both, with React Grab faster under its accuracy-penalized metric; this does **not** establish superior design, fixes or accessibility. Source-map path failures, Agentation endpoint/subcommand sync traps, clipboard-watcher preemption, local HTTP/CORS trust boundaries and Agentation's PolyForm Shield licensing materially change installation decisions. Prefer explicit copy/annotation first, verified end-to-end sync second, autonomous fix loops only with clear permissions and tests.
+
+**Evidence boundary:** Primary repo source, install/skill/MCP docs, reported GitHub issues and vendor-associated benchmark; one model/trial, synthetic corpus and inconsistent 330/331 published case count. No independent comparison or local install performed. Next: paired source-identification *and verified repair* tasks across real apps, clean controls, remote development and sensitive-data fixtures. Agent-workflow maturity unchanged.
+
+
 ### 2026-10-23 — Safari 27 MCP: actual Safari versus patched WebKit
 **Question:** Does first-party Safari MCP provide unique value to coding/design agents beyond Playwright WebKit and Chrome DevTools MCP?
 
