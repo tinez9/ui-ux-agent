@@ -3,6 +3,7 @@
 Record meaningful knowledge-base improvements, not every formatting edit.
 
 ## 2026-10-23
+- Evaluated Apple's first-party Safari 27 MCP against Playwright WebKit and Chrome DevTools: identified real Safari browser-fidelity value, 17-tool diagnostic scope, macOS/iOS and audit limitations, local-server versus agent-data trust boundaries, and a seeded-defect promotion test. No maturity change.
 - Evaluated shadcn/ui official skill and registry MCP from implementation source: differentiated project-aware composition guidance from command-returning MCP tools; challenged categorical ToggleGroup rules against radio semantics, and established registry health/supply-chain and install-review gates. No maturity change.
 - Audited official Figma MCP plugin/skills (v2.2.163): distinguished design-to-code, Code Connect and editable write-back; corrected first-party Professional-plan and low-tier quota contradictions against live Figma docs; documented client/permission, beta write, asset and benchmark gates. Agent-workflow maturity unchanged.
 - Critically audited Vercel web-design-guidelines skill against its mutable remote checklist and W3C/MDN: identified native-control keyboard false positives, naming/live-region overspecification, contradictory zoom guidance, virtualization conflation and blanket performance rules. Added conditional triage and seeded-defect validation protocol; maturity unchanged.
