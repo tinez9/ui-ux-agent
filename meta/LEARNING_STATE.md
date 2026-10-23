@@ -27,6 +27,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-23 — Vercel web-design-guidelines skill: checklist versus conformance
+**Question:** Can a widely adopted first-party code-review skill safely serve as a frontend UX/accessibility gate?
+
+**Finding:** The Vercel skill fetches a mutable remote checklist and delegates all judgment to the agent; it runs no tests. Primary-source inspection found overbroad keyboard-handler and aria-label requirements, an incorrect equivalence between `content-visibility` and virtualization, a blanket font-loading policy, and a direct contradiction between the full guidelines' `maximum-scale=1` suggestion and the condensed checklist's zoom anti-pattern. Retained a conditional triage workflow and adversarial clean-control test, not an unconditional install recommendation.
+
+**Evidence boundary:** Direct inspection of Vercel's SKILL.md, both guideline variants, W3C and MDN; no model/agent benchmark, install execution or measured uplift. Parent-repo stars are not skill effectiveness. Agent-workflow maturity unchanged. Next: benchmark checklist-driven review against baseline plus browser/AT verification using seeded compliant and defective controls.
+
+
 ### 2026-10-23 — APCA skills and contrast authority
 **Question:** Can contrast-checking skills for Claude Code/Codex be trusted as a release gate, and has WCAG 3 adopted APCA?
 
