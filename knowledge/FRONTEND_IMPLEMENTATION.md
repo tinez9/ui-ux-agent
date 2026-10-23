@@ -7,6 +7,41 @@ Keep durable design guidance separate from fast-changing framework details.
 
 Prefer the lowest-complexity platform primitive that preserves the required semantics, accessibility, resilience, and interaction quality. A newer API is not a UX improvement by itself.
 
+## Bidirectional UI and RTL: direction is not translation — 2026-10-23
+
+**Decision:** treat localization as three independent contracts: **human language** (`lang`), **base text direction** (`dir`), and **interface geometry/interaction** (logical CSS, direction-aware controls). Translating strings or setting a locale in a test runner does not, by itself, make a correct RTL interface. This is a durable internationalization gap in agent-generated frontends.
+
+### Implementation contract
+
+1. **Set document semantics at the source.** For an Arabic-language RTL document use `<html lang="ar" dir="rtl">`; for English use `lang="en" dir="ltr"`. `lang` does not imply `dir`, and CSS `direction: rtl` is not a semantic substitute for HTML `dir`. On SSR/hydration, derive both from the same resolved application locale on server and client; do not depend on browser-language detection for only one side. Mark substantial opposite-language passages with `lang` (WCAG 3.1.1/3.1.2); language metadata and bidi isolation solve different problems.
+2. **Isolate inserted text.** Names, titles, comments, search terms, and remote/user-generated values may have unknown direction even in a fixed-language shell. Render an inline value as `<bdi>{value}</bdi>` (or use `dir="auto"` on an existing semantically appropriate wrapper); use `dir="auto"` on free-form input/textarea where the user's writing direction is unknown. For a *known* opposite-direction phrase, tightly wrap it with explicit `dir="ltr"` or `dir="rtl"`. `auto` uses a first-strong-character heuristic, not language detection: leading numbers, emoji, abbreviations and mixed-script strings need examples reviewed. Preserve HTML escaping; bidi isolation is **not** an HTML-injection defense.
+3. **Keep technical tokens readable.** URLs, paths, code, identifiers and telephone-number fields often need a scoped `dir="ltr"` even inside RTL pages; do not force every user name or arbitrary user-entered phrase LTR. A fixed-direction token can be aligned to the surrounding interface separately. For form submissions where direction matters, HTML `dirname` can submit the entered direction alongside a text field. Never reverse the stored character sequence to “fix” its visual order.
+4. **Make layout flow-relative by default.** Prefer `margin-inline-start`, `padding-inline-end`, `inset-inline-start`, `border-inline-start`, and `text-align: start` over left/right assumptions when placement should follow reading direction. Physical left/right remains correct for genuinely fixed physical positions. Review Grid/Flex ordering and any `row-reverse`, `order`, or absolute positioning: a visual flip must not create a contradictory DOM, keyboard or screen-reader order.
+5. **Mirror *meaning*, not pixels.** Back/forward arrows, previous/next navigation and spatially directional affordances often reverse in RTL. Do **not** blindly `scaleX(-1)` an entire component, logo, number, code sample, media control or illustration. Firefox's shipped RTL guidance explicitly exempts product logos, playback controls, code, checkmarks and dimension order. For icons with mixed text/graphics, use a purpose-built RTL asset rather than flipping embedded text.
+6. **Treat interactive behavior separately.** Direction-sensitive composite widgets, carousels, tabs and menus may require adjusted Left/Right arrow-key meaning; browser/ARIA library behavior and the component's visual order must agree. Do not change Tab order simply to force an apparent mirror. Use a maintained internationalized component library's locale/direction contract when it actually covers the widget; React Aria exposes `useLocale()` and direction-aware keyboard interactions, but that does not certify every custom wrapper.
+7. **Test the application locale, not only browser emulation.** Playwright's `locale` option emulates browser locale; it does **not** guarantee that application translations, `html[lang]`, `html[dir]`, fonts, or persisted language settings changed. Set the app locale explicitly in fixtures/routes, then assert rendered `lang` and `dir`. Run LTR + Arabic/Hebrew RTL, mixed-script user data, numeric-first labels, punctuation, long translations, empty/search inputs, table column order, back/forward semantics, keyboard navigation, screen-reader pronunciation and 200–400% zoom. Include a real RTL locale; pseudo-RTL is a useful defect detector, not a replacement. Capture both the visual state and DOM/focus order.
+
+### Minimal example
+
+```html
+<html lang="ar" dir="rtl">
+  <body>
+    <p>المستخدم <bdi>Alex (QA-42)</bdi></p>
+    <a href="/docs"><span dir="ltr">API v2</span></a>
+    <label for="search">بحث</label>
+    <input id="search" name="query" dir="auto" dirname="query.dir" />
+  </body>
+</html>
+```
+
+```css
+.search-field { padding-inline-start: 1rem; margin-inline-end: .5rem; }
+```
+
+**Evidence boundary:** W3C i18n and WCAG define markup/accessibility expectations; MDN documents bidi primitives; Mozilla provides production engineering guidance; React Aria and Playwright document their own capabilities. These sources do **not** demonstrate measured superiority of a particular RTL layout or guarantee identical browser/AT behavior. No comparative usability or cross-device test was run in this research cycle.
+
+**Primary sources (reviewed 2026-10-23):** [W3C structural RTL](https://www.w3.org/International/questions/qa-html-dir), [W3C inline bidi isolation](https://www.w3.org/International/articles/inline-bidi-markup/index.en), [MDN `<bdi>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/bdi), [MDN `dir`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/dir), [MDN CSS logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Logical_properties_and_values/Margins_borders_padding), [Firefox RTL engineering guidance](https://firefox-source-docs.mozilla.org/code-quality/coding-style/rtl_guidelines.html), [WCAG language of page](https://www.w3.org/WAI/WCAG22/Understanding/language-of-page.html), [WCAG language of parts](https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts), [React Aria internationalization](https://react-aria.adobe.com/quality), [Playwright locale emulation](https://playwright.dev/docs/test-use-options).
+
 ## PWA update lifecycle: protect work across client versions — 2026-10-23
 
 **Decision:** a new service worker is not the same as a new UI version. Treat an update as a **multi-client state transition**: detected → installed/waiting → activated/controlling → *new app shell loaded*. An update check or worker activation alone must not trigger an “Updated” claim.
