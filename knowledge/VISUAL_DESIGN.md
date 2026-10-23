@@ -11,6 +11,16 @@ For each visual pattern distinguish aesthetic signal, product-category fit, bran
 - Color needs semantic roles separate from brand expression.
 - Distinctiveness is strongest when it emerges from a coherent system rather than one fashionable effect.
 
+## Color contrast: conformance gate versus perceptual review — 2026-10-23
+
+**Do not let a design skill replace the standard.** For a WCAG 2.2 AA target, check actual text/background pairs against **4.5:1 for normal text** and **3:1 for large text** (at least 18pt/24px regular or 14pt/~18.67px bold), and necessary UI-component/graphic cues against **3:1**. The ratios are exact thresholds: do not round 4.499 to 4.5. A logo/inactive-control exception is narrow, not a license to hide important status or functionality. Check states and adjacent colors, not just a palette's swatches. See [W3C text contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) and [non-text contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html).
+
+**APCA is supplemental, not WCAG 3 compliance.** APCA models polarity and type size/weight in a way that may surface readability concerns missed by a simple ratio; it has a signed Lc (**positive = dark text on light; negative = light on dark**). But the [September 2026 WCAG 3 Working Draft](https://www.w3.org/TR/2026/WD-wcag-3.0-20260910/#text-contrast-sufficient-minimum) has **not chosen a contrast algorithm**. Do not report an APCA pass as WCAG 3 conformance, use generic fixed Lc cutoffs for every font, or overturn a WCAG 2 failure because APCA looks favorable. If APCA and WCAG 2 disagree, retain the WCAG 2 conformance verdict and record the APCA reading as an additional design question.
+
+**Token/render test:** enumerate semantic foreground/background pairs in light, dark, high-contrast and interaction states; resolve opacity/compositing and backgrounds with images/gradients; check actual text size/weight and the browser-rendered colors (including OKLCH gamut mapping). Use automated WCAG checks for broad coverage, then manually inspect thin type, tiny icons, images, forced colors, focus indicators and user overrides. Automated checks are neither complete nor infallible: [axe-core's documented JSDOM limitation](https://github.com/dequelabs/axe-core) and a [reported OKLCH false positive](https://github.com/dequelabs/axe-core/issues/5036) justify independent reproduction, not abandoning automation. Avoid treating a change in OKLCH lightness as proof that contrast is fixed without recalculation after gamut mapping.
+
+**Evidence boundary:** W3C establishes current conformance rules and the undecided status of WCAG 3; APCA is an evolving alternative model, not demonstrated superiority for all readers, scripts or display conditions. No user-outcome experiment was conducted in this cycle.
+
 ## Responsive typography as a system
 
 Typography is not a collection of independent `font-size` choices. Treat it as a coordinated system of **semantic role + scale + measure + line height + spacing + responsive behavior**. A visually distinctive typeface or oversized heading does not compensate for fragile reading geometry.
