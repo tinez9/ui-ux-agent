@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Interest invokers: a Chromium hovercard shortcut is not cross-browser disclosure
+**Question:** When does native `interestfor` improve hover/focus preview UX, and where does it create false accessibility or touch guarantees?
+
+**Finding:** Chrome/Edge 142 shipped interest invokers, but WHATWG integration PR #11006 remains open and Firefox/Safari lack support. The 2026-10-16 Open UI explainer proposes different plain/rich hint accessibility mappings from WAI-ARIA APG's work-in-progress tooltip guidance; rich interactive cards still require direct AT/focus tests. WCAG 1.4.13 remains independently applicable. The maintained polyfill cannot provide link long-press while preserving native context menus. Documented optional-preview versus explicit-activation decision, speculative-fetch/privacy boundaries and adversarial test plan.
+
+**Evidence boundary:** Chromium release notes, Open UI/WHATWG proposals, W3C WCAG/APG, MDN and maintainer polyfill source; no live browser, AT or usability study. Frontend implementation maturity **unchanged at 3/10**, overall **3.7/10**. Next: matched native/polyfill/explicit-click tests across browser, touch, AT and private-data conditions.
+
 ### 2026-10-24 — Superdesign hosted canvas: source-grounded design is not private or production-validated by default
 **Question:** Does Superdesign's current agent skill provide useful design fidelity beyond a local code-first loop, and what does its actual source-to-cloud workflow expose?
 

@@ -286,6 +286,40 @@ Do not import a floating-UI library merely because a surface needs to escape cli
 
 This ordering keeps semantics independent from geometry and reduces JavaScript state that merely mirrors browser state.
 
+### Interest invokers: optional preview, not the only path to content — reviewed 2026-10-24
+
+**Decision:** use `interestfor` as a **progressive enhancement for supplementary hover/focus/touch previews**, not as the sole path to necessary information, editing or actions. A hovercard may reduce navigation cost; it can also obscure controls, distract keyboard users and exclude browsers or input methods. Preserve a direct link or visible tap/click disclosure. Do not mistake an interest-triggered popover for a modal dialog or a fully specified tooltip/menu widget.
+
+**Actual platform boundary:** Chrome/Edge 142 shipped `interestfor` in October 2025; Firefox and Safari have not shipped it as of this review. The WHATWG HTML integration PR #11006 is **still open** (2026-10-24), and the Open UI explainer was updated **2026-10-16**. Its proposed touch and accessibility mappings are not proof of interoperable behavior. `popover="hint"` and CSS `::interest-button` have their **own** support/standardization boundaries. Feature-detect `Object.hasOwn(HTMLButtonElement.prototype, "interestForElement")`, but a positive result is not an AT/browser-variant test. Supported invokers are enabled `<button>`, `<a href>`, `<area href>` and SVG `<a href>`; not a generic `div` or `input`.
+
+| Need | Preferred interaction | Why not interest-only? |
+|---|---|---|
+| Nonessential definition or link preview | Short interest-triggered plain hint, with an independently understandable link/control | On unsupported browsers the preview never opens; essential labels cannot depend on hover. |
+| Rich profile/card with buttons | Visible click/tap disclosure or full destination; optionally preview on interest | Rich content needs discoverable keyboard traversal, focus, dismissal and touch affordances, not just floating geometry. |
+| Consequential action, form, permission or private record | Explicit activation with appropriate dialog/popover semantics and authorization | Passive hover/focus must never submit, change state or reveal privileged data. |
+| Primary mobile navigation or required help | Always-visible button/link or equivalent touch-first disclosure | Long-press is not an adequate sole affordance; context menus and platform gestures differ. |
+
+**Counterexample to simplistic “native = accessible”:** WAI-ARIA APG's *work-in-progress* tooltip pattern says a tooltip does **not** receive focus and focusable hover content should use a non-modal dialog. The **2026-10-16 Open UI proposal** instead distinguishes *plain hints* (exposed as invoker name/description) from *rich hints* (proposed `aria-details`, `aria-expanded` and focus-order behavior; minimum role `tooltip`). These are different layers of guidance, not evidence that every Chromium/screen-reader pair implements the proposed mapping. For a rich hovercard, explicitly inspect the accessibility tree, actual Tab/Shift+Tab traversal, announced relationship and focus return; never add `role="tooltip"` to an interactive card merely because it looks like a tooltip. Avoid redundant/contradictory author `aria-describedby` or `aria-details` when the browser supplies its own mapping.
+
+**Interaction and fallback contract:**
+1. Keep the trigger's primary action unchanged. On a link, click navigates; on a button, choose an explicit click action separately. The explainer proposes `interestfor` plus `commandfor` with `command="show-popover"` for “hover to preview, click to pin”, but test the **exact shipped combination** and avoid assuming it works on Firefox/Safari. A separate visible `popovertarget` button or destination link is a simpler cross-browser baseline.
+2. Native interest follows pointer hover or keyboard focus after a delay; the target remains open while hovered/focused and Escape cancels interest. W3C WCAG 2.2 SC **1.4.13** independently requires author-controlled hover/focus content to be **dismissible, hoverable and persistent** (with stated exceptions). Test pointer travel to the card, zoom/magnification, accidental keyboard popups and focus order. Do not force zero delay for every trigger.
+3. Touch is **not simply hover emulation**. The current Open UI proposal describes a “Show details” item in link long-press context menus and immediate interest on some button long-presses; the optional `::interest-button` is still being specified. The maintainer's BSD-3-Clause `mfreed7/interestfor` polyfill explicitly **cannot reproduce link long-press** without sacrificing the browser's native context menu. If using it, review/pin its source and keep a visible touch alternative; polyfill parity is not native parity.
+4. Interest events are not authorization. Never mutate data on `interest`; if loading previews, gate private records server-side, minimize/abort speculative requests, avoid leaking sensitive content through shared caches and do not interpret transient hover as consent. This is an engineering risk inference, not a documented exploit.
+5. Avoid hand-wired `mouseenter` + focus handlers where native behavior suffices, but **do not** replace a tested cross-browser disclosure with a Chromium-only shortcut. If a preview is nonessential, graceful absence may be the best fallback; if essential, render the same information through the normal click/tap path.
+
+```html
+<!-- Enhancement only: the link is still useful without interestfor. -->
+<a href="/profiles/ada" interestfor="ada-preview">Ada's profile</a>
+<div id="ada-preview" popover="hint">Research lead · 12 public projects</div>
+```
+
+This example deliberately contains **no essential action** in the preview. Validate `popover="hint"` support separately, ensure the link already has a meaningful accessible name, and test the fallback where `interestfor` is ignored. For richer cards use a deliberate interactive pattern, not this plain-hint snippet.
+
+**Adversarial agent gate:** test Chromium 142+ and supported target versions of Firefox/Safari; hover → move pointer into preview, rapid sweep over a dense table, Tab/Shift+Tab through multiple links, Escape while focus stays on trigger, nested popovers, 200–400% zoom, screen reader name/description and card controls, Android/iOS touch and link context menu, no JS, reduced motion, slow/rejected preview fetch and unauthorized user. Compare interest enhancement vs explicit click-only baseline on discoverability, accidental obstruction, successful task completion, focus loss and network/privacy cost. **No browser, screen-reader or user study was run in this research cycle.**
+
+**Evidence:** [Open UI explainer, updated 2026-10-16](https://open-ui.org/components/interest-invokers.explainer/), [Chrome 142 release notes](https://developer.chrome.com/release-notes/142), [MDN interest invokers](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using_interest_invokers), [W3C WCAG 1.4.13](https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus.html), [WAI-ARIA APG tooltip, work in progress](https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/), [WHATWG HTML PR #11006](https://github.com/whatwg/html/pull/11006), [polyfill and touch limitations](https://github.com/mfreed7/interestfor).
+
 ### Evidence boundary — 2026-09-30
 
 Native `<dialog>`, `showModal()`, and `inert` are broadly available in current browsers. The Popover API is also a current platform primitive, but support for adjacent newer features should be checked separately. Platform availability is evidence that custom infrastructure can often be removed; it is **not** evidence that more overlays improve usability.
