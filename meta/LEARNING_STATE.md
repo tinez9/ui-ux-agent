@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Version recovery: historical snapshots are not universal undo
+**Question:** How should an agent design undo, selective recovery and whole-object restore without erasing later collaboration, losing provenance or falsely promising a complete rollback?
+
+**Finding:** Figma's restore checkpoints preserve the pre-restore file and later comments but cannot resurrect deleted comments; its duplicate loses original history/comments. Notion's sampled page versions are incomplete diffs, and restoring a database does not restore the contents of its pages. Google Sheets restoration can erase earlier cell-by-cell edit history. Yjs selective UndoManager has transaction-origin and capture-grouping boundaries, not durable historical audit semantics. Added a recovery-granularity decision table, exact-scope preview, revision-concurrency/authorization gate, accessible recovery and adversarial tests. WCAG 3.3.4 permits reversible OR checked OR confirmed safeguards for consequential actions; no blanket confirmation for every save.
+
+**Evidence boundary:** First-party shipped-product docs, Yjs API and W3C; no runtime collaborative restore, AT or outcome benchmark. Distinctive-feature maturity **unchanged at 2/10** and overall **3.7/10**. Next: compare Undo, selective block recovery, full restore and copy in concurrent-edit fixtures with nested data, permissions and history loss; measure collateral loss, recovery time and user understanding.
+
 ### 2026-10-24 — Collaborative presence: temporary coordination is not durable proof
 **Question:** When do live cursors, collaborator selections and follow modes help coordination, and what do they falsely imply about online status, saving, identity and privacy?
 
