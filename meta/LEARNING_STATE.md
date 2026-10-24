@@ -26,6 +26,12 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Offscreen rendering: CSS skipping is not DOM virtualization or guaranteed AT parity
+**Question:** When does `content-visibility: auto` improve long-page performance without compromising scroll stability, find/focus behavior or accessibility?
+
+**Finding:** CSS containment skips rendering work but retains mounted DOM, so it is not a substitute for pagination/windowing when node count dominates. Intrinsic-size estimates can produce scrollbar jumps and `scrollIntoView()` misalignment. More importantly, MDN's broad 'remains in accessibility tree' explanation has a **qualification in the current CSSWG editor's draft**: §4.6 permits omitting skipped content from the AT tree if exposing it would create an assistive-technology timing side channel. Offscreen CSS-hidden descendants can conversely appear in the AT tree. Added a conditional optimization decision table, block-axis sizing contract, semantic-state boundary and adversarial cross-browser/AT tests.
+
+**Evidence boundary:** CSSWG draft, MDN/WHATWG and Chrome documentation; no measured benchmark or observed browser-specific defect. Frontend implementation remains **3/10**, overall **3.7/10**. Next: paired browser/AT traces and realistic long-page versus virtualized-list fixtures with false-positive hidden elements, deep links and bad size estimates.
 ### 2026-10-24 — Playwright CLI skill: lower context overhead, higher page-tool trust demands
 **Question:** When does the official Playwright CLI skill improve AI coding-agent browser QA versus MCP, and can its WebMCP shortcut be safely followed?
 

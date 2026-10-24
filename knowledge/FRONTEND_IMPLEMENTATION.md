@@ -7,6 +7,44 @@ Keep durable design guidance separate from fast-changing framework details.
 
 Prefer the lowest-complexity platform primitive that preserves the required semantics, accessibility, resilience, and interaction quality. A newer API is not a UX improvement by itself.
 
+## Offscreen rendering: `content-visibility` is not virtualization — 2026-10-24
+
+**Decision:** use `content-visibility: auto` as a *measured rendering optimization* for substantial, independent, often-offscreen sections; do not mistake it for lazy data fetching, DOM windowing, a hidden-state primitive, or an accessibility guarantee. The browser may skip layout/paint for an offscreen subtree, but the DOM and application state remain. The 2024 Chrome demo's ~7× initial rendering improvement is a **single synthetic example**, not an expected product gain.
+
+| Task | Prefer | Why / boundary |
+|---|---|---|
+| Ordinary short page | Normal rendering | Containment and placeholder sizing add complexity without demonstrated benefit. |
+| Long article, feed or dashboard with costly independent sections | `content-visibility: auto` on *section-sized chunks*, after profiling | The containing element must actually become offscreen; applying it to one always-visible parent prevents skipping. |
+| Thousands of mounted, interactive rows with DOM/memory pressure | Measured list/grid virtualization or pagination | `content-visibility` does not unmount nodes, shrink state, or reduce network payload. Virtualization needs separate keyboard, focus and list-position semantics. |
+| Collapsed panel, inactive tab or permission-hidden content | Correct state/visibility semantics, not `auto` | `auto` deliberately keeps content findable/focusable. `content-visibility: hidden` excludes descendants from find/focus; it is not a universal replacement for semantic `hidden`/`inert`. `hidden="until-found"` is a different HTML feature with limited browser support. |
+
+### Size and layout contract
+
+```css
+/* Apply to independent long-form sections after profiling; estimate from real content. */
+.long-report > section {
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto 28rem;
+}
+```
+
+- Use a **plausible block-axis estimate** (`contain-intrinsic-block-size`) rather than copying `contain-intrinsic-size: auto 500px` indiscriminately: the shorthand's single value applies to *both* dimensions. `auto <length>` remembers a section's previously rendered size, but the initial fallback can still be wrong. MDN demonstrates large estimates causing **scrollbar/scroll-position jumps**; `auto none` can be worse for initial positioning. Images, fonts, expanded content, localization and responsive widths change actual heights.
+- The CSS containment draft says `scrollIntoView()` may calculate a skipped target's location using placeholder geometry; after it renders, alignment can differ. Focusing a skipped descendant first makes it relevant and may give different geometry. Test fragment links, search, deep links, focus and scroll restoration separately; do not infer correctness from one screenshot.
+- Containment persists in part even while the section is onscreen; test layout dependencies, sticky/floating descendants, intrinsic sizing and any code that measures descendants. The draft specifies that skipped descendants do not contribute to `innerText`, and an `IntersectionObserver` target *inside* skipped contents is not intersecting. Do not use visual-render state as a data-completeness test.
+
+### Accessibility and state boundary — important standards/documentation tension
+
+- MDN says `auto` content remains in the DOM/accessibility tree and supports find-in-page, selection and keyboard focus. **Qualification:** the current CSS Containment Level 2 editor's draft permits a user agent to **omit skipped descendants from the accessibility tree** if exposing them would require extra layout work that leaks assistive-technology use through timing. Thus, neither a blanket 'AT always sees all offscreen content' nor 'offscreen content is inaccessible' is a safe cross-browser assertion. Verify target browser/AT combinations and navigation to newly relevant content.
+- MDN also warns that `display: none`/`visibility: hidden` *inside a skipped subtree* can fail to hide intended elements from the accessibility tree because those descendant styles have not been rendered. Keep semantic hidden-state and focusability correct for the actual conditional child; use explicit `aria-hidden` only on genuinely noninteractive hidden content, **never on a focusable subtree**. Test hidden controls and duplicate landmarks in the accessibility tree, not just visual pixels.
+- `contentvisibilityautostatechange` can suspend expensive canvas painting when `event.skipped` is true; it is **not** permission to stop semantic DOM/data updates. An offscreen subtree can still be used by assistive technology, find-in-page and focus. Animations in skipped content may pause; do not make task state depend on their ticks.
+
+### Agent acceptance / falsification
+
+Run the same seeded long-page fixture with and without the rule in current Chrome, Firefox and Safari, including a clean small-page control. Record initial render work, scroll-frame responsiveness, INP where eligible, CLS/scroll displacement, DOM count/memory, and time-to-usable offscreen interaction; do not claim a gain without an actual trace. Seed wildly wrong height estimates, dynamically expanded content, font/image loads, programmatic scroll, deep links, find-in-page, keyboard Tab, screen-reader headings/landmarks, intentionally CSS-hidden nested controls, canvas updates, and a large virtualized alternative. Check both false-positive a11y exposure and missing content. **No browser/AT benchmark was performed in this research cycle.**
+
+**Evidence boundary:** CSSWG editor's draft defines relevant/focus/top-layer behavior and a privacy-driven accessibility-tree exception; MDN documents practical implementation and size-jump examples; Chrome's published demo shows *possible* speedup, not a transferable outcome estimate. Feature availability is broad on modern engines (MDN Baseline 2024), but exact behavior and old-browser support still need target testing.
+
+**Primary sources (reviewed 2026-10-24):** https://drafts.csswg.org/css-contain/ ; https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/content-visibility ; https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/contain-intrinsic-size ; https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/contain-intrinsic-block-size ; https://developer.mozilla.org/en-US/docs/Web/API/Element/contentvisibilityautostatechange_event ; https://web.dev/blog/css-content-visibility-baseline ; https://web.dev/articles/virtualize-long-lists-react-window ; https://html.spec.whatwg.org/dev/interaction.html .
 ## Interaction responsiveness: optimize the next paint, not just the event handler — 2026-10-23
 
 **Decision:** treat interaction responsiveness as a measurable product contract. A button can have correct semantics, attractive animation, and a successful API response while still *feeling broken* if the first visual response is blocked. Conversely, a fast INP does **not** prove the requested operation completed quickly or correctly.

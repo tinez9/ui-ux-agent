@@ -1,6 +1,7 @@
 # Knowledge Changelog
 
 ## 2026-10-24
+- Added a conditional `content-visibility: auto` performance contract: distinguished render skipping from DOM virtualization and semantic hiding, documented intrinsic-size scroll jumps and deep-link geometry, and reconciled MDN's broad accessibility statement with CSSWG's privacy-driven AT-tree omission exception. Added cross-browser/AT falsification and sources; no runtime benchmark or maturity change.
 - Compared first-party Playwright CLI skill with MCP and existing agent-browser workflows: documented conditional token-efficient use, stale copied-skill errors fixed in canonical source, secret-bearing snapshot/CDP limitations, and a critical WebMCP page-tool trust/consent boundary despite the skill's bypass-overlay recommendation. Added adversarial comparison gate; no local benchmark or maturity change.
 ## 2026-10-24
 - Strengthened server-backed data-table integrity: TanStack v8 manual sorting/filtering/pagination and page-reset traps, PostgreSQL 18 unique ordering and offset instability, plus stale-response and interleaved-page falsification tests. No runtime benchmark or maturity change.
