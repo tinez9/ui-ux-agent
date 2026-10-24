@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Google Labs Stitch skills: cloud design value versus upload, credential and validator boundaries
+**Question:** Does the official Stitch skill suite add distinct design-to-code value for coding agents, and which shipped checks are unsafe to treat as authority?
+
+**Finding:** Stitch offers genuinely different cloud screen/variant and code-to-design workflows, but the inspected React SWC validator only detects an arbitrary `*Props` interface and literal hex in `className`, not its stated architectural/a11y rules. The upload skill instructs agents to extract API keys from MCP config and pass them as CLI args; authenticated DOM/image snapshots may contain private data before cloud upload. Upstream requires user confirmation for upload and some verification steps, while the autonomous baton loop leaves visual checks optional. The Google Labs repository is Apache-2.0, active and popular, but explicitly not an officially supported Google product.
+
+**Evidence boundary:** Direct upstream source/README/scripts and official MCP setup (2026-10-24); no installation, live Stitch API call, exploit reproduction, or agent outcome benchmark. **Conditional trial only**; overall maturity **3.7/10** and agent-workflow maturity **5/10** unchanged. Next: paired sanitized/non-sanitized import, validator false-negative, permission/credential and responsive-output tests.
+
 ### 2026-10-24 — React Doctor: static agent QA, subjective design lint and a restrictive license
 **Question:** Does the React Doctor agent skill add reliable UI/React implementation validation beyond existing lint and prose skills, and what trust boundaries limit its use?
 
