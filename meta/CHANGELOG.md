@@ -1,6 +1,7 @@
 # Knowledge Changelog
 
 ## 2026-10-24
+- Documented forced-colors as a separate user-palette contract in dark/color adaptation: UA semantic recoloring, lost shadows/gradients, SVG/chart/state checks, Microsoft Fluent's backplate opt-out versus inherited `forced-color-adjust: none` maintenance trap, and a local Chromium 144 Playwright falsification fixture. Added real-Windows/Firefox/AT regression gate; maturity unchanged.
 - Deepened recurrence UX: separated wall-clock from elapsed intervals, documented RFC 5545's DST skip/resolve contradiction, tested dateutil 2.9.0.post0's imaginary gap output, and added originalStartTime, edit-scope, duration and preview contracts. No cross-engine/user validation or maturity change.
 - Extended saved-view guidance to event subscriptions: Linear personal/Slack triggers and Pulse negative case, view-revision/recipient/delivery boundaries, and Jira Software vs Product Discovery shared-autosave contradiction. Added adversarial notification/privacy tests; no live validation or maturity change.
 - Established a native `interestfor` hovercard decision contract: Chromium 142 versus still-open WHATWG standardization and Firefox/Safari fallback, plain-vs-rich hint accessibility mapping tension, WCAG 1.4.13 hover/focus requirements, polyfill's unfixable link long-press/context-menu tradeoff, and private-preview/keyboard/touch falsification. No runtime validation or maturity change.

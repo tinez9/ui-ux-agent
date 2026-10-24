@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Forced-colors design-system regression: opting out can leak later author styles
+**Question:** Does a dark/high-contrast token mapping suffice for Windows contrast themes, and is `forced-color-adjust: none` safe when copied across components?
+
+**Finding:** No. UA forced colors replace authored colors at paint time based on native semantics, remove shadows/gradients, and require rendered-state checks; `prefers-color-scheme` is a different contract. Microsoft's Fluent intentionally opts out to avoid text backplates, while Sarah Higley's maintainability counterexample shows inherited `none` exposing downstream high-specificity author colors. Local Chromium 144/Playwright emulation reproduced a lost shadow and opted-out red/purple style leak. Added scoped CSS and adversarial QA guidance.
+
+**Evidence boundary:** CSSWG/MDN/Microsoft, practitioner counterexample and one Linux Chromium emulation; no real Windows custom theme, Firefox/AT or outcome validation. Visual-design **3/10**, design-systems **4/10**, overall **3.7/10** unchanged. Next: real theme/engine and component-override matrix.
+
 ### 2026-10-24 — Recurring schedules: RFC DST contradiction and exception identity
 **Question:** Can agents safely equate a local weekly meeting with fixed UTC intervals or assume one rule for nonexistent local times?
 

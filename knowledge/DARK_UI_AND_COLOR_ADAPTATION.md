@@ -82,6 +82,41 @@ system | light | dark
 
 Do not force dark appearance merely because the OS is dark if the product genuinely cannot render a task correctly in that appearance. Conversely, opting out should be scoped to the smallest necessary surface rather than used to avoid theme work.
 
+
+## Forced colors: user palette, not a third brand theme (reviewed 2026-10-24)
+
+**Decision:** treat `@media (forced-colors: active)` as an independent accessibility rendering contract. It is not interchangeable with `prefers-color-scheme: dark` or `prefers-contrast: more`. The browser substitutes system colors using **native element semantics** (an ARIA `role="button"` on a `div` does not acquire a native button's color treatment). In forced colors, author `box-shadow` and `text-shadow` disappear, and non-URL CSS background images such as gradients are suppressed. Author color declarations are generally replaced at *used/paint* time, so a stylesheet or token inspection alone can mislead.
+
+**Prefer native controls and the user's palette.** Start with semantic HTML, accessible labels, visible state text/shape, and ordinary `forced-color-adjust: auto`. Add narrow, tested repairs where automatic conversion loses an essential boundary or state. Do not remap the entire brand palette, invert colors, or infer that a light/dark screenshot tests Windows contrast themes.
+
+- **Lost boundaries:** controls/cards separated only by shadow, gradient or subtle fill may merge. Add a real border/outline using paired system colors; transparent borders may also be forced into visibility, but verify the actual rendered result.
+- **State and focus:** preserve selected/pressed/invalid/focus information through more than color alone (text, checkmark, border/shape). A `box-shadow`-only focus ring vanishes. Check keyboard focus on every state, not merely `document.activeElement`.
+- **Icons/charts:** prefer inline SVG `currentColor` for monochrome semantic icons, then inspect actual `fill`/`stroke` under forced colors. External SVG/PNG and multi-series charts may retain pixels or lose distinctions; add labels, patterns or alternative data representations rather than assuming CSS recoloring fixes them.
+- **Disabled and overlays:** opacity can make already muted `GrayText` illegible; review actual disabled semantics, scrims, popovers and adjacent surface pairs. Do not treat disabled contrast exemptions as a reason to hide the control's existence.
+
+A small *illustrative repair*, not a universal palette recipe:
+
+```css
+@media (forced-colors: active) {
+  .shadow-only-panel { border: 1px solid CanvasText; }
+  .icon-monochrome { fill: currentColor; stroke: currentColor; }
+  .action:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+  .action[aria-pressed="true"] { border: 2px solid Highlight; }
+}
+```
+
+Check these pairings against the *actual adjacent surface and selected Windows theme*; `Highlight` is not guaranteed to contrast with every arbitrary system-color neighbor. Native focus treatment may be better than replacing it.
+
+### The `forced-color-adjust: none` trap
+
+The CSS Color Adjustment specification permits opting out for narrowly justified cases (e.g. intrinsically color-dependent media). Microsoft Fluent's published accent-button recipe deliberately uses `none` to avoid browser text backplates when applying `Highlight`/`HighlightText`. But Microsoft's own accessibility practitioner Sarah Higley documents a serious **maintainability counterexample**: `none` is inherited and exposes later, higher-specificity ordinary author colors that the browser would otherwise override. A downstream `.custom-button` can silently turn a previously accessible control red/purple in high contrast. Thus **do not copy a component-library opt-out into a generic design token or root/container rule**. If an opt-out is unavoidable, constrain it to a minimal leaf, use explicit compatible system-color foreground/background pairs, test text backplates, and regression-test downstream overrides and descendants.
+
+**Local falsification, not a user study (2026-10-24):** Python Playwright driving headless Chromium 144 on Linux with `page.emulate_media(forced_colors="active")` reproduced three mechanisms on a four-element fixture: a shadow-only card lost its shadow; a normal button's author blue/white colors were replaced by system colors; an opted-out, higher-specificity custom button retained author red background/purple text and its shadow. This proves a concrete CSS/UA failure mode **in this emulation only**. It does not validate Windows contrast themes, Firefox, Safari, screen readers, focus visibility or user comprehension.
+
+**Agent acceptance gate:** test light/dark *and* forced-colors separately. Use Playwright `forcedColors: 'active'` or Chromium/Edge DevTools for a quick regression screenshot, inspect computed style **and pixels**, then verify on real Windows contrast themes (including user-customized palettes) and a second engine where supported. Include keyboard focus, selected/disabled/error states, SVGs, charts, native controls and overlays. No automated color-contrast score or emulated screenshot is a substitute for user-palette/AT inspection. Legacy `-ms-high-contrast` and `-ms-high-contrast-adjust` were removed from Edge 138 (June 2025); new rules should use standards-based `forced-colors`.
+
+**Evidence:** CSS Color Adjustment Level 1 Candidate Recommendation (2025-12-16), MDN forced-colors/forced-color-adjust, Microsoft Fluent high-contrast implementation, Sarah Higley (2025-09-17), Edge removal announcement (2025-06-30), Playwright emulation docs, and a reproducible local Chromium 144 fixture. These establish rendering behavior and an adversarial maintenance failure, **not** measured task outcomes or cross-engine parity.
+
 ## Component-state audit
 
 For every interactive component, verify both themes across:
