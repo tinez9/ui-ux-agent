@@ -48,7 +48,7 @@ Allow flexible tracks, wrapping, intrinsic sizing, and content-driven growth to 
 When adjacency becomes misleading or cramped, change groups while preserving semantic ownership. Moving help text, totals, filters, or actions far from the object they affect can break comprehension even when every element remains technically present.
 
 ### Reorder carefully
-Visual order can change to preserve task priority, but DOM/focus/reading order must remain coherent. Avoid CSS reordering that creates a visual sequence different from keyboard or assistive-technology sequence.
+Visual order can change to preserve task priority, but DOM/focus/reading order must remain coherent. Prefer meaningful source order; the experimental `reading-flow` enhancement below cannot be the only fix for a broken fallback.
 
 ### Collapse only safe detail
 Progressive disclosure is appropriate for information that is safe to retrieve on demand. Do not hide active state, errors, consequential alternatives, pricing/scope, or information required to interpret the current decision merely because width shrank.
@@ -58,6 +58,37 @@ A toolbar may become an overflow menu; a persistent inspector may become a sheet
 
 ### Preserve genuine two-dimensional structures
 For data grids/comparison matrices, first consider column prioritization, sticky identifiers, user-selected columns, localized horizontal scrolling, or an alternate detail view. Stacking every value into isolated cards can destroy cross-row or cross-column comparison.
+
+## CSS reading-flow: an enhancement, not a source-order repair — 2026-10-24
+
+**Default:** put task-critical content and controls in a meaningful DOM sequence *without CSS*. `reading-flow` can align sequential focus and speech traversal with a different, still meaningful responsive visual composition; it does **not** rearrange DOM nodes, layout, or paint order. It must not justify an otherwise incoherent source sequence. WCAG 1.3.2 (meaningful sequence) and 2.4.3 (focus order) allow more than one logical order in some contexts; they do not demand a rigid left-to-right tab path for every independent dashboard card.
+
+**Current compatibility (checked 2026-10-24):** Chrome/Edge 137+ implement `reading-flow` and `reading-order`; current MDN browser-compat-data still records **no Firefox or Safari support**. A September 2026 community article claiming Safari 26.4 support conflicts with that data and with the still-open WebKit standards-position request; do not promote the claim without a tested engine/build. Unsupported browsers retain source-based navigation, so source order is the required fallback, not a minor polish item.
+
+| Need | Mechanism | Boundary |
+|---|---|---|
+| A responsive flex row visually reversed | `reading-flow: flex-visual` follows visual reading direction; `flex-flow` follows flex-direction/wrap order | These can yield **different** orders for `row-reverse` and `wrap-reverse`; verify RTL/writing-mode. |
+| Explicitly positioned grid cards | `reading-flow: grid-rows` or `grid-columns` | Choose the meaningful row/column sequence; `grid-order` follows CSS `order`, **not** arbitrary grid-area placement. |
+| An exceptional item must be visited earlier | `reading-order: -1` on a direct child of a container with a non-`normal` `reading-flow` | Ordinal groups are local to that container. Do not replace document architecture with many manual ranks. |
+| Forms, checkout steps, ordered instructions, linked labels/errors | Correct DOM sequence first | CSS visual reordering is not a reliable cross-browser fix for meaning-bearing dependencies. |
+
+Example of **optional** enhancement for independent dashboard modules, after verifying that source order remains usable:
+
+```css
+.dashboard-modules {
+  display: grid;
+  /* Grid placement may differ across container widths. */
+}
+@supports (reading-flow: grid-rows) {
+  .dashboard-modules { reading-flow: grid-rows; }
+}
+```
+
+**Scope and testing traps:** a reading-flow container also affects focus-navigation scoping; positive `tabindex` is not a safe workaround. `display: contents` wrappers and focusable descendants have additional HTML focus-scope interactions (WHATWG #10407/#10533 remain open). CSS support detection checks parsing, **not** the actual keyboard/assistive-technology outcome. Do not assume all screen-reader browsing modes follow the same path merely because the spec targets speech order.
+
+**Agent acceptance gate:** inspect DOM order with CSS disabled; tab/Shift+Tab through real controls in supported Chromium **and** unsupported Safari/Firefox; inspect screen-reader linear reading and headings separately; repeat after responsive/container-query changes, RTL/writing-mode, 200–400% zoom, nested `display: contents`, and dynamically inserted controls. Record both *visible focus position* and *meaning preserved*. Do not rely on a screenshot or an axe-clean result alone.
+
+**Evidence boundary:** CSS Display 4 (editor's draft, 2026-06-05) and Chrome's 2025 implementation article establish intended mechanics; MDN BCD and browser standards-position issues establish a **current support gap**, not tested assistive-technology parity. WCAG defines outcome constraints, not an endorsement of this CSS property. No local cross-engine/AT runtime experiment was performed.
 
 ## Density is contextual
 Do not equate narrow with “mobile” or wide with “expert.” A desktop user may use a narrow split pane; a tablet may be wide; browser zoom can produce a narrow CSS viewport; a component can be narrow inside a wide dashboard.
@@ -149,6 +180,10 @@ W3C provides a strong normative accessibility boundary for reflow and text enlar
 - W3C WAI — Understanding WCAG 1.4.4 Resize Text (reviewed 2026-10-05): https://www.w3.org/WAI/WCAG21/Understanding/resize-text
 - MDN — CSS container queries (reviewed 2026-10-05): https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Containment/Container_queries
 - MDN — Using container size and style queries (reviewed 2026-10-05): https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Containment/Container_size_and_style_queries
+- CSSWG — CSS Display 4 reading-flow / reading-order (editor's draft 2026-06-05, reviewed 2026-10-24): https://drafts.csswg.org/css-display-4/#reading-flow
+- Chrome for Developers — reading-flow focus-navigation behavior (2025-05-01): https://developer.chrome.com/blog/reading-flow/
+- MDN — reading-flow reference and compatibility (reviewed 2026-10-24): https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/reading-flow
+- W3C WAI — WCAG 2.2 focus order and meaningful sequence: https://www.w3.org/WAI/WCAG22/Understanding/focus-order.html ; https://www.w3.org/WAI/WCAG22/Understanding/meaningful-sequence.html
 
 ## Maturity
 **Operational but incomplete.** Platform and accessibility constraints are strong. The semantic-preservation model is agent synthesis and needs broader validation across data-heavy products, localization, native platforms, and measured task outcomes before being treated as mature universal guidance.

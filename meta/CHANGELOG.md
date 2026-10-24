@@ -1,6 +1,7 @@
 # Knowledge Changelog
 
 ## 2026-10-24
+- Researched CSS `reading-flow`/`reading-order` for responsive visual-vs-DOM sequencing; documented Chromium-only support as of 2026-10-24, differences among flex/grid modes, unsupported-engine fallback, unresolved `display: contents` focus scoping and a cross-browser/AT acceptance gate. Corrected unverified Safari 26.4 support claims; no runtime test or maturity change.
 - Revalidated CSS anchor positioning against the 2026-09-06 CSSWG draft: corrected categorical last-anchor matching, documented singular visibility syntax/default and implicit-anchor `normal`/`auto` boundary, and flagged open nested-scroller visibility/fallback exceptions. Added browser/AT falsification gate; no runtime test or maturity change.
 - Evaluated the Google Labs Stitch MCP skill suite for design exploration and code↔design workflows; source-inspected cloud snapshot/upload privacy, API-key-in-argv handling, React validator false assurance and unbounded baton-loop/optional visual QA. Added conditional install/usage, alternatives and seeded falsification gate; no runtime trial or maturity change.
 - Reviewed React Doctor's maintained agent skill/CLI as a conditional deterministic React QA layer, not a design or WCAG oracle; documented mutable /doctor instructions, false-positive design rules, changed/full scan coverage, pseudonymous telemetry and Socket network defaults, and the actual Modified MIT license restrictions on ML evaluation/training uses. Added a paired agent benchmark gate; no runtime trial or maturity change.

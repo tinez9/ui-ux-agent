@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — CSS reading-flow: Chromium focus-order enhancement cannot replace logical source order
+**Question:** Can responsive flex/grid visual reordering be repaired accessibly with `reading-flow`, and what happens in unsupported engines or assistive-technology modes?
+
+**Finding:** CSS Display 4 distinguishes `flex-visual` from `flex-flow`, grid row/column traversal from `grid-order`, and ordinal `reading-order` groups from DOM changes. Chrome 137+ supports these properties, but MDN BCD still records no Safari/Firefox support (2026-10-24); a 2026 community claim of Safari 26.4 support is uncorroborated and conflicts with primary support data. `display: contents` focus-scope behavior has open WHATWG questions. Added an agent decision/QA contract to responsive composition: preserve meaningful source order; use CSS as optional enhancement, not an accessibility certification.
+
+**Evidence boundary:** CSSWG draft, Chrome documentation, current MDN BCD, open platform issues and WCAG 1.3.2/2.4.3; no cross-browser/AT experiment or observed task uplift. Maturity **unchanged** (3.7 overall; 3 frontend). Next: paired source-order and CSS-reordering fixtures across Chromium/Safari/Firefox with real keyboard and screen-reader traversal.
+
 ### 2026-10-24 — CSS anchor positioning: September draft drift changes duplicate-name and visibility assumptions
 **Question:** Which seemingly stable 2026 anchor-positioning recipes conflict with the current specification or real overflow constraints?
 
