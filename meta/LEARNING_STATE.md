@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — CSS anchor positioning: September draft drift changes duplicate-name and visibility assumptions
+**Question:** Which seemingly stable 2026 anchor-positioning recipes conflict with the current specification or real overflow constraints?
+
+**Finding:** The 2026-09-06 CSSWG draft now prefers the nearest eligible ancestor for duplicate anchor names (MDN still says last in source order), changes `position-anchor`'s initial value to `normal`, and renames `position-visibility` values to singular `anchor-visible`/`anchor-valid` while allowing old aliases only optionally. The default visibility and nested-scroller fallback behavior are therefore not safe to infer from old snippets; CSSWG #13079/#13176 remain open. Updated the existing overlay contract with compatibility and focused-action safety gates, rather than adding a new pattern file.
+
+**Evidence boundary:** W3C draft/MDN/HTML Popover docs and checked CSSWG issue status on 2026-10-24; no cross-browser execution, assistive-technology verification or user-outcome data. Frontend maturity **3/10**, overall **3.7/10** unchanged. Next: pinned-browser adversarial fixture with nested/portaled anchors, syntax variants, clipped interactive popovers and keyboard/AT tests.
+
 ### 2026-10-24 — Google Labs Stitch skills: cloud design value versus upload, credential and validator boundaries
 **Question:** Does the official Stitch skill suite add distinct design-to-code value for coding agents, and which shipped checks are unsafe to treat as authority?
 

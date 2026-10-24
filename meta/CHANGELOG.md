@@ -1,6 +1,7 @@
 # Knowledge Changelog
 
 ## 2026-10-24
+- Revalidated CSS anchor positioning against the 2026-09-06 CSSWG draft: corrected categorical last-anchor matching, documented singular visibility syntax/default and implicit-anchor `normal`/`auto` boundary, and flagged open nested-scroller visibility/fallback exceptions. Added browser/AT falsification gate; no runtime test or maturity change.
 - Evaluated the Google Labs Stitch MCP skill suite for design exploration and code↔design workflows; source-inspected cloud snapshot/upload privacy, API-key-in-argv handling, React validator false assurance and unbounded baton-loop/optional visual QA. Added conditional install/usage, alternatives and seeded falsification gate; no runtime trial or maturity change.
 - Reviewed React Doctor's maintained agent skill/CLI as a conditional deterministic React QA layer, not a design or WCAG oracle; documented mutable /doctor instructions, false-positive design rules, changed/full scan coverage, pseudonymous telemetry and Socket network defaults, and the actual Modified MIT license restrictions on ML evaluation/training uses. Added a paired agent benchmark gate; no runtime trial or maturity change.
 - Established a row-swipe decision and accessibility contract: differentiated reveal versus commit, identified SwiftUI's full-swipe-default-to-first-action hazard, linked W3C's explicit F105 swipe-only failure and independent pointer/drag/cancel requirements, and added cross-input/RTL/OS-edge and optimistic-recovery falsification. No device study or maturity change.
