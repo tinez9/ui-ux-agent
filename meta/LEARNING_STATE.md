@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Server-backed data tables: page-local sorting is not dataset sorting
+**Question:** When can a sortable/filterable table falsely imply it transformed the entire result set, and how should agents test this across server pagination and concurrent changes?
+
+**Finding:** TanStack Table v8 explicitly warns that client sorting combined with server pagination sorts only loaded rows. Its manual sorting/filtering/pagination flags delegate the corresponding transforms to the backend; manual pagination also disables automatic page reset, and unknown `pageCount: -1` cannot determine the last page. PostgreSQL 18 requires uniquely ordered LIMIT/OFFSET queries for predictable page subsets; concurrent changes can still shift offset boundaries. Strengthened the existing table contract with server query scope, deterministic tie-breakers, stale-response rejection and a two-page falsification fixture rather than duplicating the bulk-selection contract.
+
+**Evidence boundary:** TanStack v8 and PostgreSQL 18 first-party documentation plus explicitly marked engineering inferences; no runtime benchmark or user/AT experiment. UX-pattern maturity **unchanged at 4/10**, overall **3.7/10**. Next: run matched client/server/mixed fixtures with concurrent mutation, unknown totals, cursor/snapshot variants and accessible status feedback.
+
 ### 2026-10-24 — Responsive imagery: composition is not resource resolution
 **Question:** How can AI agents keep imagery meaningful, accessible and performant when a layout changes aspect ratio and focal subject?
 
