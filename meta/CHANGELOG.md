@@ -1,6 +1,8 @@
 # Knowledge Changelog
 
 ## 2026-10-24
+- Compared first-party Playwright CLI skill with MCP and existing agent-browser workflows: documented conditional token-efficient use, stale copied-skill errors fixed in canonical source, secret-bearing snapshot/CDP limitations, and a critical WebMCP page-tool trust/consent boundary despite the skill's bypass-overlay recommendation. Added adversarial comparison gate; no local benchmark or maturity change.
+## 2026-10-24
 - Strengthened server-backed data-table integrity: TanStack v8 manual sorting/filtering/pagination and page-reset traps, PostgreSQL 18 unique ordering and offset instability, plus stale-response and interleaved-page falsification tests. No runtime benchmark or maturity change.
 - Established a responsive-imagery art-direction contract separating resource resolution, CSS clipping, composition changes and accessible meaning; documented viewport-versus-container source selection, per-variant intrinsic sizing, Cloudinary auto-crop counterexamples and Next.js 16 image-priority/placeholder traps, with adversarial visual/performance checks. No runtime benchmark or maturity change.
 - Established a version-recovery feature contract separating local Undo, selective historical recovery, whole-object restore, duplication and independent audit history; contrasted Figma comment/checkpoint semantics, Notion nested-database and sampling gaps, Google Sheets provenance loss, Yjs selective transaction origins and WCAG's alternative error-prevention mechanisms. Added concurrent-edit/permission and accessibility falsification gates. No runtime validation or maturity change.
