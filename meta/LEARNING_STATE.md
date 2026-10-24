@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — OpenPencil local design-file agents: editable context versus false lint assurance
+**Question:** Does OpenPencil's installable skill/MCP add unique design-to-code value over screenshots and Figma/Penpot, and can its design lint be trusted?
+
+**Finding:** OpenPencil 0.16.0 (released 2026-10-14) offers MIT-licensed headless `.fig` inspection/edit/export, local live MCP and design tokens/JSX. It fills an offline editable-source gap, but is not a production component mapping or design-quality oracle. Source inspection exposes high-impact false-assurance risks: contrast lint samples only solid text/ancestor fills, touch targets are inferred from node names, and the 12px text threshold is heuristic rather than WCAG. Selection-only MCP offers five server-enforced read tools; full mode and scripting need narrow file roots and version-paired app/server. Windows root defaults to home despite generalized cwd docs. Two older serious issues (#579, #750) were fixed/closed and should be used as regression cases, not current bug claims.
+
+**Evidence boundary:** Primary source, release/docs and resolved issues; no local install or comparative outcome evidence. Maturity **unchanged** (3.7 overall; 5 agent workflows). Next: paired screenshot-only versus OpenPencil CLI/skill versus live MCP trials with gradient/alpha contrast, misleading control names, component override round-trips, production-component reuse and unauthorized edits.
+
 ### 2026-10-24 — Argos visual-regression agent skills: diff evidence versus baseline authority
 **Question:** Do installable visual-regression review skills materially improve agent QA, and can their flakiness and approval advice be trusted?
 
