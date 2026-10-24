@@ -1,5 +1,13 @@
 # Source Registry
 
+## Version history, selective undo and restore-scope exceptions (2026-10-24)
+- **Figma shipped recovery:** https://help.figma.com/hc/en-us/articles/360038006754-View-a-file-s-version-history — 30-minute checkpoints; restore creates pre/post checkpoints, retains later comments but cannot recover deleted comments; duplicate omits original history/comments; historical access requires edit permission.
+- **Notion shipped recovery:** https://www.notion.com/help/duplicate-delete-and-restore-content — 10-minute active / 2-minute idle snapshots; highlights not exhaustive, plan-limited retention and mobile diff limitations; restoring a database does not restore its pages' internal content.
+- **Google Docs/Sheets shipped recovery:** https://support.google.com/docs/answer/190843/find-out-what-s-changed-in-a-file-computer — edit access, grouped revisions, restore/copy/named versions; Sheets restore clears earlier cell-by-cell edit history, so copying can preserve evidence.
+- **Operation-level alternative:** https://docs.yjs.dev/api/undo-manager — scoped selective undo, tracked origins, default 500 ms capture grouping, stopCapturing; not a durable snapshot or audit log.
+- **Normative error-prevention scope:** https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data.html — for consequential submissions, reversible OR checked OR confirmed; explicitly not a mandate to confirm each routine save.
+- **Evidence boundary:** First-party product behavior, library API and WCAG interpretation, reviewed 2026-10-24. No live multiuser/AT test, security review or comparative recovery outcome study.
+
 ## Collaborative presence, stale awareness and privacy boundaries (2026-10-24)
 - **Protocol and separation:** https://docs.yjs.dev/getting-started/adding-awareness ; https://github.com/yjs/y-protocols/blob/master/PROTOCOL.md — Yjs Awareness is not persisted in Y.Doc; per-client state, clock, null/offline, recommended 15-second refresh and 30-second stale expiry. Protocol semantics, not a real-world user-attention measurement.
 - **Shipped integration:** https://liveblocks.io/docs/products/sync/presence ; https://liveblocks.io/docs/use-cases/presence ; https://tiptap.dev/docs/collaboration/core-concepts/awareness — temporary cursors/selections, editor carets, AI-agent TTL, provider-level awareness. Product documentation, not comparative UX validation.
