@@ -258,6 +258,36 @@ React's `useOptimistic` supplies temporary rendering, not persistence. TanStack 
 
 Sources: https://react.dev/reference/react/useOptimistic ; https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates ; https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query ; https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-Match .
 
+## Offline edits and synchronization: local durability is not server acceptance — 2026-10-24
+
+**Decision:** support offline mutation queues only for operations that can be safely replayed, reconciled, and explained. An optimistic screen, a persisted local draft, a queued request, and a server-accepted change are **different promises**. Do not show an unconditional “Saved” checkmark for a write not acknowledged by the authoritative service. Payments, irreversible deletion, time-sensitive approvals, and actions requiring fresh authorization usually need explicit online confirmation rather than automatic replay.
+
+### A truthful per-item state contract
+
+| State | What the UI may claim | Failure boundary |
+|---|---|---|
+| Editing | “Editing” | Do not claim durability until the local storage transaction succeeds. |
+| Stored locally | “Saved on this device; not synced” | Browser/device reset, private-mode exit or eviction can still remove it. |
+| Queued | “2 changes waiting to send” | Show pending state on affected items, not just a global banner. |
+| Sending / uncertain | “Checking whether changes reached the server” | A timeout does **not** prove failure; do not mint a second logical operation. |
+| Server confirmed | “Synced” and relevant last-success time | Only after authoritative acknowledgement or reconciliation lookup. |
+| Rejected / conflict / expired | “Needs attention” with specific reason | Preserve local edit and offer compare, retry, export or manual resolution. |
+
+Use a quiet contextual status while important work remains pending; an ephemeral toast is insufficient. Distinguish inbound data freshness from outbound unsent changes. Announce meaningful transitions through accessible status semantics, not every retry. Manual “Sync now” should not promise immediate delivery. Google's Open Health Stack guidance supports contextual status, last-sync timestamps and recovery for healthcare workflows; it is not a controlled universal usability result.
+
+### Correctness is an application contract, not a service-worker feature
+
+1. **Persist before promising.** Store a versioned operation record with logical operation ID, account scope, resource, expected server version, dependencies, payload, creation/expiry time and stable idempotency key where supported. Handle quota errors and migrations. IndexedDB is best-effort by default; StorageManager.persist() reduces eviction risk but cannot prevent deliberate deletion or device loss.
+2. **Choose replay by consequence.** Independent low-risk draft updates can retry; create-then-edit needs dependency ordering. Do not auto-replay stale destructive operations. Reauthenticate and reauthorize every replay on the server; quarantine/clear pending operations on sign-out or account switch. Never persist bearer tokens in a generic queue, and minimize sensitive queued payloads.
+3. **Deduplicate and reconcile.** A response can be lost after server commit. Reuse the same idempotency key and unchanged payload only within the endpoint's documented retention window; after expiry, query operation status before replay. Stripe's current documentation distinguishes API v1 (first response cached **including HTTP 500**, key retention at least 24h) from API v2 (different partial-failure semantics); neither is a universal API guarantee. For concurrent edits, server version/ETag preconditions (If-Match; usually HTTP 412 on mismatch) protect against silent overwrites, but require a visible compare/recovery flow.
+4. **Treat connectivity as a hint.** navigator.onLine is unreliable. Background Sync is not Baseline; scheduling is browser-managed and may be delayed. Workbox fallback on browsers without Background Sync replays when the service worker starts, **not reliably while the app is closed**. Provide foreground retry on reopening and manual recovery.
+5. **Workbox source-level trap (inspected 2026-10-24).** BackgroundSyncPlugin enqueues thrown fetchDidFail exceptions, **not HTTP 4xx/5xx by default**. More subtly, Queue.replayRequests() awaits fetch(entry.request.clone()) but never checks response.ok: a queued replay returning HTTP 503 is **removed as though successful**. A fetchDidSucceed status-throwing plugin on the initial route does not change this replay loop. If HTTP failures must remain queued, implement and test a reviewed custom onSync/replay policy with explicit response validation; do not blindly retry authorization, validation or conflict responses.
+6. **TanStack Query v5 boundary.** Persisted mutations restore state, not executable functions. Register a matching default mutation function before resumePausedMutations() after reload or replay may fail with “No mutationFn found.” Mutations run in parallel by default; shared scope.id serializes only matching operations. The mutation cache alone does not implement server deduplication, conflict resolution or account isolation.
+
+**Agent falsification fixture:** offline create/edit → refresh → reconnect; drop response *after* server commit; return 503 on first send **and again on Workbox replay**; return 401 after sign-out, 412 after another device edits, and 422 for invalid input; exhaust quota, evict storage, change app schema, close Safari, and switch accounts with pending work. Verify actual server writes/no duplicates, queue retention, truthful UI, preserved edits, accessible status/focus, expiry and recovery. Include an online-only control for high-risk actions. **No runtime or multi-browser benchmark was performed in this cycle.**
+
+**Primary sources:** https://developer.chrome.com/docs/workbox/modules/workbox-background-sync ; https://github.com/GoogleChrome/workbox/blob/main/packages/workbox-background-sync/src/Queue.ts ; https://tanstack.com/query/latest/docs/framework/react/guides/mutations ; https://developer.mozilla.org/en-US/docs/Web/API/Background_Synchronization_API ; https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria ; https://developer.mozilla.org/en-US/docs/Web/API/Navigator/onLine ; https://www.rfc-editor.org/rfc/rfc9110.html#section-13.1.1 ; https://docs.stripe.com/api/idempotent_requests ; https://developers.google.com/open-health-stack/design/offline-sync-guideline .
+
 ## Loading, progress, empty, and error states
 
 Treat asynchronous UI as a **state machine**, not a spinner decoration. Define idle, pending, success-with-data, success-with-no-data, and failure; add stale/refreshing, partial, queued, or cancelled states when real.
