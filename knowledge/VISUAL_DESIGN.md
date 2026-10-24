@@ -11,6 +11,46 @@ For each visual pattern distinguish aesthetic signal, product-category fit, bran
 - Color needs semantic roles separate from brand expression.
 - Distinctiveness is strongest when it emerges from a coherent system rather than one fashionable effect.
 
+
+## Responsive imagery and art direction: a crop is a content decision — 2026-10-24
+
+**Decision:** specify the image's **job, subject, focal region, permitted crop and text-safe space** before selecting an image API. Image quality is not just resolution: a fast, sharp crop that removes the evidence, subject, product detail or spatial context needed for the task is a failed design. Do not use a generic full-bleed stock hero as a substitute for product-specific visual intent.
+
+| Actual requirement | Lowest-complexity mechanism | Failure boundary |
+|---|---|---|
+| Same composition, different display sizes/DPR | One semantic `<img>` with accurate `srcset` and `sizes` | `srcset` chooses a resource; it does not recompose the scene. Incorrect `sizes` can waste bandwidth. |
+| Same photo, decorative framing may clip edges | `object-fit: cover` + reviewed `object-position` | Cropping is **not** art direction if the important content is outside the frame. Use `contain` or change layout when the whole object matters. |
+| Different framing is required for narrow/wide views | `<picture><source media=...>...<img ...></picture>` with editorially approved variants | `media` queries are **viewport/media conditions**, not container queries. A narrow sidebar on a wide desktop can receive the wide asset. |
+| The image is purely decorative | CSS background or `<img alt="">` | A CSS background has no useful image alternative; never hide informative content or text inside it. |
+| Product detail, map, diagram or evidence must remain intact | Preserve full image or supply zoom/detail and accessible text/data | Cropping for visual consistency must not erase required information. |
+
+### Image contract for design and implementation agents
+
+1. **Art-direct the content, not only the rectangle.** Specify the essential subject(s), relationships, optional context, intended emotional/brand tone, negative space for adjacent copy, and a safe crop per aspect ratio. If an image communicates something necessary, verify every delivered variant communicates it. Avoid baking headings, prices or controls into raster art: translations, zoom and assistive technology need real text. Check licensing/provenance and whether a subject can be used in the proposed context.
+2. **Separate resource choice from composition.** Use `srcset`/`sizes` for resolution and slot width; use `<picture>` when the **composition** must change. `<source>` order matters (first matching media/type), and `<img>` remains the fallback and the location for `alt`. For different aspect ratios, specify `width`/`height` on each relevant `<source>` and on the fallback `<img>` (or an equivalent reserved CSS aspect ratio) to reduce layout shifts. Do not combine `w` and `x` descriptors in the same candidate list.
+3. **Keep the accessible meaning consistent.** W3C classifies `alt` by *purpose in context*: informative image = useful replacement meaning; decorative image = empty `alt`; image-only link/button = destination/action; complex visual = equivalent information elsewhere. A single `<picture>` uses one fallback `<img alt>`; if two crops tell materially different stories, fix the variants or surrounding content rather than inventing an `alt` that describes an invisible object. A hero with adjacent equivalent copy can be decorative; not every photograph needs a verbose literal description.
+4. **Treat automatic focal detection as a proposal.** Cloudinary's own example shows `g_auto` prioritizing people when the desired subject is a storefront; `person_avoid` changes the result. Object-specific gravity can select only the most prominent of several same-class objects; missing-object fallbacks vary by mode. For editorial, identity, product and evidence-critical assets, review generated variants and retain a human-set focal point or curated crops. Saliency/face detection is not proof of the image's communicative purpose.
+5. **Make the priority match the actual LCP.** The visible, above-the-fold LCP image should be discoverable in server HTML, not client-JS-only or lazy-loaded; use a measured `fetchpriority="high"` or an appropriate responsive preload **selectively**. Do not high-prioritize every carousel slide or preload desktop and mobile alternatives indiscriminately. Defer genuinely offscreen images. Reserve layout space and measure LCP, CLS, transferred bytes and `currentSrc` at actual device widths/DPR; a blur placeholder does not fix a late network request.
+6. **Check framework/version behavior.** Next.js 16 deprecated `priority` in favor of `preload`, but current docs generally favor `loading="eager"` or `fetchPriority="high"` over `preload`; `preload` is discouraged when multiple candidates might be LCP. `fill` without accurate `sizes` assumes `100vw` and may download an oversized file. Its documented `getImageProps()` + `<picture>` path supports art direction, but its blur placeholder is not removed when used through `getImageProps()`. Verify the **installed** framework release and optimizer policy, not a copied legacy `priority` recipe.
+
+```html
+<!-- Different approved compositions, same essential subject and meaning. -->
+<picture>
+  <source media="(max-width: 44rem)" srcset="/scene-portrait.webp"
+          width="720" height="900">
+  <img src="/scene-wide.webp" width="1440" height="720"
+       alt="The accessible meaning of the scene" fetchpriority="high">
+</picture>
+```
+
+For this example, style the image's displayed width and height responsively; do not use the illustrative `alt` placeholder in production. If the layout is a small card rather than a full-width hero, model its **actual slot width** in `sizes` when using width-descriptor candidates. A viewport breakpoint is not a substitute for testing the same component in different container widths.
+
+**Adversarial QA gate:** test wide hero, narrow card on wide viewport, narrow phone, landscape phone, 200–400% zoom, long translated heading, light/dark overlay contrast, slow/blocked images, high DPR, no JavaScript, and screen reader. Include two-person scenes, off-center products, small text in source imagery, multiple same-class objects and empty negative space. Record selected `currentSrc`, intrinsic/visible aspect ratio, clipped critical subjects, actual bytes, LCP/CLS, text contrast and meaning conveyed by `alt`/surrounding text. A correct HTML validator or passing Lighthouse score cannot certify the editorial crop.
+
+**Evidence boundary:** WHATWG/MDN establish `picture`, source selection, intrinsic sizing and CSS cropping mechanics; W3C establishes image-alternative purpose; web.dev documents LCP/CLS delivery tradeoffs; Next.js and Cloudinary document product-specific capabilities and concrete exceptions. The visual brief and QA gate are agent synthesis, **not** a controlled finding that curated crops outperform automatic crops on all tasks. No browser matrix or user-outcome experiment was executed.
+
+**Primary references (reviewed 2026-10-24):** [WHATWG art direction](https://html.spec.whatwg.org/dev/images.html), [MDN picture](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/picture), [MDN source dimensions](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/source), [MDN object-fit](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/object-fit), [W3C image alternatives](https://www.w3.org/WAI/tutorials/images/), [web.dev images/CLS](https://web.dev/learn/html/images), [web.dev LCP](https://web.dev/articles/optimize-lcp), [Next.js 16 Image](https://nextjs.org/docs/app/api-reference/components/image), [Cloudinary object-aware cropping](https://cloudinary.com/documentation/cloudinary_ai_content_analysis_object_aware_cropping).
+
 ## Color contrast: conformance gate versus perceptual review — 2026-10-23
 
 **Do not let a design skill replace the standard.** For a WCAG 2.2 AA target, check actual text/background pairs against **4.5:1 for normal text** and **3:1 for large text** (at least 18pt/24px regular or 14pt/~18.67px bold), and necessary UI-component/graphic cues against **3:1**. The ratios are exact thresholds: do not round 4.499 to 4.5. A logo/inactive-control exception is narrow, not a license to hide important status or functionality. Check states and adjacent colors, not just a palette's swatches. See [W3C text contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) and [non-text contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html).
