@@ -26,6 +26,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Playwright CLI skill: lower context overhead, higher page-tool trust demands
+**Question:** When does the official Playwright CLI skill improve AI coding-agent browser QA versus MCP, and can its WebMCP shortcut be safely followed?
+
+**Finding:** CLI is a credible, maintained first-party option for shell-capable coding agents; GitHub Agentic Workflows chose it for schema/deployment economy, not proven UI quality. The current skill encourages page-provided WebMCP calls even when a cookie banner obstructs the UI: that crosses a new trust boundary because tool metadata, outputs and behavior come from the visited site. Apply origin/consent/action-scope checks and independent verification, not automatic invocation. Source inspection also uncovered a stale `microsoft/playwright-cli` skill mirror (three documented errors fixed in canonical `microsoft/playwright` on 2026-10-19) and a closed password-snapshot report that does **not** establish automatic masking.
+
+**Evidence boundary:** official Playwright/Chrome docs, canonical and mirrored skill source, fixed issue/commit history; no runtime comparison, adoption or security test. AI-agent workflow maturity **unchanged at 5/10**, overall **3.7/10**. Next: matched CLI/no-skill/CLI+skill/MCP trials with adversarial page-tool metadata, secret-bearing snapshots and clean controls.
+
+## Recent research
 ### 2026-10-24 — Server-backed data tables: page-local sorting is not dataset sorting
 **Question:** When can a sortable/filterable table falsely imply it transformed the entire result set, and how should agents test this across server pagination and concurrent changes?
 
