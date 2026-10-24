@@ -1,5 +1,14 @@
 # Source Registry
 
+## Numeric entry, locale parsing and spinbutton failure modes (2026-10-24)
+- **Public-service tested guidance and June 2026 revision:** https://design-system.service.gov.uk/components/text-input/ ; https://technology.blog.gov.uk/2020/02/24/why-the-gov-uk-design-system-team-changed-the-input-type-for-numbers/ — prefer text/inputmode for most numeric entry; decimal mobile keyboard may lack minus; old AT observations are historical, not assumed current across all AT.
+- **Platform and accessibility contracts:** https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/number ; https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/inputmode ; https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/ — native number implicit spinbutton/default step, inputmode hint only, keyboard semantics.
+- **Locale/precision:** https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat ; https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER — locale-dependent formatting, no general parse inverse, safe-integer limits.
+- **Library implementation contract:** https://react-spectrum.adobe.com/NumberField ; https://react-spectrum.adobe.com/v3/NumberField.html — commit-on-blur/step, default snap vs validate, wheel setting, locale/numbering, raw form submission.
+- **Version-specific counterexamples:** https://github.com/adobe/react-spectrum/issues/9059 (open signDisplay/negative decrement report, React Aria 1.12.1); https://github.com/adobe/react-spectrum/issues/9671 (closed via #9683); https://github.com/adobe/react-spectrum/issues/1893 and https://github.com/adobe/react-spectrum/issues/9899 (closed via #9905). Do not infer issue prevalence or untested present-day reproducibility.
+- **Evidence boundary:** Documentation and reported failure cases; no direct browser/AT trial or quantified UX outcome.
+
+
 ## DTCG builders and export fidelity (2026-10-24)
 - **Normative status:** https://www.designtokens.org/tr/2025.10/ ; https://www.designtokens.org/tr/2025.10/format/ ; https://www.designtokens.org/tr/2025.10/resolver/ — stable Community Group Report (not W3C Recommendation); https://www.designtokens.org/tr/drafts/ — 2026-09-08 preview explicitly non-authoritative.
 - **Style Dictionary:** https://github.com/style-dictionary/style-dictionary/blob/main/package.json (inspected 5.7.0, Node >=22, Apache-2.0); https://styledictionary.com/info/dtcg/ (2025.10 incomplete); https://styledictionary.com/reference/hooks/transforms/ (ordered transforms, alias interactions).
