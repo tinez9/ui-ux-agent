@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Numeric entry: localized amount is not an identifier or spinbutton
+**Question:** When should agents choose `type="number"`, `inputmode="decimal"`, or a locale-aware number field, and which silent data changes must be prevented?
+
+**Finding:** The correct split is identifier strings vs step-adjustable quantities vs localized precise amounts. GOV.UK's June 2026 revision warns that decimal mobile keyboards may omit minus, contradicting blanket `inputmode="decimal"` advice for negative values. `inputmode` is only a keyboard hint, native number inputs imply spinbutton behavior/default integer steps, and `Intl.NumberFormat` does not supply an inverse parser. React Spectrum's `NumberField` handles locale formatting but commits on blur/step and defaults to snap/clamp; a version-specific open negative/signDisplay issue motivates targeted regression tests. Documented resolved issues were not presented as active bugs. Preserve raw edits, distinguish parsed/committed/serialized values, validate ambiguity and precision, and test multilingual/AT/mobile paths.
+
+**Evidence boundary:** Official GOV.UK/MDN/W3C and Adobe documentation, with GitHub issue reports for falsification. No device/browser execution or comparative usability experiment. UX-pattern maturity remains **4/10** and overall **3.7/10**. Next: compare native number, text+parser and locale-aware NumberField using mixed-locale amounts, step edits, screen readers, keyboard, and interrupted edits; measure silent value changes and task success.
+
 ### 2026-10-24 — DTCG token builders: a valid export can erase design-system context
 **Question:** Can an AI coding agent trust “DTCG compatible” Style Dictionary/Terrazzo builds or Adobe Spectrum exports to preserve semantic token contexts and aliases?
 
