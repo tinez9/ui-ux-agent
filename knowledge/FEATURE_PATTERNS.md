@@ -10,6 +10,42 @@ Contextual command palettes; interactive previews; comparison workspaces; smart 
 
 Each promoted feature should include use cases, risks, and implementation guidance.
 
+## Version recovery: undo is not restore — 2026-10-24
+
+**Decision:** offer recovery at the granularity of the mistake. Local Undo, selective content recovery, whole-document restore, and an audit/history trail are **different capabilities**. A visible timeline is not evidence that every edit is captured, every nested object is restored, or later collaborators' work is safe.
+
+### Choose the recovery operation
+
+| User intent | Prefer | Boundary |
+|---|---|---|
+| Reverse my just-completed edit | Local, author-scoped Undo/Redo | Do not silently undo other users' intervening edits. Group typing into sensible steps; split deliberate actions. |
+| Recover one deleted paragraph, asset or field | Copy/cherry-pick from a previewed historical snapshot | Avoid replacing the rest of the current document. Preserve object identity/links where the data model permits. |
+| Roll back widespread corruption | Explicitly previewed, authorized whole-object restore | Treat as a **new write** against current state, not a passive trip through time. Warn about newer collaborators' changes. |
+| Explore or hand off an old state without affecting the live object | Duplicate/fork the old version | Copies may lose comments, history, links, permissions or external integrations. Disclose what travels. |
+| Establish who did what and when | Independently retained audit/activity record | Neither Undo stack nor sampled snapshot history is necessarily a complete event log. |
+
+### Counterexamples from shipped products
+
+- **Figma:** restoring a file creates checkpoints for both the pre-restore current state and the restored state; newer comments remain, while deleted comments are **not** recovered. Duplicating a historical version creates a new file without the original comments/history. Its snapshots are checkpointed (documented every 30 minutes), not one version per keystroke. Previous-version links require edit access.
+- **Notion:** page versions are sampled during editing (documented every 10 minutes, plus 2 minutes after the last edit); the highlighted diff is explicitly **not exhaustive**. Restoring a database restores pages/properties but **not the contents of those database pages**; each page needs separate restoration. History availability varies by plan, and detailed comparison is unavailable on mobile.
+- **Google Docs/Sheets:** version history requires edit permission and revisions can be grouped. Google warns that restoring a **Sheet** clears cell-by-cell edit history from before the restore; copying the old version is safer when that provenance matters.
+- **Yjs:** §UndoManager§ is a *selective* operation stack scoped to shared types and optionally §trackedOrigins§; its default 500 ms capture window merges edits unless §stopCapturing()§ is used. This is not a durable, universal version-history or audit implementation. Test whether undoing local work preserves newer remote changes, including attribute changes and nested objects.
+
+### Implementation contract for agents
+
+1. **Define the snapshot's actual scope:** document body, nested pages/rows, attachments, metadata, comments, permissions, external links and published outputs may have independent histories. In the preview, show *what will change*, *what will not*, the snapshot time/author, and any known gaps or retention limits. Never label a partial snapshot a full backup.
+2. **Preserve newer work by default:** offer copy/selective recovery first. For whole-object restore, compare the current server revision to the revision reviewed by the user; if it changed, refresh the diff and ask for a renewed decision rather than silently overwriting. Require server authorization for both historical read and restore, including revoked access and newly restricted fields. A restored value must not bypass current policy.
+3. **Make restore observable and recoverable:** when supported, record an immutable pre-restore checkpoint and the restore as a new attributed event; report success only after server acceptance. If a provider cannot guarantee rollback, say so explicitly. Do not promise that undo, trash, snapshot, audit and backup retention are interchangeable.
+4. **Design the accessible flow:** navigable version list with author/time labels, keyboard-accessible comparison or textual change summary, clear Restore vs Copy actions, explicit focus/announcement after completion, and a way to return to the current state. Avoid color-only diffs and confirmation dialogs for every minor edit. WCAG 2.2 SC 3.3.4 requires a reversible, checked **or** confirmed mechanism for consequential submissions; it does **not** require confirming every routine save.
+
+### Adversarial validation
+
+Seed two editors and a read-only account; concurrent changes between preview and Restore; offline/reconnected writes; nested database page content; deleted comments and attachments; restricted fields and revoked access; version grouping/expiry; duplicate/fork metadata; a failed restore after optimistic UI; keyboard/screen-reader diff comprehension; and mobile without rich diff. Verify the **server's post-restore object**, the surviving later edits, the audit record, and whether the user can actually recover the pre-restore state. Compare local Undo, selective recovery, full restore and copy on time-to-recovery, collateral loss and incorrect beliefs about what was restored.
+
+**Evidence boundary:** Figma, Notion and Google product help establish concrete exceptions; Yjs documents operation-stack mechanics; W3C defines error-prevention alternatives. The implementation contract is synthesis, **not** an empirically validated universal recovery UI. No live collaborative restore or assistive-technology experiment was run.
+
+**Primary references:** [Figma version history](https://help.figma.com/hc/en-us/articles/360038006754-View-a-file-s-version-history), [Notion delete and restore](https://www.notion.com/help/duplicate-delete-and-restore-content), [Google Docs version history](https://support.google.com/docs/answer/190843/find-out-what-s-changed-in-a-file-computer), [Yjs UndoManager](https://docs.yjs.dev/api/undo-manager), [WCAG 2.2 SC 3.3.4](https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data.html).
+
 ## Collaborative presence: coordination signal, not proof of activity — 2026-10-24
 
 **Decision:** add live collaborators, selections, typing or cursors only when users actually need to coordinate *in the same object*. The valuable feature is reduced collision and faster handoff, not decorative cursor movement. For solo workflows, sensitive drafting, or primarily asynchronous review, comments, assignments, activity history or explicit locks may be clearer and cheaper.
