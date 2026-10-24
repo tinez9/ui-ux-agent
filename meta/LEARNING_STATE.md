@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Vercel React Best Practices: high-value checklist, unsafe unqualified snippets
+**Question:** Should React/Next.js agents install Vercel's official performance skill, and which source-level recipes can degrade correctness, privacy or UX if applied mechanically?
+
+**Finding:** The 70-rule first-party skill is useful for focused waterfall, bundle, authorization and render reviews, but a rule is a *hypothesis*, not an optimization proof. Its cross-request `getUser(id)` LRU sample lacks tenant/authorization boundaries; a module cache example keeps a cookie-derived login boolean stale; its inline theme script promises no flicker/hydration mismatch without proving timing, React parity or CSP compliance; and its `content-visibility` example claims a 10× improvement without measurement. React Compiler and request-scoped caching further narrow when generic memo/caching advice applies. Keep the skill conditional, load only relevant rules, test against clean/adversarial controls and do not copy unsafe examples.
+
+**Evidence boundary:** canonical Vercel skill/rule files, React/Next/Vercel first-party docs; no live install, exploit, measured speedup or cross-model trial. AI-agent workflows stay **5/10**, frontend implementation **3/10**, overall **3.7/10**. Next: paired agent/no-skill React tasks with cross-tenant cache, strict-CSP hydration, compiler and long-list controls.
+
 ### 2026-10-24 — Offscreen rendering: CSS skipping is not DOM virtualization or guaranteed AT parity
 **Question:** When does `content-visibility: auto` improve long-page performance without compromising scroll stability, find/focus behavior or accessibility?
 
