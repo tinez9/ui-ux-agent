@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Responsive imagery: composition is not resource resolution
+**Question:** How can AI agents keep imagery meaningful, accessible and performant when a layout changes aspect ratio and focal subject?
+
+**Finding:** `srcset`/`sizes` select appropriate bytes, `object-fit` crops within a box, and `<picture>` art-directs composition; they are not interchangeable. `<source media>` follows viewport/media conditions rather than component container size, and variant-specific intrinsic dimensions matter for CLS. W3C image alternatives depend on contextual purpose; one `<picture>` has one `img alt`, so radically different crops can invalidate a shared description. Cloudinary's documented people-versus-storefront example falsifies any claim that auto-gravity always preserves editorial intent. Current Next.js 16 deprecates `priority` and warns against overusing preloads; `fill` without `sizes` may waste bytes. Added a focal-subject brief, delivery decision table and adversarial image QA gate to visual-design knowledge.
+
+**Evidence boundary:** WHATWG, MDN, W3C, web.dev, Next.js and Cloudinary primary documentation; no live crop experiment, AT trial or outcome study. Visual design remains 3/10 and overall 3.7/10. Next: compare center crop, auto-gravity, manual focal point and curated art-directed variants on content-critical images with desktop/mobile/embedded-card contexts.
+
 ### 2026-10-24 — Version recovery: historical snapshots are not universal undo
 **Question:** How should an agent design undo, selective recovery and whole-object restore without erasing later collaboration, losing provenance or falsely promising a complete rollback?
 
