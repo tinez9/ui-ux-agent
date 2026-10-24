@@ -28,6 +28,37 @@ A reduced-motion variant should preserve the information the original transition
 
 Apple independently recommends adapting problematic depth simulation, parallax, animated blur, and depth-of-field effects when Reduce Motion is enabled.
 
+## Swipe actions: acceleration, not hidden-only functionality — 2026-10-24
+
+**Decision:** use row swipes as an *optional shortcut* for frequent, predictable list actions, not the only way to reveal or perform them. Separate **swipe to reveal choices** (user still taps an explicit action) from **full swipe to commit** (the gesture executes a mutation). A visually pleasing row animation is not evidence that the operation is discoverable, accessible, or safe.
+
+### Interaction and consequence contract
+
+| Situation | Prefer | Avoid |
+|---|---|---|
+| Infrequent or high-consequence action | Visible/tap-accessible overflow or action button; deliberate confirmation where justified | Hidden-only swipe or one-gesture irreversible delete |
+| Frequent reversible triage (archive, mark read, complete) | Optional directionally consistent swipe shortcut **plus** a tap path and undo/recovery | Requiring users to memorize left/right mappings or relying on color alone |
+| Multiple actions per row | Reveal clearly labeled buttons; keep them usable without the swipe | Different destructive actions triggered by small distance/velocity differences |
+| Horizontal carousel, scrollable region, or browser edge | Prefer explicit controls; test native scroll/history gesture competition | Capturing all horizontal touch motion or disabling native page navigation |
+| Cross-platform web/PWA | Accessible button/menu first; add gesture only after testing input arbitration | Copying iOS-only behavior into desktop/AT contexts without equivalents |
+
+- **Platform exception worth checking in code:** SwiftUI `.swipeActions(edge:allowsFullSwipe:content:)` defaults `allowsFullSwipe` to **true**; a full swipe executes the **first** action for that edge. Thus a seemingly harmless list-row decoration can become an immediate delete or archive. Explicitly decide whether full-swipe execution is appropriate; consider `allowsFullSwipe: false` for destructive/high-cost actions. Apple documents that custom swipe actions also replace synthesized `onDelete` actions for those rows. Android Compose's `SwipeToDismissBox` demonstrates separate start-to-end/end-to-start outcomes and an explicit `confirmValueChange` callback. Neither framework component guarantees safe product semantics or recovery.
+- **Gesture ambiguity:** the user's browser/OS may reserve edge swipes for Back or app switching; horizontal carousels and nested scrolling compete with row swipes. Let vertical scrolling win when intent is vertical; do not block the native scroll path just to detect a shortcut. Define direction, reveal/commit threshold, cancellation, and RTL behavior *per platform*, then test rather than hard-code one universal pixel/velocity value. Apple's HIG recommends consistent gestures, feedback while moving, and alternatives; NN/g reports discoverability and edge-swipe ambiguity in mobile carousels (transfer that finding to row gestures cautiously).
+- **Recovery and persistence:** never remove a server-backed item as though permanently deleted before defining the pending/rejected/accepted states. If optimistic, preserve the item ID and undo window/restore path; undo must restore the actual data and correct filter/sort placement, not only animate the row back. For irreversible operations prefer explicit activation/confirmation and reliable post-action feedback. Announce meaningful state changes without flooding a live region during every movement.
+- **Reduced motion:** the same action must be available without sliding animation. Respect `prefers-reduced-motion` for nonessential displacement; do not confuse removing animation with removing the tap alternative.
+
+### Accessibility: three independent tests, not one
+
+1. **WCAG 2.2 SC 2.5.1 (A):** a direction-constrained swipe/flick is a *path-based pointer gesture*. Every author-implemented action needs an equivalent **simple single-pointer** method such as tap/click. **Keyboard access alone is insufficient.** W3C failure F105 explicitly cites a swipe-to-reveal UI whose options cannot otherwise be reached by simple tap/click. An overflow menu can qualify if it exposes the **same** actions without a swipe.
+2. **SC 2.5.7 (AA)** additionally applies to genuine dragging (grab/move/release, where the path itself is not the prescribed gesture). A click/tap alternative is needed unless an exception applies. An interaction can involve both drag and path constraints; don't relabel a directional swipe “drag” to bypass 2.5.1. **SC 2.5.2 (A)** requires appropriate pointer cancellation (e.g. release/abort/undo), and **SC 2.5.8 (AA)** applies to the tap targets, subject to its explicit 24-CSS-pixel/spacing exceptions.
+3. Test **real** touch, mouse, keyboard, VoiceOver/TalkBack, Switch Control, screen magnification, RTL and reduced motion. A custom VoiceOver accessibility action can supplement a row but does not itself supply the required *simple pointer* path for web content. When the row disappears, move focus to a logical surviving item/control, not to the document body.
+
+### Agent acceptance / falsification
+
+Compare (A) always-visible actions, (B) tap-accessible menu with optional swipe-to-reveal, and (C) full-swipe execution **on the same task**. Seed 1,000-row lists, long translated labels, left-edge navigation, nested horizontal scroll, rapid reverse swipes, motor-imprecision, two actions on one edge, offline/rejected mutations, and a removed focused row. Record discovery without coaching, unintended actions, completed tasks, undo success, scroll/back interference, focus/AT status, and actual persisted state. Include a clean control: the shortcut must not increase errors enough to erase its time benefit. **No controlled user or device test was performed in this research cycle.**
+
+**Evidence boundary:** W3C supplies normative web accessibility requirements and an exact swipe-to-reveal failure example; Apple/Android document native API defaults and platform practice; NN/g's older carousel research shows a related discoverability/gesture-conflict risk, **not** measured row-swipe failure rates. Sources: [W3C 2.5.1](https://www.w3.org/WAI/WCAG22/Understanding/pointer-gestures.html), [F105](https://www.w3.org/WAI/WCAG22/Techniques/failures/F105.html), [2.5.7](https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html), [2.5.2](https://www.w3.org/WAI/WCAG22/Understanding/pointer-cancellation.html), [Apple gestures](https://developer.apple.com/design/human-interface-guidelines/gestures), [SwiftUI swipeActions](https://developer.apple.com/documentation/swiftui/view/swipeactions(edge:allowsfullswipe:content:)), [Android SwipeToDismissBox](https://developer.android.com/develop/ui/compose/touch-input/user-interactions/swipe-to-dismiss), [NN/g mobile carousels](https://www.nngroup.com/articles/mobile-carousels/).
+
 ## Transition patterns
 
 ### Local state change
