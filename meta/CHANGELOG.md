@@ -1,6 +1,7 @@
 # Knowledge Changelog
 
 ## 2026-10-24
+- Falsified Workbox Background Sync's implied replay-order guarantee with the exact v7.4.1 `replayRequests()` method in an isolated mocked harness: overlapping manual calls sent dependent edit before create (`edit-404`), removed both entries, and lost the edit; 503 also removed an entry, while a rejected fetch retained it. Added single-flight/dependency/reconciliation safeguards and narrowed the real-browser test gap; maturity unchanged.
 - Reproduced CSS `reading-flow` QA blind spot: Chromium 144 Tab/CDP AX traversal differs from Playwright Python 1.57 ARIA snapshots and a passing snapshot assertion. Documented CDP `childIds` hierarchy requirement and added agent QA guidance; maturity unchanged.
 - Added offline outbox/synchronization UX: device-local versus server-confirmed state, queue expiry/account scope, idempotent timeout reconciliation, ETag conflicts, storage/Background Sync limits, TanStack rehydration requirement and source-inspected Workbox replay dropping HTTP 503 responses. Added adversarial tests; no runtime validation or maturity change.
 - Documented forced-colors as a separate user-palette contract in dark/color adaptation: UA semantic recoloring, lost shadows/gradients, SVG/chart/state checks, Microsoft Fluent's backplate opt-out versus inherited `forced-color-adjust: none` maintenance trap, and a local Chromium 144 Playwright falsification fixture. Added real-Windows/Firefox/AT regression gate; maturity unchanged.

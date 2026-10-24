@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Workbox replay is not single-flight: dependent offline edits can disappear
+**Question:** Does default Workbox Background Sync preserve the order and outcome of dependent queued mutations when manual replays overlap?
+
+**Finding:** No method-level guarantee. Inspected pinned Workbox v7.4.1 `Queue.replayRequests()` and ran its exact method body with mocked storage/network. Two overlapping manual invocations sent B while A was still in flight; the controlled create-then-edit sequence became `create-start → edit-404 → create-201`, and the queue ended empty although the edit never applied. Separate 503 replay also emptied the queue; rejected fetch retained the entry. The method has no single-flight guard and does not inspect resolved HTTP statuses. GitHub issue #2640 was administratively closed, not shown repaired. Added explicit single-replay-owner, dependency, server reconciliation and falsification guidance.
+
+**Boundary:** Dynamic execution of the pinned source method, **not** full Workbox package, IndexedDB, service-worker sync, browser, or user testing. Do not infer that native browser sync necessarily overlaps; the demonstrated hazard is concurrent manual calls. **UX patterns 4/10 and overall 3.7/10 unchanged.** Next: full package/browser fixture, HTTP-status classification, worker restart and account switch.
+
 ### 2026-10-24 — Playwright ARIA snapshots can miss CSS reading-flow focus order
 **Question:** Does a passing ARIA snapshot assertion verify the navigation order produced by `reading-flow`?
 
