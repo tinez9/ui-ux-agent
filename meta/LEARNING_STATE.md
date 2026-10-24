@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Swipe actions: hidden-only controls and native full-swipe defaults
+**Question:** When do row swipe shortcuts improve triage, and when do they introduce undiscoverable controls, accidental mutations or inaccessible paths?
+
+**Finding:** W3C F105 explicitly flags swipe-to-reveal actions lacking a simple tap/click route; keyboard access alone does not satisfy WCAG 2.5.1. Distinguish directional swipes from unconstrained dragging (2.5.7), pointer cancellation (2.5.2), and target size (2.5.8). SwiftUI's `swipeActions` defaults `allowsFullSwipe=true`, automatically invoking the first action; this deserves explicit review for delete/archive. Prefer visible/tap-accessible actions with optional gesture acceleration and recoverable persistence. Native browser/OS gestures can conflict with horizontal swipes.
+
+**Evidence boundary:** Normative W3C, first-party Apple/Android APIs, Apple HIG, and older NN/g carousel observations; no row-swipe comparative outcomes or device trials. No maturity-score change. Next: matched always-visible/menu/swipe test with accidental deletion, RTL, edge navigation, AT, and offline recovery.
+
 ### 2026-10-24 — Vercel React Best Practices: high-value checklist, unsafe unqualified snippets
 **Question:** Should React/Next.js agents install Vercel's official performance skill, and which source-level recipes can degrade correctness, privacy or UX if applied mechanically?
 
