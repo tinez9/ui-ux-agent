@@ -30,6 +30,12 @@ Shared views need a conflict model. Jira's current model is useful: administrato
 
 Agent rule: make it explicit whether an edit is **temporary/local**, **saved to my view**, or **changes the shared definition**. Never let the same control silently cross those scopes.
 
+### Shared edits and autosave are product-specific (reviewed 2026-10-24)
+
+Do not generalize Jira Software's admin-owned shared baseline to every Jira product. [Jira Software Cloud](https://support.atlassian.com/jira-software-cloud/docs/save-and-share-views-from-your-list/) documents local member adjustments and admin-controlled Save/Reset. A [2026-04-20 Jira Product Discovery maintainer note](https://community.atlassian.com/forums/discussion/3223773/when-people-change-a-view-e-g-filters-it-is-saved-for-everyone-help) instead reports that editing a shared view could autosave for everyone; disabling **Autosave view configuration** requires explicit saving. The author proposed changing the default, but did not confirm a completed rollout. These are different product/feature contracts.
+
+**Design consequence:** make private, temporary and published changes distinct; prefer explicit “Save for everyone” with revision/permission checks for shared definitions. If a view drives notifications, show the affected audience and triggers before publishing a predicate change. Opening an editor does not imply authorization to change the shared definition.
+
 ## Persistence semantics must be legible
 
 A saved view can be either:
@@ -69,6 +75,22 @@ When practical, keep the active view/query representable in navigation state so 
 
 Do not assume that sharing a URL means sharing permissions. Recipients should see an authorization-appropriate result or a clear access boundary, never leaked metadata from the creator's scope.
 
+## Saved views as event subscriptions: a separate contract (reviewed 2026-10-24)
+
+A saved view can become a **watch rule**, not merely a retrieval shortcut. [Linear Custom Views](https://linear.app/docs/custom-views) supports personal and Slack-channel subscriptions for issues **entering** a view and for completion/cancellation; it suppresses notifications for the subscriber's own actions. Its [2024-08-23 release](https://linear.app/changelog/2024-08-23-slack-channel-notifications-for-custom-views) documents shipped Slack view alerts. Not every saved view can be watched: [Linear Pulse custom feeds](https://linear.app/docs/pulse) are personal and cannot be subscribed to.
+
+**Keep three contracts separate:** (1) query membership at time *t*; (2) event trigger (enter, complete, cancel, or specific transition); (3) recipient/channel delivery. Entering after a status change does not mean a row was created; leaving after a filter change does not mean it was completed. Editing a shared predicate may redefine the matching set. Specify whether reconfiguration backfills, resets the baseline, or preserves a subscription revision; do not silently flood subscribers with newly matching historical rows. These are implementation recommendations, **not** claims about Linear's undocumented event engine.
+
+**Agent implementation contract:**
+- Display the actual trigger and audience (“Notify #triage when an issue enters *Needs review*”), not merely a bell. Expose subscribe/mute/digest/unsubscribe and explain what publishing a view edit will do to existing alerts.
+- Record view ID/revision, recipient, event ID and prior/current membership; use idempotent dispatch, deduplication and a policy for rapid in/out flapping. A failed delivery is not a failed data mutation.
+- Reauthorize both records **and fields** for each destination at delivery time. A Slack channel is a different audience from an authenticated product workspace; review channel membership and redact private data. [Linear Slack docs](https://linear.app/docs/slack) say some team/project channel notifications are visible to people without Linear accounts; this does **not** establish the exact payload behavior of custom-view alerts.
+- Provide an inspectable reason (“entered view after priority changed”) and a permission-checked link; do not equate suppression/throttling with no underlying change.
+
+**Falsification fixture:** two members, an unauthorized account and a Slack channel containing a non-workspace member; an issue enters by status change, leaves without completion, oscillates, completes and reopens. Edit the shared predicate, revoke access, duplicate and reorder delivery events. Verify recipients, redaction, dedup, backfill, opt-out, and whether people understand why an alert arrived. Compare against manual view checking and a fixed project subscription; measure missed important events and noise, not subscription count.
+
+**Evidence boundary:** first-party Linear docs establish shipped triggers and user-facing options; Atlassian documents a real shared-autosave failure mode. Event-engine safeguards and tests are agent synthesis, not observed vendor internals. No runtime benchmark or cross-audience permission test was performed.
+
 ## Failure modes
 
 - calling a saved query a full view while silently dropping layout/grouping state;
@@ -79,6 +101,7 @@ Do not assume that sharing a URL means sharing permissions. Recipients should se
 - too many near-duplicate views with weak naming and no favorites/pinning;
 - using saved views to compensate for an incoherent default information architecture;
 - presenting a live query as if it were a historical snapshot;
+- silently retargeting view subscriptions when shared predicates change, or sending private data to a wider alert channel;
 - letting a view expose data the current viewer is not authorized to access.
 
 ## Agent decision rule

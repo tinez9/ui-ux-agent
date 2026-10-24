@@ -1,6 +1,7 @@
 # Knowledge Changelog
 
 ## 2026-10-24
+- Extended saved-view guidance to event subscriptions: Linear personal/Slack triggers and Pulse negative case, view-revision/recipient/delivery boundaries, and Jira Software vs Product Discovery shared-autosave contradiction. Added adversarial notification/privacy tests; no live validation or maturity change.
 - Established a native `interestfor` hovercard decision contract: Chromium 142 versus still-open WHATWG standardization and Firefox/Safari fallback, plain-vs-rich hint accessibility mapping tension, WCAG 1.4.13 hover/focus requirements, polyfill's unfixable link long-press/context-menu tradeoff, and private-preview/keyboard/touch falsification. No runtime validation or maturity change.
 - Revalidated Superdesign's hosted design skill from canonical init, generation, resume and install source: clarified source-to-cloud payload and locally duplicated code, SHA-256/path safeguards, canvas-component vs production behavior, unpinned CLI/auth/legacy-extension boundaries and lack of verified output uplift. Replaced a shallow existing note, removed the duplicate candidate listing and added a falsifiable comparison; no runtime test or maturity change.
 - Researched CSS `reading-flow`/`reading-order` for responsive visual-vs-DOM sequencing; documented Chromium-only support as of 2026-10-24, differences among flex/grid modes, unsupported-engine fallback, unresolved `display: contents` focus scoping and a cross-browser/AT acceptance gate. Corrected unverified Safari 26.4 support claims; no runtime test or maturity change.

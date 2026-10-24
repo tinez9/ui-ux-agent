@@ -1,5 +1,12 @@
 # Source Registry
 
+## Saved-view subscriptions and shared-definition mutation — product-specific (reviewed 2026-10-24)
+- **View event subscriptions:** https://linear.app/docs/custom-views ; https://linear.app/changelog/2024-08-23-slack-channel-notifications-for-custom-views — shipped entry/completion/cancellation alerts, personal/Slack channels, self-action suppression; no specified backfill, flapping or delivery-idempotency guarantee.
+- **Negative case:** https://linear.app/docs/pulse — personal custom feeds cannot be shared or subscribed to.
+- **Cross-audience caveat:** https://linear.app/docs/slack — some team/project Slack channel notifications can be read by non-Linear members; do not extrapolate custom-view payload behavior.
+- **Different shared-edit contracts:** https://support.atlassian.com/jira-software-cloud/docs/save-and-share-views-from-your-list/ versus https://community.atlassian.com/forums/discussion/3223773/when-people-change-a-view-e-g-filters-it-is-saved-for-everyone-help — Jira Software admin baseline vs 2026-04-20 Jira Product Discovery shared-autosave pitfall; proposed default change not verified.
+- **Authorization principles:** https://api-security.owasp.org/editions/2023/en/0x11-t10/ — object/property/function authorization independent of UI and notification filters.
+
 ## Interest invokers: optional hovercards versus cross-input accessibility (reviewed 2026-10-24)
 - **Shipped versus proposed:** https://developer.chrome.com/release-notes/142 ; https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using_interest_invokers ; https://open-ui.org/components/interest-invokers.explainer/ (updated 2026-10-16); https://github.com/whatwg/html/pull/11006 (open, unmerged 2026-10-24). Chromium 142+ implements interest invokers; the latest proposed rich-hint semantics and `::interest-button` remain moving targets, not cross-browser promises. Firefox/Safari unsupported at review.
 - **Accessibility countercheck:** https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus.html ; https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/ . WCAG 1.4.13 requires dismissible/hoverable/persistent author content; APG tooltip is work in progress and excludes focusable controls, while Open UI proposes rich-hint tooltip-minimum role and `aria-details`/focus-order mappings. Do not equate a proposal or role with tested AT behavior.

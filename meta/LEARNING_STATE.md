@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Saved views as notification rules: membership, mutation and delivery diverge
+**Question:** When saved views power alerts, what changes trigger notifications and who may receive them?
+
+**Finding:** Linear ships personal/Slack subscriptions for view entry and completion/cancellation, with self-action suppression; its Pulse custom feeds are a counterexample that cannot be subscribed to. Live membership, event trigger and delivery permissions are separate. Jira Software's admin-managed shared baseline contrasts with a documented Jira Product Discovery autosave pitfall; a proposed default change was not confirmed. Added view-revision/dedup/redaction guidance and a seeded falsification test.
+
+**Evidence boundary:** First-party Linear/Atlassian docs and OWASP authorization guidance. Event-engine rules are synthesis; no live notification, permission or outcome benchmark. Distinctive-feature maturity remains **2/10**. Next: paired alert-vs-manual monitoring and cross-audience tests.
+
 ### 2026-10-24 — Interest invokers: a Chromium hovercard shortcut is not cross-browser disclosure
 **Question:** When does native `interestfor` improve hover/focus preview UX, and where does it create false accessibility or touch guarantees?
 
