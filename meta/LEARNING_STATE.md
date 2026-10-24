@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Offline mutation queues: local save, replay and server confirmation diverge
+**Question:** When may an offline-capable UI claim “Saved,” and do common background-sync libraries preserve failed writes?
+
+**Finding:** Local drafts, queued requests, network attempts and server-accepted changes require separate UI states. Workbox source inspection found that its initial plugin queues thrown failures, while Queue.replayRequests() drops entries after any resolved HTTP response (including 503). TanStack v5 requires a default mutation function to resume persisted mutations after reload. Stripe's v1/v2 idempotency differences and RFC 9110 preconditions show why timeout retry and concurrent-edit recovery require server contracts, not a spinner.
+
+**Evidence boundary:** Primary browser, Workbox source, TanStack, RFC, Stripe and Google offline UX guidance; no runtime, cross-browser/AT or outcome trial. UX patterns **4/10** and overall **3.7/10** unchanged. Next: reproduce replay loss and test duplicates, account switching, conflicts and truthful status.
+
 ### 2026-10-24 — Forced-colors design-system regression: opting out can leak later author styles
 **Question:** Does a dark/high-contrast token mapping suffice for Windows contrast themes, and is `forced-color-adjust: none` safe when copied across components?
 
