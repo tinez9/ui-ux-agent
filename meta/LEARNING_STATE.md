@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Superdesign hosted canvas: source-grounded design is not private or production-validated by default
+**Question:** Does Superdesign's current agent skill provide useful design fidelity beyond a local code-first loop, and what does its actual source-to-cloud workflow expose?
+
+**Finding:** Revalidated the canonical v0.6.0 skill and its init/generation/resume instructions. It can reproduce existing UI from real render branches, branch canvas variants, reuse brand assets and resume with SHA-256 source checks. The init artifacts duplicate full UI source locally; the hosted CLI receives selected context and assets, while only temporary HTML is explicitly gitignored in the SOP. Path/secret-pattern guards and context enumeration are helpful but cannot establish absence of sensitive literals or permission to upload. A canvas logo postcondition checks HTML references, not rendering/behavior/a11y. The original IDE extension is archived and distinct; the published independent trial was blocked by login.
+
+**Evidence boundary:** Direct upstream Markdown/plugin/license and a login-limited independent trial; no authenticated generation, CLI source audit, privacy/retention confirmation, or outcome benchmark. Conditional candidate only; maturity **unchanged** (3.7 overall; 5 agent workflows). Next: compare sanitized local and hosted design flows with upload inventory, source-fidelity and post-integration tests.
+
 ### 2026-10-24 — CSS reading-flow: Chromium focus-order enhancement cannot replace logical source order
 **Question:** Can responsive flex/grid visual reordering be repaired accessibly with `reading-flow`, and what happens in unsupported engines or assistive-technology modes?
 
