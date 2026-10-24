@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Recurring schedules: RFC DST contradiction and exception identity
+**Question:** Can agents safely equate a local weekly meeting with fixed UTC intervals or assume one rule for nonexistent local times?
+
+**Finding:** No. Local series need an IANA zone, local-time rule, duration semantics and stable original occurrence IDs. RFC 5545 §3.3.10 conflicts with itself on DST-gap skip versus DATE-TIME resolution; local Python dateutil 2.9.0.post0 produced an imaginary Madrid spring-gap occurrence despite its documented skip rule, while monthly invalid dates were skipped. Google Calendar's originalStartTime and split-series edits clarify exception scope. Added explicit preview/ambiguity and testing contracts.
+
+**Evidence boundary:** RFC/Temporal/Google docs plus one local library probe; no cross-engine, provider, AT or user benchmark. UX-pattern maturity stays **4/10**, overall **3.7/10**. Next: multi-engine recurrence and edit-scope falsification.
+
 ### 2026-10-24 — Saved views as notification rules: membership, mutation and delivery diverge
 **Question:** When saved views power alerts, what changes trigger notifications and who may receive them?
 

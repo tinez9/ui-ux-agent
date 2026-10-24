@@ -1,5 +1,12 @@
 # Source Registry
 
+## Recurrence, DST and exception identity (reviewed 2026-10-24)
+- **Protocol contradiction:** https://www.rfc-editor.org/rfc/rfc5545.html#section-3.3.10 both excludes nonexistent recurrence times and later defers their resolution to https://www.rfc-editor.org/rfc/rfc5545.html#section-3.3.5 (pre-gap offset/first overlap). https://www.rfc-editor.org/rfc/rfc5545.html#section-3.8.5.3 documents local-zone series and exact-versus-nominal duration. Do not assume interoperable DST gap handling.
+- **Provider series semantics:** https://developers.google.com/workspace/calendar/api/guides/recurringevents (immutable originalStartTime; moved/canceled exceptions; this-and-following split; avoid per-instance mass edits); https://developers.google.com/workspace/calendar/api/v3/reference/events (recurrence expansion zone).
+- **Clock-to-instant conversion:** https://tc39.es/proposal-temporal/docs/timezone.html (compatible/earlier/later/reject; changing zone rules).
+- **Falsification:** https://dateutil.readthedocs.io/en/stable/rrule.html claims invalid times are ignored. Local Python dateutil 2.9.0.post0 `rrule(DAILY,count=3,dtstart=2026-03-28 02:30 Europe/Madrid)` returned imaginary 2026-03-29 02:30+02:00 (`dateutil.tz.datetime_exists=False`); monthly Jan-31 `COUNT=4` did skip invalid calendar dates. Not a cross-engine benchmark.
+
+
 ## Saved-view subscriptions and shared-definition mutation — product-specific (reviewed 2026-10-24)
 - **View event subscriptions:** https://linear.app/docs/custom-views ; https://linear.app/changelog/2024-08-23-slack-channel-notifications-for-custom-views — shipped entry/completion/cancellation alerts, personal/Slack channels, self-action suppression; no specified backfill, flapping or delivery-idempotency guarantee.
 - **Negative case:** https://linear.app/docs/pulse — personal custom feeds cannot be shared or subscribed to.
