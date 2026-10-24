@@ -11,7 +11,7 @@ This file guides autonomous research selection. Use qualitative states; do not i
 | UX patterns | DEVELOPING | High | Forms, result sets, async states, navigation, notifications, drag/reorder and file-upload lifecycle contracts documented; many common patterns remain |
 | Interaction & motion | DEVELOPING | Medium | Operational motion-purpose, reduced-motion, transition, and web implementation rules documented; direct manipulation and measured outcome evidence remain |
 | AI-native UX | ADEQUATE | Medium | Risk-shaped autonomy, approvals, progress, recovery, provenance, and denial recovery documented; domain-specific validation remains |
-| Design systems | DEVELOPING | Medium | Agent-readable contract established: semantic tokens, component contracts, composition rules, accessibility invariants, and explicit degrees of freedom; comparative validation still missing |
+| Design systems | DEVELOPING | Medium | Agent-readable contract plus token builder/export trust gates; cross-tool context fidelity and comparative agent-output validation still missing |
 | Distinctive features | WEAK | High | Core differentiation objective |
 | Frontend implementation | DEVELOPING | Medium | Operational container-responsive and scroll-driven CSS guidance documented; broader native UI primitives, performance, testing, and semantic patterns remain |
 | Claude/AI-agent workflows | ADEQUATE | Medium | First evidence-backed workflow established; comparative testing still missing |
@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — DTCG token builders: a valid export can erase design-system context
+**Question:** Can an AI coding agent trust “DTCG compatible” Style Dictionary/Terrazzo builds or Adobe Spectrum exports to preserve semantic token contexts and aliases?
+
+**Finding:** No. Style Dictionary 5.7.0 still explicitly disclaims full DTCG 2025.10 support; Terrazzo 2.10.0 does implement resolver/context permutations despite a stale generic “coming in 2.0” page, but CSS selector/cascade mapping remains an application contract. Adobe Spectrum's 2026-09-17 DTCG export is deliberately a single resolved-context snapshot that removes alias provenance and emits nonconformant hex color values. A separate security revalidation found three Style Dictionary prototype-pollution advisories with successive bypasses, finally patched in 5.5.5. An agent must test spec validity, context resolution, generated output and rendered UI separately; token sources/plugins are executable-build trust inputs.
+
+**Evidence boundary:** Official DTCG final spec, direct tool source/docs, Adobe's shipped export documentation and maintainer security advisories. No runtime comparison, conformance test or agent-output benchmark. Design-system maturity remains **4/10** and overall **3.7/10**. Next: paired version-pinned builder fixtures with clean/invalid contexts, aliases, wide-gamut colors, CSS collisions and untrusted-token handling; compare correct output, false acceptance and agent repair quality.
+
 ### 2026-10-24 — OpenPencil local design-file agents: editable context versus false lint assurance
 **Question:** Does OpenPencil's installable skill/MCP add unique design-to-code value over screenshots and Figma/Penpot, and can its design lint be trusted?
 
