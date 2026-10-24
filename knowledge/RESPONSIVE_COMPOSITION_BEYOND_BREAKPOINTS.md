@@ -88,7 +88,22 @@ Example of **optional** enhancement for independent dashboard modules, after ver
 
 **Agent acceptance gate:** inspect DOM order with CSS disabled; tab/Shift+Tab through real controls in supported Chromium **and** unsupported Safari/Firefox; inspect screen-reader linear reading and headings separately; repeat after responsive/container-query changes, RTL/writing-mode, 200–400% zoom, nested `display: contents`, and dynamically inserted controls. Record both *visible focus position* and *meaning preserved*. Do not rely on a screenshot or an axe-clean result alone.
 
-**Evidence boundary:** CSS Display 4 (editor's draft, 2026-06-05) and Chrome's 2025 implementation article establish intended mechanics; MDN BCD and browser standards-position issues establish a **current support gap**, not tested assistive-technology parity. WCAG defines outcome constraints, not an endorsement of this CSS property. No local cross-engine/AT runtime experiment was performed.
+### Tested QA limitation: Playwright snapshots versus CSS reading-flow (2026-10-24)
+
+**Reproduced locally** with headless Linux Chromium **144.0.7559.96** and Playwright Python **1.57.0**. Three buttons were in source order **One → Two → Three**:
+
+| Layout | Visual LTR | Actual Tab / CDP AX tree order | Playwright `locator.aria_snapshot()` |
+|---|---|---|---|
+| Flex `row-reverse`, `reading-flow: normal` | Three, Two, One | One, Two, Three | One, Two, Three |
+| Flex `row-reverse`, `reading-flow: flex-visual` | Three, Two, One | **Three, Two, One** | **One, Two, Three** |
+| Grid: One in column 3, Two in 1, Three in 2; `reading-flow: grid-rows` | Two, Three, One | **Two, Three, One** | **One, Two, Three** |
+| Same grid with `reading-order: -1` on One | Two, Three, One | One, Two, Three | One, Two, Three |
+
+A **source-ordered** `expect(locator).to_match_aria_snapshot()` assertion **passed** on the `flex-visual` fixture although Tab moved Three → Two → One. Current Playwright upstream `packages/injected/src/ariaSnapshot.ts` constructs its snapshot by walking DOM `firstChild/nextSibling` (plus slot/shadow/ARIA-owns), without CSS `reading-flow` sorting. A Playwright ARIA snapshot is useful structural/semantic evidence, **not an oracle for CSS-driven sequential focus order**.
+
+**CDP trap:** `Accessibility.getFullAXTree().nodes` is a flat response array, not necessarily reading-order traversal. In a nested block-wrapper grid fixture, filtering raw nodes yielded **Three, One, Two**; traversing the hierarchy via `nodeId → childIds` yielded **Two, Three, One**, matching Tab. For agent QA, test logical DOM order with CSS off, actual Tab/Shift+Tab from known focus, visual geometry and (if needed) the reconstructed CDP AX hierarchy. Do not infer real screen-reader speech from CDP or Playwright snapshots. This test does **not** cover newer Playwright releases, Safari/Firefox, NVDA/VoiceOver, zoom or dynamic reflow.
+
+**Evidence boundary:** CSS Display 4 (editor's draft, 2026-06-05) and Chrome's 2025 implementation article establish intended mechanics; MDN BCD and browser standards-position issues establish a **current support gap**, not tested assistive-technology parity. WCAG defines outcome constraints, not an endorsement of this CSS property. A single-engine Chromium keyboard/CDP experiment is documented above; cross-engine and real AT validation remain missing.
 
 ## Density is contextual
 Do not equate narrow with “mobile” or wide with “expert.” A desktop user may use a narrow split pane; a tablet may be wide; browser zoom can produce a narrow CSS viewport; a component can be narrow inside a wide dashboard.

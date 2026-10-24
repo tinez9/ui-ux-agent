@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Playwright ARIA snapshots can miss CSS reading-flow focus order
+**Question:** Does a passing ARIA snapshot assertion verify the navigation order produced by `reading-flow`?
+
+**Finding:** No in pinned local Chromium 144 / Playwright Python 1.57.0. A reversed flex row with `flex-visual` yielded actual Tab and reconstructed CDP AX **Three/Two/One**, but Playwright snapshot **One/Two/Three**; the source-ordered snapshot assertion passed. Explicit grid `grid-rows` reproduced the discrepancy. CDP's flat node-array order also differed from the hierarchy in a nested wrapper; traverse `childIds`. Current Playwright source walks DOM children, explaining the snapshot limitation.
+
+**Boundary:** Local headless Chromium plus current upstream source and official docs; no newer Playwright runtime, Safari/Firefox, real screen-reader or user study. Responsive-composition QA contract updated. **Frontend 3/10 and overall 3.7/10 unchanged.** Next: Playwright MCP/CLI and NVDA/VoiceOver validation.
+
 ### 2026-10-24 — Offline mutation queues: local save, replay and server confirmation diverge
 **Question:** When may an offline-capable UI claim “Saved,” and do common background-sync libraries preserve failed writes?
 
