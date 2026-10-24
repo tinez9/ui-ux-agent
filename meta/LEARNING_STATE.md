@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — React Doctor: static agent QA, subjective design lint and a restrictive license
+**Question:** Does the React Doctor agent skill add reliable UI/React implementation validation beyond existing lint and prose skills, and what trust boundaries limit its use?
+
+**Finding:** The maintained React Doctor CLI/skill adds configurable deterministic React/Next/React Native diagnostics, changed-vs-full scope, optional hooks/CI and Chrome tracing, but neither its 0–100 score nor its design rules prove usable UI. The official skill fetches mutable remote /doctor and per-rule instructions that can edit the working tree. The changelog documents false-positive removals (including bold headings) and a 2,000-project parity correction. The repository's actual **Modified MIT** license restricts ML training/evaluation-data uses despite some “MIT” summaries. CLI telemetry can retain pseudonymous paths and default Socket.dev checks make separate network requests.
+
+**Evidence boundary:** First-party skill/repo/docs, changelog, license and data-use statements; no installation, empirical agent uplift, runtime audit or legal determination. Conditional tool trial only; agent-workflow maturity remains **5/10**, overall **3.7/10**. Next: clean/buggy paired trials against existing lint, with licensed evaluation handling, privacy isolation and verified repairs.
+
 ### 2026-10-24 — Swipe actions: hidden-only controls and native full-swipe defaults
 **Question:** When do row swipe shortcuts improve triage, and when do they introduce undiscoverable controls, accidental mutations or inaccessible paths?
 
