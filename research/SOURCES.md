@@ -1,5 +1,13 @@
 # Source Registry
 
+## Responsive image art direction, semantic crops and delivery (2026-10-24)
+- **Normative image selection:** https://html.spec.whatwg.org/dev/images.html ; https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/picture ; https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/source — art direction versus resolution choice, first matching source, viewport/media matching, per-source intrinsic dimensions, fallback image and `srcset`/`sizes` mechanics.
+- **Cropping and image semantics:** https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/object-fit ; https://www.w3.org/WAI/tutorials/images/ ; https://www.w3.org/WAI/tutorials/images/decorative/ ; https://www.w3.org/WAI/tutorials/images/informative/ — CSS cover can clip content; `alt` reflects contextual meaning and purpose, not image filenames or a generic literal description.
+- **Performance and layout:** https://web.dev/learn/html/images ; https://web.dev/articles/optimize-lcp — reserve image aspect ratio, discover LCP images early, do not lazy-load LCP, avoid high-priority competition; guidance, not a measured result for this repository.
+- **Framework integration:** https://nextjs.org/docs/app/api-reference/components/image — checked current Next.js 16 docs: `priority` deprecated, `preload` selective, `fill` needs accurate `sizes`, `getImageProps()` enables `<picture>` but cannot clear a blur placeholder.
+- **Automatic crop counterexample:** https://cloudinary.com/documentation/cloudinary_ai_content_analysis_object_aware_cropping — first-party demonstration that default saliency can favor people over a storefront, object-specific cropping can omit same-class subjects, and detection fallback depends on crop mode. Vendor examples do not establish error rates.
+- **Evidence boundary:** Platform specifications, accessibility tutorials, browser/performance documentation and vendor implementation examples. No independently run device/browser matrix, controlled visual-comprehension trial, or crop-model benchmark.
+
 ## Version history, selective undo and restore-scope exceptions (2026-10-24)
 - **Figma shipped recovery:** https://help.figma.com/hc/en-us/articles/360038006754-View-a-file-s-version-history — 30-minute checkpoints; restore creates pre/post checkpoints, retains later comments but cannot recover deleted comments; duplicate omits original history/comments; historical access requires edit permission.
 - **Notion shipped recovery:** https://www.notion.com/help/duplicate-delete-and-restore-content — 10-minute active / 2-minute idle snapshots; highlights not exhaustive, plan-limited retention and mobile diff limitations; restoring a database does not restore its pages' internal content.
