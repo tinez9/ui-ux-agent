@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — WebAuthn Signal API: stale-passkey cleanup can damage another account
+**Question:** Is passkey-provider reconciliation safe to automate when users hold multiple accounts under the same relying-party ID?
+
+**Finding:** W3C's signal methods are best-effort and intentionally scoped to one user/credential; however, open WebKit bug 322267 reports deletion of an unrelated account's passkey when a password and passkey share a Passwords-app entry. Both deletion signals were implicated. Separate open bug 324909 reports unresolved Signal API promises for Safari 27 on macOS 26, despite an earlier, distinct promise bug being fixed. Added conditional rollout/kill-switch, complete-list, no-claim-of-device-deletion and nonblocking-signaling safeguards to authentication guidance.
+
+**Evidence boundary:** W3C/MDN/Chrome/WebKit primary docs and WebKit Bugzilla reports, not local Apple reproduction or user tests. One reported regression is not evidence all Safari/provider combinations fail. Authentication/UX maturity **unchanged** (overall **3.7/10**; UX patterns **4/10**). Next: multi-account provider matrix with destructive side-effect and promise-liveness assertions.
+
 ### 2026-10-24 — Workbox replay is not single-flight: dependent offline edits can disappear
 **Question:** Does default Workbox Background Sync preserve the order and outcome of dependent queued mutations when manual replays overlap?
 

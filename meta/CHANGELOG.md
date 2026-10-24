@@ -1,5 +1,8 @@
 # Knowledge Changelog
 
+## 2026-10-25
+- Challenged automatic WebAuthn Signal API passkey cleanup: WebKit's open cross-account deletion report (322267) and Safari 27/macOS 26 unresolved-promise report (324909) qualify otherwise sound W3C/MDN guidance. Added account-scoped completeness, Apple rollout/kill-switch, nonblocking and server-authority UX safeguards plus a falsifiable provider/device matrix. No device reproduction or maturity change.
+
 ## 2026-10-24
 - Falsified Workbox Background Sync's implied replay-order guarantee with the exact v7.4.1 `replayRequests()` method in an isolated mocked harness: overlapping manual calls sent dependent edit before create (`edit-404`), removed both entries, and lost the edit; 503 also removed an entry, while a rejected fetch retained it. Added single-flight/dependency/reconciliation safeguards and narrowed the real-browser test gap; maturity unchanged.
 - Reproduced CSS `reading-flow` QA blind spot: Chromium 144 Tab/CDP AX traversal differs from Playwright Python 1.57 ARIA snapshots and a passing snapshot assertion. Documented CDP `childIds` hierarchy requirement and added agent QA guidance; maturity unchanged.
