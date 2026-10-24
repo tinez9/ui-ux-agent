@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-24 — Collaborative presence: temporary coordination is not durable proof
+**Question:** When do live cursors, collaborator selections and follow modes help coordination, and what do they falsely imply about online status, saving, identity and privacy?
+
+**Finding:** Yjs Awareness uses ephemeral client state with 15-second suggested heartbeat and 30-second expiry; Liveblocks' reconnect UI can reset other users after a separate 5-second lost-connection timeout. A cursor is neither a lock nor a save receipt. Miro's shipped follow/bring interactions are reversible attention modes; its cursor chat is transient rather than a comment trail. Liveblocks separates server-enforced room permissions from presence, and its retention policy discloses persisted session metadata even though cursor state disappears. Added a graduated participant → selection → cursor/follow decision model, accessibility/noise rules and adversarial multiuser tests.
+
+**Evidence boundary:** Yjs protocol, Liveblocks/Tiptap API and retention docs, Miro shipped behavior and MDN accessibility guidance; no controlled multiuser, AT, performance or privacy test. Distinctive-feature maturity **unchanged at 2/10**; overall **3.7/10**. Next: test matched participant-only, selection and full-cursor/follow modes with seeded disconnect, stale presence, unauthorized writes, duplicate tabs and privacy-sensitive work; measure coordination errors, interruptions, accessibility and cost.
+
 ### 2026-10-24 — Numeric entry: localized amount is not an identifier or spinbutton
 **Question:** When should agents choose `type="number"`, `inputmode="decimal"`, or a locale-aware number field, and which silent data changes must be prevented?
 

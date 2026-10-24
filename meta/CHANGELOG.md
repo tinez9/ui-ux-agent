@@ -1,6 +1,7 @@
 # Knowledge Changelog
 
 ## 2026-10-24
+- Added a collaborative-presence feature contract distinguishing ephemeral awareness, durable edits, attention/follow modes and authenticated authority; surfaced Yjs heartbeat expiry, Liveblocks reconnect/retention exceptions, Miro's reversible follow and transient cursor chat, plus privacy/accessibility/performance and adversarial multiuser checks. No experimental validation or maturity change.
 - Established a numeric-entry decision contract separating digit-string identifiers, step-adjustable quantities and locale-aware precise amounts; incorporated GOV.UK's June 2026 minus-keyboard exception, parse/commit/precision boundaries, React Spectrum snap/commit behavior, and current-versus-resolved issue status with adversarial fixtures. No runtime benchmark or maturity change.
 - Audited DTCG token build and export fidelity against Style Dictionary 5.7.0, Terrazzo 2.10.0, the stable 2025.10 spec and Adobe Spectrum's real exporter; corrected stale resolver docs, exposed single-context/alias-loss and nonconformant hex exports, and recorded iterative Style Dictionary prototype-pollution patches plus an agent validation/CI gate. No empirical trial or maturity change.
 - Audited OpenPencil's 0.16.0 skill, MCP/CLI source and design lint against Figma/Penpot workflows: identified genuine local editable-file value, WCAG false-assurance heuristics, Windows filesystem-root discrepancy, safe selection-only MCP mode and resolved regression history. No agent benchmark or maturity change.
