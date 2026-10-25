@@ -1,5 +1,10 @@
 # Open Research Questions
 
+## Design-skill constraint fidelity — UI UX Pro Max (2026-10-26)
+- **Pinned full-runtime falsification:** On a clean checkout, run the actual `search.py --design-system --json` for paired positive/negative prompts (“gamification”/“no gamification”; “booking”/“without booking”; “dark mode”/“light only, no dark mode”), and inspect `activated_rules`, `constraints`, mode, palette, style and persisted `MASTER.md`. Compare `--variance 3/7/8/10` on conservative/professional and expressive products. Source-level predicate probes show inversion risk, not the end-to-end result.
+- **Agent-output causal test:** With identical briefs, assets and existing tokens, compare Claude Code/Codex without skill, with skill, and with skill plus an explicit positive/forbidden/optional requirement gate. Seed negative requirements, brand exceptions, accessibility conflicts and contradictory dials; score **forbidden-feature violations**, design quality, rendered/keyboard defects, time and tokens, with clean controls. Check whether the skill's existing “verify fit” instruction prevents the source-level issue in practice.
+- **Supply chain/freshness:** Pin the distributed npm CLI and compare its bundled scripts/assets with reviewed GitHub source; inspect dependencies, installation writes, `--dry-run`, `--force`, `--legacy`, global scope and update behavior. Recheck the top-level skill v2.15.0 vs source `cli/package.json` v2.5.0 mismatch against a published release before calling it a packaging defect.
+
 Prioritize questions whose answers could materially change future agent behavior.
 
 ## Conditional passkey upgrades: consent, provider support, verification (2026-10-25)
