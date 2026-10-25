@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Native form sizing: auto-grow is not a global one-line migration
+**Question:** Can newly Baseline `field-sizing: content` safely replace textarea resize scripts without affecting other controls?
+
+**Finding:** CSS Forms makes controls intrinsically content-sized, ignoring textarea `rows`/`cols` and potentially expanding listboxes beyond `size`. Local Chromium 144 Playwright reproduced a 15px-wide empty textarea, a 590px-tall 30-option multi-select, and placeholder-driven input width change; a bounded textarea remained capped with internal scroll. Added scoped CSS/fallback and adversarial QA. Firefox 152 made this Baseline *Newly available* on 2026-06-16, not universally supported by older installed browsers.
+
+**Evidence boundary:** CSSWG editor's draft, MDN/Chrome/Mozilla release docs and one Chromium fixture; no Firefox/Safari/mobile/AT/INP comparison. Frontend maturity **unchanged at 3/10**; overall **3.7/10**. Next: cross-engine keyboard/caret/mobile and JS fallback comparison.
+## Recent research
 ### 2026-10-25 — WebAuthn Signal API: stale-passkey cleanup can damage another account
 **Question:** Is passkey-provider reconciliation safe to automate when users hold multiple accounts under the same relying-party ID?
 

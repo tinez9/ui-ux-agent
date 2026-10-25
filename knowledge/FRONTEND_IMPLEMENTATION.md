@@ -369,6 +369,40 @@ A small progressive-enhancement pattern (the default fixed placement remains usa
 
 **Evidence boundary:** browser/standards documentation establishes API mechanics, newly broad support, and failure cases; no measured evidence here that CSS anchoring itself improves task outcomes. Sources: [CSSWG September 2026 draft](https://drafts.csswg.org/css-anchor-position-1/), [MDN anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Anchor_positioning/Using), [fallback failure modes](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Anchor_positioning/Try_options_hiding), [anchor-scope](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/anchor-scope), [popover](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using), [WAI-ARIA menu button](https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/), [tooltip pattern caveat](https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/).
 
+## Intrinsic form-control sizing: scoped auto-grow, not global styling — 2026-10-25
+
+**Decision:** Use `field-sizing: content` selectively for auto-growing comments or AI chat composers. **Do not apply it globally to `textarea, input, select`.** This property changes intrinsic sizing for *all* these controls, not just textarea height. Baseline **Newly available** since **2026-06-16** (Chromium 123+, Safari 26.2+, Firefox 152+), but older installed browsers still need a usable fixed-size fallback. CSS Forms Level 1 is an **editor's draft**, not a final Recommendation.
+
+**Failure modes:** `field-sizing: content` ignores a textarea's `rows`/`cols` preferred size. An empty textarea without constraints can collapse to caret width; long content can expand it sideways. A single-line input can shrink abruptly after its placeholder disappears. `<select multiple size="3">` can expand to display *all options*, ignoring the intended visible row count. A fixed `height` prevents auto-growth; a maximum block size permits growth then internal scrolling. A blanket one-line migration is therefore unsafe.
+
+**Bounded composer pattern (keep native semantics and fallback):**
+
+```html
+<label for="message">Message</label>
+<textarea id="message" name="message" rows="3" class="message"></textarea>
+```
+```css
+.message {
+  box-sizing: border-box;
+  display: block;
+  inline-size: 100%;
+  min-inline-size: 0; /* flex/grid shrink protection */
+  min-block-size: 3lh;
+  max-block-size: min(10lh, 35dvh);
+  overflow-y: auto;
+}
+@supports (field-sizing: content) {
+  .message { field-sizing: content; }
+}
+```
+
+`rows="3"` supplies the older-browser preferred height; CSS minimum controls supporting browsers. Fixed inline size deliberately forces wrapping and vertical growth. The `dvh` cap is a heuristic, **not** proof of mobile keyboard safety. Keep a real label; a placeholder is not one. If auto-grow is mandatory in old browsers, gate JavaScript measurement behind a feature check so CSS and JS do not fight.
+
+**Executed layout falsification (local Playwright + Chromium 144, 2026-10-25):** `rows="4"` default textarea measured **110 px high**; bare content-sized empty textarea measured **38 px high / 15 px wide**. After long paste, the bare textarea grew to **880 px wide** at a 900 px viewport. A 30-option `<select multiple size="3">` measured **590 px high**, versus **150 px** with `max-block-size`. A constrained textarea at a 320 px viewport remained **292 px wide**, capped at **192 px high**, with `scrollHeight` **2076 px** and no page horizontal overflow. A long-placeholder input changed width **234 → 44 px** after one typed character. These are fixture-specific **single-engine** measurements, not a browser-interoperability or accessibility claim.
+
+**Agent QA gate:** exercise empty/cleared, short, long, unbroken-token and pasted drafts; programmatic restore, font swap, IME, keyboard caret/focus after max-height, zoom 200–400%, RTL, flex/grid shrink, actual mobile keyboard, and select lists with many options. Check geometry, internal scrolling and document overflow in a rendered browser; `CSS.supports()` alone proves none of this. Do not claim an INP/UX improvement from deleting resize JS without measured evidence.
+
+**Evidence boundary:** CSSWG/MDN/Chrome/Mozilla document semantics and release support; local Chromium demonstrates only these layout effects. No Firefox, Safari, device, assistive-technology or controlled performance/user trial. Sources: [CSSWG draft](https://drafts.csswg.org/css-forms-1/#field-sizing), [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/field-sizing), [Chrome](https://developer.chrome.com/docs/css-ui/css-field-sizing), [Firefox 152](https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/152), [Web Features](https://web-platform-dx.github.io/web-features-explorer/features/field-sizing/).
 ## Customizable native select: style without rebuilding the widget — 2026-10-12
 
 **Decision:** when the task is a single choice from a bounded set, first ask whether a select is appropriate; only then decide how much to style it. A richly styled native `<select>` can preserve built-in form submission, keyboard operation and accessibility semantics without a JavaScript combobox. But styling cannot fix an inappropriate control: GOV.UK reports that some users struggle with selects and recommends reducing choices or using radios where practical.

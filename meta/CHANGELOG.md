@@ -1,6 +1,8 @@
 # Knowledge Changelog
 
 ## 2026-10-25
+- Probed CSS `field-sizing: content` in Chromium 144: empty textarea collapse, 30-option multi-select expansion, placeholder-driven input width, and bounded composer overflow. Added scoped auto-grow guidance, Baseline 2026 support, and a cross-engine/mobile/AT regression matrix. Maturity unchanged.
+## 2026-10-25
 - Challenged automatic WebAuthn Signal API passkey cleanup: WebKit's open cross-account deletion report (322267) and Safari 27/macOS 26 unresolved-promise report (324909) qualify otherwise sound W3C/MDN guidance. Added account-scoped completeness, Apple rollout/kill-switch, nonblocking and server-authority UX safeguards plus a falsifiable provider/device matrix. No device reproduction or maturity change.
 
 ## 2026-10-24
