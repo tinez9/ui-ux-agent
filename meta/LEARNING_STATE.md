@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Localized dynamic messages: CLDR precision and runtime availability are separate contracts
+**Question:** Can an agent safely construct dynamic multilingual UI strings using basic singular/plural checks or assume standardized MF2 is natively available?
+
+**Finding:** CLDR 49 (released 2026-10-22) updated plural rules and stabilized MF2 currency/percent functions, while TC39's native `Intl.MessageFormat` remains Stage 1. A local Node 22.16 / ICU 77 / CLDR 47 probe found Spanish million and Russian singular categories change with `Intl.PluralRules` fractional-display options. Established whole-message translation, exact-zero vs grammatical-zero, formatter-version, bidi and SSR/client parity gates.
+
+**Evidence boundary:** Unicode normative spec/release, official TC39/FormatJS/i18next/MDN and one Node probe. No cross-runtime hydration failure reproduced, MF2 engine benchmark, translator study or maturity-score change. Next: compare pinned CLDR 47/49 runtimes and live MF1/MF2 renderers with mixed RTL and rich-text fixtures.
+
 ### 2026-10-25 — Agent-rule corpora: runnable examples can propagate non-normative advice
 **Question:** Does a 411-rule interactive good/bad corpus provide trustworthy incremental design guidance over existing skills, and how should an agent detect misleading rules?
 
