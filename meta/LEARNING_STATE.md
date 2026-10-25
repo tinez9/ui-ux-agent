@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Customizable select clone can disagree with submitted data
+**Question:** Does native `appearance: base-select` remove custom-dropdown data/accessibility hazards during dynamic option updates?
+
+**Finding:** Not entirely. Three isolated Chromium 144/Playwright runs showed that editing selected option text left `selectedcontent` displaying the old cloned label until selection changed. Without explicit `value`, a decorative `aria-hidden` star still entered the submitted string; after a label edit, `FormData` reflected the new text while the visible clone remained stale. An explicit stable value prevents data-string drift, not clone staleness. Favor progressive enhancement, real text labels, noninteractive options and a classic-select baseline.
+
+**Evidence boundary:** MDN, Chrome, WebKit/Safari 27, WHATWG open #12328 and a repeatable single-engine DOM fixture. No cross-engine, real mobile, AT, framework-hydration or user-outcome testing. UX patterns remain 4/10 and overall 3.7/10; next: real keyboard/AT and framework update comparisons.
+
 ### 2026-10-25 — Text spacing exposes hidden losses in line-clamped UI
 **Question:** Can two-line cards that look correct at default typography lose information after WCAG text-spacing overrides even though the full text remains in the DOM?
 
