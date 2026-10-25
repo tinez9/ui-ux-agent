@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Comparison workspace: mobile demand and data semantics outweigh table polish
+**Question:** When does a side-by-side compare feature actually improve selection, and can “only differences” conceal consequential missing or shared constraints?
+
+**Finding:** NN/g's 2024 small-set comparison guidance and Baymard's 2022 desktop/spec-heavy observations support comparison as a *conditional* decision aid, but mobile recommendations diverge: Baymard's 3/38 use across two mobile sites and a 51%-height tray caution against automatically building a mobile matrix, while NN/g advocates some mobile comparison when feasible. Baymard's Sep 2026 spec-sheet review strengthens the upstream data-quality requirement. Agents should shortlist first, normalize typed attributes and provenance, keep unknown distinct from not offered, and make differences-only reversible without hiding shared hard requirements. Preserve native table semantics and reflow/target-size boundaries.
+
+**Evidence boundary:** NN/g/Baymard usability evidence is category/device-specific; W3C accessibility rules are normative. Typed-equality/freshness rules are engineering synthesis. No new runtime or user test. Distinctive-feature maturity remains 2/10 and overall 3.7/10. Next: compare mobile shortlist vs matrix on decision accuracy and semantic-data failure cases.
+
 ### 2026-10-25 — 21st MCP/skills: valuable catalog, incomplete executable trust chain
 **Question:** Does 21st.dev's current agent tooling materially improve frontend work, and can its published source establish installation, component and review safety?
 
