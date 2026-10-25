@@ -2,6 +2,10 @@
 
 Prioritize questions whose answers could materially change future agent behavior.
 
+## Focused falsification — target-size coverage and actual hit geometry (2026-10-25)
+- Pin axe **4.14.0** and a newer version. Compare default, `wcag22aa` tag-only, and explicit `target-size` opt-in on seeded 20×20px/0-gap (**fail**), 20×20px/4-gap (**spacing pass**) and transformed/clipped 24px fixtures. Verify actual executed-rule IDs, `incomplete`, false positives and performance; do **not** assume tag filtering enables disabled rules without a runtime test.
+- Reproduce issue #5183 with below-fold controls inside vs outside fixed-position ancestors, before/after scrolling. Compare axe results to point-sampled hit regions and manual exceptions on mobile/desktop; then test whether Claude/Codex audit skills detect the disabled-rule gap or falsely certify WCAG 2.2 AA.
+
 ## Resolved / narrowed this cycle
 The broad question “Which context artifacts most improve visual quality in AI-generated frontend work?” now has a useful first answer for Claude: a brief-grounded design contract plus visual references/rendered inspection and explicit evaluation criteria are supported by Anthropic's current workflow evidence. Remaining comparative questions belong below.
 

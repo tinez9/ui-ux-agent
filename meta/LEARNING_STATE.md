@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Target-size geometry and axe 2.5.8 audit coverage
+**Question:** Can a green axe/Playwright scan plus 24px CSS dimensions certify WCAG 2.2 AA pointer target sizing?
+
+**Finding:** No. Pinned **axe-core 4.14.0** ships `target-size` **disabled by default** despite its WCAG 2.2 AA tag. W3C SC 2.5.8 permits 24×24 CSS px **or** five exceptions including 24px-circle spacing. Chromium 144 probes showed a computed 24px button rendered 12px after `scale(.5)`, while `clip-path:inset(4px)` preserved a 24px rect but eliminated near-edge hit testing. Open axe #5183 concerns a **fixed-ancestor** off-viewport scenario reported in 4.11.3; performance subissue #5389 closed Oct 20.
+
+**Evidence boundary:** W3C, pinned scanner metadata, Playwright/Deque docs, maintainer issues and one Chromium geometry fixture; **no axe runtime, cross-browser/device, AT or user outcome**. Frontend **3/10**, agent workflows **5/10**, overall **3.7/10** unchanged. Next: seeded default/tag/explicit rule checks and current-version fixed-root regression tests.
+
 ### 2026-10-25 — Comparison workspace: mobile demand and data semantics outweigh table polish
 **Question:** When does a side-by-side compare feature actually improve selection, and can “only differences” conceal consequential missing or shared constraints?
 
