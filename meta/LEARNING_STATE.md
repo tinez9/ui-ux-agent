@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Modern Web Guidance: self-eval uplift is not an independent behavior oracle
+**Question:** How much trust should coding agents place in GoogleChrome's installable modern-web-guidance skill and its published evaluation gains?
+
+**Finding:** First-party skill, CLI, telemetry, guide, grader and metric-source inspection supports a **conditional implementation-reference recommendation**, not automatic design certification. Maintainer Oct-19 assertions report Codex 56→83% and Claude 56→88%, but early failures are excluded from pass-rate denominators and the author-built `search-hidden-content` grader can pass two requirements from a bare `beforematch` string without testing actual reveal/fallback. Sensitive-content checking covers two literal markers. The skill's local retrieval is distinct from default-on query telemetry and networked `@latest` installation. Clarified browser support and state/fallback behavior for `hidden="until-found"`.
+
+**Evidence boundary:** Source inspection and current WHATWG/MDN/web-features documentation; no independent agent, browser, screen-reader or installer execution. Overall **3.7/10**, frontend **3/10**, agent workflows **5/10** unchanged. Next: independent seeded-good/bad comparison and actual cross-browser/AT checks.
+
 ### 2026-10-25 — `ariaNotify`: Baseline availability does not certify delivery or iframe containment
 **Question:** Should AI agents replace live regions with the new announcement API, and is cross-origin use restricted by default?
 
