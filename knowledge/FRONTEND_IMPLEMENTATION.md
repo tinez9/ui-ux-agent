@@ -7,6 +7,39 @@ Keep durable design guidance separate from fast-changing framework details.
 
 Prefer the lowest-complexity platform primitive that preserves the required semantics, accessibility, resilience, and interaction quality. A newer API is not a UX improvement by itself.
 
+## Preserved routes and Playwright locators: hidden DOM is not gone — 2026-10-25
+
+**Decision:** define a *return-state policy* before assuming navigation remounts a page. Preserve a user's draft, selected filters and intentional reading position when returning; reset transient menus, completed one-shot forms, stale success/error banners and account-scoped data when their context expires. Restoring an interface is not the same as revalidating its data or authorization.
+
+### Three different retention mechanisms
+
+| Mechanism | What it preserves | Boundary for agents |
+|---|---|---|
+| Browser back/forward cache (bfcache) | A paused **whole document and JS heap** on eligible cross-document history traversal | `pageshow.persisted` identifies a bfcache restoration. Revalidate stale/sensitive views and reconnect resources on resume; do not rely on `unload` or assume every traversal is cached. |
+| React `<Activity mode="hidden">` | Hidden DOM and component state; React cleans up Effects and recreates them on reveal | Unmount cleanup is **not** proof that DOM/input values were destroyed. Media/iframe and global-style side effects may survive unless handled explicitly. |
+| Next.js App Router **with `cacheComponents: true`** | Recently visited page routes via Activity (current docs: **up to three**, then eviction) | This is conditional on the feature configuration and version; it is **not** universal Next.js or browser bfcache behavior. Fresh navigation and browser Back may have different reset requirements. |
+
+Next's current guidance (reviewed 2026-10-25) recommends retaining drafts/filter panels, closing transient dropdowns on Activity hide, clearing completed creation forms after confirmed success, and scoping draft state to authenticated identity. It documents `useRouter().bfcacheId` as a **migration** key to reset on push/replace while retaining Back/Forward state; prefer targeted per-pattern reset rules for new code. Avoid an unconditional `form.reset()` on hide when an unsent draft should survive. A full reload can clear in-memory state but is not a substitute for server-side session invalidation or authorization checks. Browser bfcache can restore stale sensitive DOM even after an HTTP cache directive; treat `pageshow.persisted` as a trigger to revalidate or obscure sensitive content appropriately.
+
+### Agent/browser-test trap: not all semantic locators exclude hidden routes
+
+The current **Next.js preserving-state guide incorrectly groups Playwright `getByLabel` and `getByPlaceholder` with `getByRole` as automatically visibility-filtering**. In a controlled fixture with two identical labeled inputs (one inside `display:none`, one visible), Playwright Python **1.57.0** + Chromium **144.0.7559.96** returned:
+
+| Locator | Matches | `fill()` with two duplicate inputs |
+|---|---:|---|
+| `get_by_role("textbox", name="Email")` | 1 (visible/ARIA-exposed) | Succeeded |
+| `get_by_label("Email")` | 2 (including hidden) | **Strict-mode violation** |
+| `get_by_placeholder("Search...")` | 2 (including hidden) | **Strict-mode violation** |
+| `get_by_label("Email").filter(visible=True)` | 1 | Succeeded in a separate control |
+
+A second fixture showed `get_by_role("button")` **included an `opacity:0` button** (which Playwright could click) but excluded an `aria-hidden="true"` button that was visually displayed. **ARIA-tree inclusion, Playwright actionability and human-visible pixels are different tests.** `getByRole` is useful for semantic targeting, not proof of perceptual visibility, correct focus or contrast.
+
+**Implementation rule:** prefer an accessible role/name *within the active route or region*, and assert uniqueness/visibility before action. If label/placeholder targeting is necessary, scope to an active route container or apply an explicit visibility filter (JS: `.filter({ visible: true })`; Python: `.filter(visible=True)` on supported versions). Playwright **v1.63+** also documents `.visible()`; do not copy it into older pinned suites without checking the installed API. Do not “fix” duplicates with `.first()` or by disabling strictness: that can silently target the retained wrong route. Add negative controls for hidden duplicates, opacity-only invisibility, account switch, retained modal, draft return, completed-form return, route eviction and real browser Back/Forward. Verify keyboard focus and screen-reader announcements separately.
+
+**Evidence boundary:** React and Next.js first-party documentation establish retention semantics; Playwright's official locator docs establish role-hidden filtering and explicit visible filtering; the counts/errors above are **isolated DOM fixtures**, not a running Next.js/React Activity application. The mismatch with Next's locator claim was reproduced only in Playwright Python 1.57/Chromium 144; repeat on current Playwright JS/Python and real Cache Components routes before asserting cross-version behavior. No cross-browser/AT or measured user-outcome test.
+
+**Sources (checked 2026-10-25):** https://nextjs.org/docs/app/guides/preserving-ui-state ; https://react.dev/reference/react/Activity ; https://playwright.dev/docs/locators ; https://playwright.dev/docs/api/class-page ; https://playwright.dev/docs/api/class-locator ; https://web.dev/articles/bfcache ; https://github.com/vercel/next.js/discussions/88044 .
+
 ## Offscreen rendering: `content-visibility` is not virtualization — 2026-10-24
 
 **Decision:** use `content-visibility: auto` as a *measured rendering optimization* for substantial, independent, often-offscreen sections; do not mistake it for lazy data fetching, DOM windowing, a hidden-state primitive, or an accessibility guarantee. The browser may skip layout/paint for an offscreen subtree, but the DOM and application state remain. The 2024 Chrome demo's ~7× initial rendering improvement is a **single synthetic example**, not an expected product gain.
