@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Browser-agent guardrails: configured is not contained
+**Question:** Can AI frontend QA agents trust browser-tool allowlists, action policies and “disable JS” flags to confine autonomous inspection?
+
+**Finding:** Source-inspected canonical `agent-browser` 0.39.2 still treats an empty parsed domain allowlist as unrestricted, consistent with open reporter issue #1902; its action-policy checks compare exact action strings, consistent with open issue #1612 that documented categories do not protect related actions. Chrome DevTools MCP 1.12.0 documents Chrome 149+ URL-filter requirements, attachment/hot-reload gaps, agent-writable config risk, persistent browser profiles, and a DevTools Console path not disabled by `--no-javascript-evaluation`. Established a fail-closed preflight/negative-control and OS isolation decision contract; compared Playwright MCP's explicitly non-security-boundary origin filters.
+
+**Evidence boundary:** Current upstream docs and source plus two open GitHub reporter reproductions; no local browser/binary containment test or measured agent-quality uplift. AI-agent workflows **unchanged at 5/10**, overall **3.7/10**. Next: execute pinned cross-tool forbidden-origin/action fixtures with benign controls and host-level egress instrumentation.
+
 ### 2026-10-25 — Native form sizing: auto-grow is not a global one-line migration
 **Question:** Can newly Baseline `field-sizing: content` safely replace textarea resize scripts without affecting other controls?
 
