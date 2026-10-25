@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Safari MCP: real signed-in profile is a privilege, not a QA upgrade
+**Question:** When does a third-party Safari MCP tool add value beyond Apple's newly shipped first-party Safari MCP, and what are the hidden operational boundaries?
+
+**Finding:** Apple's Safari 27 `safaridriver --mcp` already provides 17 browser inspection/interaction tools without npm or ordinary-profile access. The actively maintained MIT `achiya-automation/safari-mcp` 2.22.18 offers a much broader published tool catalog but intentionally operates against a user's real signed-in Safari and installs a helper with a macOS `codesign` postinstall step. Source inspection found that its `SECURITY.md` blanket “no ports” claim omits opt-in HTTP/extension modes, and “no data leaves” omits downstream model transmission; tab ownership is actively guarded but not a security sandbox. A separate Apple MCP stdio handshake was independently reproduced by an open GitHub integration spike. Prefer Apple's isolated development workflow for Safari QA; require explicit authorization and negative controls before real-profile automation.
+
+**Evidence boundary:** WebKit first-party docs, GitHub integration spike and community package/source inspection, **not** a local Mac test, package execution, exploit, independent performance measurement or causal agent-quality benchmark. AI-agent workflows **5/10** and overall **3.7/10** unchanged; next: compare actual defect detection and forbidden-action controls with clean fixtures.
+
 ### 2026-10-25 — Native scroll anchoring is not conditional chat follow
 **Question:** When does the browser preserve a chat/feed reader's position, and when must an application deliberately follow new output?
 
