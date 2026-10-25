@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Activity-retained routes contradict a first-party Playwright locator recommendation
+**Question:** When route DOM survives navigation, can an agent assume all semantic Playwright locators ignore hidden route copies?
+
+**Finding:** No. Next.js's current Cache Components guide correctly describes Activity retaining route DOM/state (up to three routes) and offers nuanced draft/transient/reset policies, but incorrectly says `getByLabel` and `getByPlaceholder` automatically filter hidden elements like `getByRole`. In an isolated Chromium 144 / Playwright Python 1.57 fixture, role lookup matched only the visible textbox; label and placeholder lookups each matched both visible and `display:none` inputs and failed strict-mode `fill`. Explicit visible filtering fixed it. A separate opacity/ARIA-hidden control showed that role matching is not a visual-visibility test. Documented state-retention and agent-QA contracts, including bfcache vs Activity distinction.
+
+**Evidence boundary:** Reproduced against plain DOM, not a live Next.js/React Activity app or current Playwright JS; official React/Next/Playwright docs and an upstream Next discussion provide context. No cross-engine/AT, auth-switch or task-outcome validation. Frontend and agent maturity scores unchanged. Next: pin a real Cache Components fixture and compare selector behavior, focus, stale forms and route eviction.
+
 ### 2026-10-25 — Native accordions: exclusive names are tree-scoped, not component-scoped
 **Question:** When does `<details name>` replace a custom accordion safely, and what hidden state/focus regressions can occur in composed apps?
 
