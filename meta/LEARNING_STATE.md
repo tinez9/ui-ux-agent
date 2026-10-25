@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Focus occlusion: scroll-padding is not a substitute for scroll range
+**Question:** Does the common AI-agent recipe `scroll-padding-bottom` alone keep last-page focused controls clear of fixed footer overlays?
+
+**Finding:** Not in an isolated Chromium 144 fixture. A 180px fixed footer covered the final focused button even with root scroll-padding: at the maximum scroll offset the button remained entirely behind the footer. Pairing 180px physical end padding with the scroll inset made it reachable; a midpage button was correctly repositioned by scroll-padding alone. Root-only scroll-padding did not affect an inner scrolling pane, and `focus({preventScroll:true})` intentionally skipped scrolling. W3C C43's actual example includes **both** physical padding and scroll-padding; recipes that quote only the latter omit a material constraint. Added scroller-ownership, focus-path, reflow/zoom and keyboard QA guidance.
+
+**Evidence boundary:** W3C WCAG/techniques, MDN, historical CSSWG discussion and local Chromium 144/Playwright Python geometry probes; no cross-browser, real AT or user-outcome testing. **Frontend 3/10, UX patterns 4/10, overall 3.7/10 unchanged.** Next: browser/device/AT and dynamic-overlay matrix with first/last focusable controls and short viewport/zoom.
+
 ### 2026-10-25 — Native dialog light dismiss: a first-party agent guide confuses backdrop with dismissal semantics
 **Question:** Is `closedby="any"` only valid for modal `showModal()` dialogs, as GoogleChrome's installable modern-web-guidance tells agents?
 
