@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Command palette IME guards stop at component boundaries
+**Question:** Does a component's IME-safe Enter handler also protect consumer callbacks and global shortcuts?
+
+**Finding:** Not automatically. Source inspection of `dip/cmdk` found its consumer `onKeyDown` executes before the internal `isComposing || keyCode===229` check; the library's own selection is guarded, but host actions can run early. MDN describes IME keydown ordering and WCAG 2.1.4 constrains bare-character shortcuts. Independent resolved OpenCode and reported Codex issues demonstrate the failure class in different apps. Added end-to-end keyboard/IME acceptance guidance.
+
+**Evidence boundary:** First-party source, W3C/MDN, separate product issue reports and a Chromium 144 synthetic-event callback-order probe; no real IME, actual cmdk React runtime, cross-browser/AT or outcome experiment. UX patterns **4/10**, overall **3.7/10** unchanged. Next: real-IME integration and screen-reader testing.
+
 ### 2026-10-25 — Visual screenshot stabilization is not always read-only
 **Question:** Can Playwright's default visual-assertion animation suppression change the application state an AI agent is trying to verify?
 

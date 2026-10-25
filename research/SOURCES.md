@@ -1,5 +1,12 @@
 # Source Registry
 
+## Command palette IME: consumer callback executes before cmdk's guard (reviewed 2026-10-25)
+- **First-party source:** https://github.com/dip/cmdk/blob/main/cmdk/src/index.tsx (root `onKeyDown`: `etc.onKeyDown?.(e)` precedes `e.nativeEvent.isComposing || e.keyCode === 229` check; internal Enter selection follows guard). https://github.com/dip/cmdk/blob/main/README.md (host binds Cmd/Ctrl+K; no built-in virtualization). Not a proven live cmdk defect. Repository reported last push 2025-10-29; adoption does not prove IME correctness.
+- **Standards and platform:** https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event (composition boundary and 229 fallback); https://www.w3.org/WAI/WCAG22/Understanding/character-key-shortcuts.html (disable/remap/focus rule for bare-character shortcuts); https://www.w3.org/WAI/ARIA/apg/patterns/combobox/ (semantic focus/Enter contract, not OS IME validation).
+- **Independent reports:** https://github.com/anomalyco/opencode/issues/9563 (list Enter mis-selection; closed with #9564 Jan 2026); https://github.com/openai/codex/issues/11026 (Japanese IME Plan Mode premature submit reported in 2026). Separate applications, not evidence that cmdk's internal guard fails.
+- **Isolated test:** 2026-10-25 Linux headless Chromium 144, synthetic KeyboardEvents dispatched to a minimal DOM listener reproducing inspected callback/guard order. Normal Enter invoked consumer + internal action; `isComposing:true` and `keyCode:229` Enter invoked consumer only. **Not real IME, actual cmdk runtime, cross-engine, or AT validation.**
+
+
 ## Screenshot stabilization can execute UI state transitions (reviewed 2026-10-25)
 - **Primary API contract:** https://playwright.dev/docs/api/class-pageassertions (`toHaveScreenshot` defaults `animations: 'disabled'`; finite transitions are fast-forwarded and fire `transitionend`; screenshots retry until two consecutive captures match); https://playwright.dev/docs/api/class-page (direct `page.screenshot` defaults to `animations: 'allow'`); https://playwright.dev/docs/api/class-locator (same capture-time animation semantics and masking of invisible elements).
 - **Browser event contract:** https://developer.mozilla.org/en-US/docs/Web/API/Element/transitionend_event (event occurs on completion; cancellation and zero-duration are different). **Alternative tool:** https://www.chromatic.com/docs/animations/ (CSS animations paused; JS-driven animation requires application-specific control; different mechanism, not an equivalent Playwright reproduction).

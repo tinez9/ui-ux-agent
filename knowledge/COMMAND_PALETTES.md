@@ -123,6 +123,32 @@ Additional requirements:
 - pointer users need equivalent access to important commands;
 - do not assume `Cmd/Ctrl+K` is universally available: GitHub documents conflicts and offers shortcut customization.
 
+## IME-safe command execution: the library guard is not the application guard — 2026-10-25
+
+**Decision:** Enter used to confirm an IME candidate must not select a command, submit, navigate or close a palette. Only a subsequent intentional Enter should execute the highlighted action. Protect **every action handler**, not only the command component's built-in keyboard handler.
+
+### Source-inspected integration boundary
+
+In current `dip/cmdk` (`cmdk/src/index.tsx`, reviewed 2026-10-25), root `onKeyDown` calls the consumer's `etc.onKeyDown?.(e)` **before** checking `e.nativeEvent.isComposing || e.keyCode === 229`. Its *internal* Enter-to-select is correctly guarded; a host callback that executes a command immediately is **not** protected by that later check. This is a source-level integration hazard, **not a claim that cmdk's own selection is broken**. The README also explicitly delegates `Cmd+K` binding to the host, so global shortcut safety is outside the component.
+
+For React handlers, return before any `preventDefault` or action:
+
+```ts
+if (event.nativeEvent.isComposing || event.keyCode === 229) return;
+if (event.key === 'Enter') {
+  // Recheck current target, availability and permission at execution.
+  executeSelectedCommand();
+}
+```
+
+For native events use `event.isComposing`. `keyCode === 229` is deprecated but MDN recommends it as an IME-boundary fallback: `compositionstart` may follow the first keydown, and `compositionend` may precede the last, so `isComposing` can be false at either edge. Do not run commands on `compositionend`, swallow candidate-selection arrows, or assume a custom composition-state flag is cross-browser proof.
+
+**Global hotkeys need independent guards.** An app-wide bare `/`, `?`, `j` or `k` can still fire during typing/dictation even if the palette's internal Enter is safe. WCAG 2.2 SC 2.1.4 requires single-character shortcuts to be **turn-off-able, remappable with a non-printable key, or active only while the relevant component has focus**. Modifier shortcuts fall outside that particular criterion but still collide with browser/OS/editor/AT bindings. Avoid intercepting text entry in `input`, `textarea`, `contenteditable` and embedded editors; retain visible/pointer access to commands.
+
+**Agent QA gate:** use real Japanese, Chinese Pinyin and Korean IMEs to confirm that the first Enter commits a candidate with **zero** command executions/closures, and a later Enter intentionally activates the right command. Test Escape during composition versus Escape to close, candidate arrows, zero results, stale selected results, document hotkeys during editing, speech input, focus return and screen-reader announcements. Assert action counts/targets and preserved text, not only screenshot appearance. A small Chromium 144 **synthetic** keydown harness matching the inspected callback order showed consumer callback invocation on normal, `isComposing:true` and `keyCode:229` Enter, but guarded internal action only on normal Enter. This **does not reproduce real OS IME or cmdk React runtime**.
+
+**Sources (2026-10-25):** https://github.com/dip/cmdk/blob/main/cmdk/src/index.tsx ; https://github.com/dip/cmdk/blob/main/README.md ; https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event ; https://www.w3.org/WAI/WCAG22/Understanding/character-key-shortcuts.html ; https://www.w3.org/WAI/ARIA/apg/patterns/combobox/ ; https://github.com/anomalyco/opencode/issues/9563 (closed, separate product); https://github.com/openai/codex/issues/11026 (user reports, not independently reproduced).
+
 ## Mobile and touch
 
 Do not mechanically transplant a desktop `Cmd+K` overlay to mobile. If the underlying capability is valuable on touch, expose it through an obvious search/action entry point, contextual action sheet, or another platform-appropriate surface. Preserve the command model; adapt the interaction surface.
