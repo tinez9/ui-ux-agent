@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Native scroll anchoring is not conditional chat follow
+**Question:** When does the browser preserve a chat/feed reader's position, and when must an application deliberately follow new output?
+
+**Finding:** CSS scroll anchoring protects an eligible visible node against *above-viewport* insertion but does not automatically pin a normal feed to its bottom on append. In a Chromium 144 fixture, prepending 180px changed `scrollTop` 600→780 while preserving the visible row; disabling anchoring held it at 600 and shifted the row 180px. A manual 180px correction layered over native compensation double-shifted to 960. Appending at bottom left `scrollTop` 901 while max rose to 1081; a visible end sentinel selectively followed to 1081 but did not preserve mid-list prepend. TanStack Virtual now exposes explicit end anchoring and conditional follow options, with a reported padding/threshold edge case (#1258); a separate count-neutral append+trim bug was closed September 11. Documented a decision contract for prepend, append, streaming, virtualization, user interruption and accessible history.
+
+**Evidence boundary:** CSSWG/MDN, TanStack first-party docs/issues, W3C ARIA23 and a local Chromium DOM fixture. No TanStack runtime reproduction, Firefox/WebKit, real AT, mobile or user-outcome evidence. **Maturity unchanged** (overall 3.7/10, frontend 3/10); next test must isolate native/browser/library/application correction and pinned-state semantics.
+
 ### 2026-10-25 — Focus occlusion: scroll-padding is not a substitute for scroll range
 **Question:** Does the common AI-agent recipe `scroll-padding-bottom` alone keep last-page focused controls clear of fixed footer overlays?
 
