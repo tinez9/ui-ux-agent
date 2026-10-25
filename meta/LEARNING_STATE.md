@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-26 — UI UX Pro Max can invert explicit negative design requirements
+**Question:** Does a popular installable design-skill generator respect “no/without/only” constraints, or can its deterministic retrieval rules recommend the forbidden feature?
+
+**Finding:** Source inspection of `nextlevelbuilder/ui-ux-pro-max-skill` v2.15.0 found whole-word trigger rules with no negation handling. Faithful isolated predicate checks using real CSV actions activate **progress animation** for “no gamification or badges” and **calendar** for “without booking.” A separate dark-mode substring check treats “no dark mode” as a dark request; high variance can promote Brutalism ahead of normal category priorities. Added a brief-first forbidden/required/optional gate and clarified install/runtime trust boundaries rather than removing the skill's conditional retrieval recommendation.
+
+**Evidence boundary:** Current canonical source, CSV data, skill/CLI manifests and isolated source-equivalent predicate probes; **no complete generator, npm tarball, Claude/Codex output, browser rendering, or measured user outcome**. No broad maturity change (agent workflows **5/10**, overall **3.7/10**). Next: paired full-runtime and agent-output falsification.
+
 ### 2026-10-25 — Conditional Create is opportunistic registration, not passive sign-in
 **Question:** Can a mixed password/passkey site silently upgrade accounts without confusing consent, blocking login, or weakening WebAuthn verification?
 
