@@ -1,6 +1,8 @@
 # Knowledge Changelog
 
 ## 2026-10-25
+- Established a native-disclosure/exclusive-accordion decision contract: WHATWG same-tree name collisions, Boolean `open`, toggle-event coalescing and GOV.UK multi-open counterexample. Reproduced cross-section closure, shadow-tree isolation and programmatic hidden-focus retention in Chromium 144; added unique-name/focus and cross-engine/AT falsification gates. No maturity change.
+## 2026-10-25
 - Established a localized dynamic-message contract after Unicode CLDR 49 (2026-10-22): differentiated grammatical categories from exact-zero copy, demonstrated `Intl.PluralRules` precision-dependent Spanish/Russian branches in Node 22.16/ICU 77, separated stable MF2 spec from Stage-1 native `Intl.MessageFormat`, and added bidi/SSR/translation test gates. No cross-runtime reproduction or maturity change.
 - Tested a 411-rule interactive UI-agent corpus against native form semantics: traced its multi-field Enter-submit heuristic to Vercel, falsified a literal last-field-only reading in Chromium 144, and found the Good demo tests only one field while static alignment checks cover 17 IDs. Added a WHATWG-based form contract, conditional corpus/small-skill evaluation, provenance and adversarial benchmark gate; maturity unchanged.
 - Revalidated browser-agent containment against current upstream source: agent-browser empty allowlist fail-open and literal-action policy mismatch (open reports #1902/#1612), Chrome DevTools MCP config mutability, Chrome 149+ URL-filter and DevTools Console/no-JS-eval boundaries, plus persistent-profile/telemetry risks. Added fail-closed negative-control guidance and a pinned comparison matrix; no live exploit or maturity change.

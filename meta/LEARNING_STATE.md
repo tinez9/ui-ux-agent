@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Native accordions: exclusive names are tree-scoped, not component-scoped
+**Question:** When does `<details name>` replace a custom accordion safely, and what hidden state/focus regressions can occur in composed apps?
+
+**Finding:** WHATWG explicitly warns that exclusive accordions can harm users who compare content. Its grouping is based on identical nonempty names within the *same tree*, not the surrounding component/section. In an isolated Chromium 144 Playwright probe, two unrelated sections with the same name closed each other; a shadow-root item did not; rapid toggles coalesced; and programmatic closure left focus on a now-hidden child button. Documented when to use independent versus exclusive disclosures, unique group naming, Boolean/open semantics, focus preservation, and a comparative QA gate.
+
+**Evidence boundary:** Normative WHATWG, MDN, W3C APG and GOV.UK production guidance plus one headless Chromium probe. No cross-engine/AT/React hydration or measured user study. **Overall 3.7/10 and UX patterns 4/10 unchanged.** Next: test focus recovery and content comparison across browsers, screen readers and multiple accordion instances.
+
 ### 2026-10-25 — Localized dynamic messages: CLDR precision and runtime availability are separate contracts
 **Question:** Can an agent safely construct dynamic multilingual UI strings using basic singular/plural checks or assume standardized MF2 is natively available?
 
