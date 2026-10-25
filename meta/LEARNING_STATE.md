@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — 21st MCP/skills: valuable catalog, incomplete executable trust chain
+**Question:** Does 21st.dev's current agent tooling materially improve frontend work, and can its published source establish installation, component and review safety?
+
+**Finding:** The legacy Magic MCP package is now an ISC-licensed hosted-server proxy; the seven newer Apache-2.0 skills support catalog retrieval, project-aware build/explore/review and public publishing. Source inspection identified auto-search instructions on `components.json`, shadcn/npm installation side effects, unbenchmarked `review --fix`, public theme publication, and separate author/media rights. Crucially, public `21st-dev/cli` source is v0.0.29 while npm advertises v1.18.0; that GitHub tree cannot audit the current CLI executable. AI generation requires separately enabled credits. Recommend **conditional search/reuse**, explicit outbound-data and publish permissions, pinned/tarball-inspected tooling and independent rendered QA; do not assume component catalogs or scanner scores improve design quality.
+
+**Evidence boundary:** Current official 21st site/terms/privacy, four public 21st repositories and shadcn/OWASP primary guidance; no authenticated MCP, npm tarball, agent-output comparison or exploit. Agent workflows remain 5/10 and overall 3.7/10. Next: independent baseline-vs-skill tasks and CLI tarball/side-effect audit.
+
 ### 2026-10-25 — Customizable select clone can disagree with submitted data
 **Question:** Does native `appearance: base-select` remove custom-dropdown data/accessibility hazards during dynamic option updates?
 
