@@ -117,6 +117,46 @@ The CSS Color Adjustment specification permits opting out for narrowly justified
 
 **Evidence:** CSS Color Adjustment Level 1 Candidate Recommendation (2025-12-16), MDN forced-colors/forced-color-adjust, Microsoft Fluent high-contrast implementation, Sarah Higley (2025-09-17), Edge removal announcement (2025-06-30), Playwright emulation docs, and a reproducible local Chromium 144 fixture. These establish rendering behavior and an adversarial maintenance failure, **not** measured task outcomes or cross-engine parity.
 
+## Reduced transparency: replace the material, not only the blur — 2026-10-25
+
+**Decision:** Treat a user's reduced-transparency preference as a request to remove *see-through material*, not merely to stop blur. A panel with `background: rgb(255 255 255 / .3)` remains translucent when `backdrop-filter:none` is applied. Setting the panel's `opacity:1` also does **not** make its alpha background opaque; using element-level `opacity<1` additionally fades all descendants. Neither workaround reliably improves legibility over busy content.
+
+**Compatibility boundary (checked 2026-10-25):** CSS `prefers-reduced-transparency` is **limited availability**: supported in Chromium-based browsers since Chrome 118, disabled by default in Firefox, and **not supported by Safari 27**, even though macOS/iOS expose a Reduce Transparency system preference. Native SwiftUI exposes that setting through `accessibilityReduceTransparency`; this does **not** imply Safari exposes it to websites. A CSS query that never matches cannot be the only way an essential label becomes readable. The preference is independent of `prefers-reduced-motion`, `prefers-contrast`, `forced-colors`, and `prefers-color-scheme`.
+
+**Two defensible strategies:**
+- **Legibility-first (preferred for essential controls over variable imagery):** use an opaque, contrast-tested surface by default; opt into translucency *only* when the browser exposes `no-preference` and supports the effect. Unsupported browsers keep the opaque surface. This sacrifices glass aesthetics on Safari/Firefox rather than assuming a preference they cannot report.
+- **Visual-continuity-first (only when translucent mode itself passes contrast checks):** render translucent styling by default and use `@media (prefers-reduced-transparency: reduce)` to switch **both** the background fill and filter. This keeps the effect in unsupported browsers, so it cannot promise respect for their OS preference; offer an explicit solid-surface option where important.
+
+Illustrative legibility-first pattern (tokens must be checked for each theme):
+
+```css
+.frosted-toolbar {
+  background: var(--surface-opaque);
+  color: var(--text-primary);
+}
+@media (prefers-reduced-transparency: no-preference) {
+  @supports (backdrop-filter: blur(1px)) {
+    .frosted-toolbar {
+      background: var(--surface-translucent);
+      backdrop-filter: blur(12px);
+    }
+  }
+}
+@media (forced-colors: active) {
+  .frosted-toolbar {
+    background: Canvas;
+    color: CanvasText;
+    backdrop-filter: none;
+  }
+}
+```
+
+**Falsification (local Chromium 144 / Playwright, 2026-10-25):** A striped dark/light backdrop, three 192×90px panels, `rgba(255,255,255,.3)`, and CDP `Emulation.setEmulatedMedia` with `prefers-reduced-transparency:reduce` were tested. In paired screenshot pixels 24px apart, **blur-only removal** left a maximum RGB-channel difference of **156**; **opacity-only change to 1** also left **156**; **opaque background plus blur removal** reduced it to **0**. Computed styles confirmed the alpha background remained in the first two variants. Separately emulating `prefers-contrast:more`, `forced-colors:active`, or `prefers-reduced-motion:reduce` did **not** activate the reduced-transparency query. These are controlled CSS/pixel observations, **not** a cross-browser OS-setting, contrast-conformance, accessibility, or user-study result.
+
+**Release gate:** Inspect light/dark surfaces over actual worst-case photos, video, gradients, and scrolling content; test foreground contrast and non-text boundaries in both material modes. Check keyboard focus, hover/selected/disabled states, zoom and forced colors. Test the OS toggle on real devices and compare Safari/Firefox fallback; browser emulation tests only CSS behavior, not whether the OS setting reaches the browser. Do not equate Apple's adaptive native Liquid Glass with a hand-built CSS blur: Apple explicitly limits where the material belongs and adapts it to platform accessibility settings.
+
+**Evidence:** CSS Media Queries Level 5, MDN reduced-transparency compatibility and backdrop-filter semantics, Apple SwiftUI `accessibilityReduceTransparency` and HIG Materials, W3C WCAG contrast technique G18; plus the isolated Chromium fixture. None establishes that translucency improves task success or user preference.
+
 ## Component-state audit
 
 For every interactive component, verify both themes across:

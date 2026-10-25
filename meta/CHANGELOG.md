@@ -1,6 +1,8 @@
 # Knowledge Changelog
 
 ## 2026-10-25
+- Distinguished reduced transparency from blur, opacity, contrast and motion: a Chromium 144 striped-background fixture showed blur-only and opacity-only “fixes” leave background bleed-through, whereas opaque fill removes it. Added solid-first progressive enhancement and Safari/Firefox OS-preference support caveats; no maturity change.
+## 2026-10-25
 - Compared Apple's first-party Safari 27 MCP with a source-inspected real-profile community Safari MCP (v2.22.18): clarified 17 official tools vs 98 published community tools, ordinary-session privilege, helper re-signing at npm postinstall, optional HTTP/extension versus blanket security-doc claims, and guarded-but-not-sandboxed tab ownership. Added an adversarial Mac/agent QA comparison; no runtime or maturity change.
 - Distinguished native CSS scroll anchoring from conditional chat-tail following: Chromium 144 prepend/append/sentinel fixtures showed native compensation, double-correction risk and failure of default append-to-bottom; contrasted with current TanStack Virtual end-anchor APIs and an open padding/threshold issue. Added visible-item, pinned-state, virtualization and screen-reader QA gates. No maturity change.
 - Corrected a simplistic sticky-overlay accessibility recipe: Chromium 144 fixtures showed root `scroll-padding-bottom` alone cannot reveal a final button under a fixed footer when max scroll is exhausted; W3C C43 also reserves physical space. Added actual-scroller, focus-path and reflow/zoom decision gates, with explicit cross-browser/AT limits. No maturity change.

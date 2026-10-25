@@ -26,6 +26,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Reduced transparency is not a backdrop-filter switch
+**Question:** Can AI-generated glass UI honor Reduce Transparency merely by removing blur or increasing element opacity, and can the web reliably detect the OS setting?
+
+**Finding:** No. Chromium 144 paired CSS/pixel controls showed both blur-only removal and `opacity:1` retained alpha-background bleed-through (156 RGB-channel delta on a striped fixture), while an opaque background plus no blur removed it (delta 0). MDN lists the media query as limited availability: Safari 27 does not expose it despite a native OS setting; Firefox remains disabled by default. A solid-first progressive enhancement is a safer default for essential UI, with translucent-first reserved for independently contrast-tested contexts. Contrast, motion and forced-colors media queries do not imply reduced transparency.
+
+**Evidence boundary:** W3C/MDN/Apple establish platform semantics and compatibility; one headless Chromium/CDP fixture demonstrates CSS behavior, not real OS propagation, accessibility outcomes or cross-browser parity. No broad maturity-score change. Next: real OS/browser toggle matrix and dynamic-background legibility trials.
+
+## Recent research
 ### 2026-10-25 — Safari MCP: real signed-in profile is a privilege, not a QA upgrade
 **Question:** When does a third-party Safari MCP tool add value beyond Apple's newly shipped first-party Safari MCP, and what are the hidden operational boundaries?
 
