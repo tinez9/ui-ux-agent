@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — axe target-size: default-disabled does not mean tag-excluded
+**Question:** Does an explicit WCAG 2.2 AA tag filter select axe-core 4.14.0's default-disabled `target-size` rule, and which configuration wins when options conflict?
+
+**Finding:** Yes. Executed the **exact pinned upstream `ruleShouldRun` function** in an isolated JS harness: bare default **skip**; `wcag22aa` tag **select**; `wcag21aa` alone **skip**; explicit rule ID or `enabled:true` **select**; tag plus explicit `enabled:false` **skip**. Corrects an overly broad inference that all tag-filtered scans miss the rule. A WCAG 2.2 tag by itself does not cover earlier A/AA criteria. A selected rule is not evidence of reliable detection.
+
+**Evidence boundary:** Primary axe 4.14.0 JSON/API/selection code and a branch-level execution harness, plus W3C/Deque maintenance context. **No full axe runtime, seeded browser scan, cross-version/engine/AT or user evaluation.** Frontend **3/10**, agent workflows **5/10**, overall **3.7/10** unchanged. Next: browser-level false-negative/exception/performance matrix and agent-wrapper configuration audits.
+
 ### 2026-10-25 — Target-size geometry and axe 2.5.8 audit coverage
 **Question:** Can a green axe/Playwright scan plus 24px CSS dimensions certify WCAG 2.2 AA pointer target sizing?
 
