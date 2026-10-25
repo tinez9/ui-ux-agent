@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Visual screenshot stabilization is not always read-only
+**Question:** Can Playwright's default visual-assertion animation suppression change the application state an AI agent is trying to verify?
+
+**Finding:** Yes for finite transitions with completion handlers. Playwright documents that `toHaveScreenshot()` defaults to `animations: 'disabled'`, fast-forwarding finite CSS transitions and firing `transitionend`, unlike direct `page.screenshot()`'s default `allow`. In three paired Linux Chromium 144 / Playwright Python 1.57 fixture runs, disabling animation during a 20-second toast exit transition immediately fired `transitionend`, removed the toast and changed a status label; allowing animation left the toast present. Added before/after state-oracle and intermediate-vs-settled capture rules to the existing visual-regression guidance.
+
+**Evidence boundary:** Real browser reproduction but synthetic fixture, only Chromium/Python direct screenshot; no Playwright JS assertion, Firefox/WebKit, React app, AT or user-outcome validation. Not a Playwright defect claim. Frontend **3/10**, agent workflows **5/10**, overall **3.7/10** unchanged. Next: compare actual `toHaveScreenshot()` and cross-engine/animation-type side effects.
+
 ### 2026-10-25 — Activity-retained routes contradict a first-party Playwright locator recommendation
 **Question:** When route DOM survives navigation, can an agent assume all semantic Playwright locators ignore hidden route copies?
 
