@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Conditional Create is opportunistic registration, not passive sign-in
+**Question:** Can a mixed password/passkey site silently upgrade accounts without confusing consent, blocking login, or weakening WebAuthn verification?
+
+**Finding:** Conditional `get()` is a pending autofill sign-in chooser; conditional `create()` is post-authentication enrollment that may complete without a new modal only after prior consent/recent mediation. Browser `conditionalCreate` support does not certify provider eligibility. WebAuthn L4 requires skipping **UP** for conditional registration but **not** ignoring **UV when required**. SimpleWebAuthn 14 exposes `useAutoRegister:true` and a scoped `requireUserPresence:false`; failure must not undo a valid password session, and client-created/server-rejected passkeys require best-effort cleanup. The adidas first-party case reports +8% creation uplift but is observational and bundles other changes.
+
+**Evidence boundary:** W3C working drafts, Chrome/Google, passkeys.dev, SimpleWebAuthn source/docs, one vendor-reported production case and open W3C issue #2295 (reported Safari/iOS 18.5 UV mismatch). **No real credential-manager execution, cross-device experiment, independent UX study or security audit.** UX patterns **4/10**, frontend **3/10**, overall **3.7/10** unchanged. Next: pinned SimpleWebAuthn UP/UV rejection fixtures and OS/provider consent/cleanup matrix.
+
 ### 2026-10-25 — axe target-size: default-disabled does not mean tag-excluded
 **Question:** Does an explicit WCAG 2.2 AA tag filter select axe-core 4.14.0's default-disabled `target-size` rule, and which configuration wins when options conflict?
 
