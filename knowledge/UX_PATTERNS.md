@@ -6,6 +6,14 @@ Reusable interaction patterns and their tradeoffs. Prefer task-oriented guidance
 
 Treat a form as a sequence of user decisions, not a collection of inputs.
 
+### Implicit Enter submission is form-scoped, not last-field-only (2026-10-25)
+
+The HTML Living Standard defines a form's **default submit button** as the first submit button in tree order associated with that form. On platforms supporting implicit submission (often Enter in a single-line input), the browser activates that button even if focus is on the **first** of several text fields. If there is **no** submit button, implicit submission is blocked when more than one qualifying single-line input belongs to the form; with at most one such input it can submit without a submitter. A disabled default button blocks implicit submission even when a later enabled submit button exists. Enter in a textarea normally inserts a newline; a Ctrl/Cmd+Enter send shortcut is an *application choice*, not a built-in HTML rule.
+
+**Agent implementation contract:** use a semantic `<form>` with an intentional `type="submit"` default action, give non-submit controls `type="button"`, handle the form's `submit` event (and `SubmitEvent.submitter` for multiple actions), and let native constraint validation work. Do not add blanket Enter `preventDefault()` handlers or make only the last field submit based on a copied design-rule slogan. For multi-action forms, check that the **first** submit button is the safe, expected default; do not accidentally make Delete the implicit action. Preserve textarea composition/IME behavior and keyboard alternatives.
+
+**Falsification:** an isolated Playwright keyboard probe on Chromium 144.0.7559.96 observed Enter from **both** inputs activate the first Save submitter when two text inputs and Save/Delete submit buttons were present; neither input submitted with two fields and no button; one field/no button submitted with no submitter; a disabled first submitter prevented submission; textarea Enter inserted a newline while the adjacent single-line input submitted. This is a single-engine behavioral check, **not** cross-browser/assistive-technology validation. It contradicts a literal reading of the "last control" advice copied from Vercel into a third-party UI-rule corpus; that advice is a design heuristic, **not** the platform's implicit-submission algorithm. Sources: [WHATWG HTML](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#implicit-submission), [MDN submit event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/submit_event), [Vercel guidelines](https://vercel.com/design/guidelines).
+
 ### Reduce work before optimizing messages
 - Ask only for information needed for the task.
 - Prefer removing a field over polishing it. Baymard's checkout research finds field count can matter more than step count; treat this as commerce evidence, not a universal numeric rule.

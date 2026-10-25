@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Agent-rule corpora: runnable examples can propagate non-normative advice
+**Question:** Does a 411-rule interactive good/bad corpus provide trustworthy incremental design guidance over existing skills, and how should an agent detect misleading rules?
+
+**Finding:** Source-inspected strongeron/ui-guides-agent-rules (411 Good/Bad pairs, selective Markdown retrieval, 17 explicitly checked rule IDs) and two smaller Codex skills. Its `forms-enter-submits` example reproduces a Vercel last-control heuristic but demonstrates only a single-input form. WHATWG HTML instead defines the first associated submit button as default; a Chromium 144 Playwright probe confirmed Enter from both inputs activates that button, while no-button/disabled/textarea cases differ. Added native form contract and a rule-corpus promotion gate; no skill was promoted.
+
+**Evidence boundary:** First-party GitHub source/metadata, WHATWG/MDN and isolated Chromium probe; no cross-browser/AT demo audit, user-outcome data, upstream license analysis or controlled agent uplift. **Overall 3.7/10, UX patterns 4/10, agent workflows 5/10 unchanged.** Next: multi-engine negative controls and blinded agent comparisons of retrieved rules versus spec-grounded guidance.
+
 ### 2026-10-25 — Browser-agent guardrails: configured is not contained
 **Question:** Can AI frontend QA agents trust browser-tool allowlists, action policies and “disable JS” flags to confine autonomous inspection?
 
