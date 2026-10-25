@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Native dialog light dismiss: a first-party agent guide confuses backdrop with dismissal semantics
+**Question:** Is `closedby="any"` only valid for modal `showModal()` dialogs, as GoogleChrome's installable modern-web-guidance tells agents?
+
+**Finding:** No in Chromium 144. WHATWG defines close policy separately from modal state. Three isolated runs per condition showed that an outside click closes both modal and **non-modal** `show()+closedby="any"` dialogs (`cancel→close`); default modal/non-modal did not light-dismiss. The guide's “always showModal / never use closedby for non-modal” is overbroad, and Safari still lacks `closedby` support. An open WHATWG issue and local test also show `requestClose()` on a non-modal dialog can remain open when its `cancel` handler removes `closedby` (without preventing default); modal behavior differs. Documented modal-vs-dismissal decision, unsaved-draft/cancel guard and browser/AT falsification.
+
+**Evidence boundary:** WHATWG/MDN/WAI-ARIA APG/web-features, first-party skill source and 27 isolated Chromium 144/Playwright case runs; no Firefox/WebKit, real touch/Back/AT or product outcome. **UX patterns 4/10, frontend 3/10, agent workflows 5/10, overall 3.7/10 unchanged.** Next: cross-engine `closedby`/cancel mutation matrix and actual agent output comparison.
+
 ### 2026-10-25 — Modern Web Guidance: self-eval uplift is not an independent behavior oracle
 **Question:** How much trust should coding agents place in GoogleChrome's installable modern-web-guidance skill and its published evaluation gains?
 
