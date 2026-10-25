@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — `ariaNotify`: Baseline availability does not certify delivery or iframe containment
+**Question:** Should AI agents replace live regions with the new announcement API, and is cross-origin use restricted by default?
+
+**Finding:** WAI-ARIA 1.3's 2026-10-21 editor's draft and June Working Draft set `aria-notify` Permissions Policy default to **`*`**, while MDN's March 2026 policy reference says **`self`**. W3C security review #2861 remains open over possible cross-origin announcement flooding. MDN marks the API Baseline Newly Available since September 2026 but notes queue loss, silent policy failure and platform-dependent delivery; a June practitioner test of Safari **26.5** cannot be extrapolated to Safari 27. Added visible-state/announcement-channel, policy-isolation, localization and AT test gates to the existing notifications pattern.
+
+**Evidence boundary:** W3C draft, MDN, open standards/security discussion, dated independent AT tests, and an isolated Chromium 144 feature-presence probe; cross-origin navigation was blocked by the environment, and no live AT speech was measured. UX patterns **4/10**, overall **3.7/10** unchanged. Next: cross-origin Permissions Policy and actual AT delivery matrix.
+
 ### 2026-10-25 — Command palette IME guards stop at component boundaries
 **Question:** Does a component's IME-safe Enter handler also protect consumer callbacks and global shortcuts?
 
