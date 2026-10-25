@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-25 — Text spacing exposes hidden losses in line-clamped UI
+**Question:** Can two-line cards that look correct at default typography lose information after WCAG text-spacing overrides even though the full text remains in the DOM?
+
+**Finding:** Yes in an isolated Chromium 144/Playwright fixture. The same two-line sentence fitted 48px initially; after the four WCAG spacing overrides, fixed-height/hidden and prefixed two-line clamp remained 48px while scrollHeight rose to 72px, whereas an auto-height variant grew to 72px. A functional `aria-expanded` disclosure removing the clamp restored the full visual text. The decision rule is not “ban truncation”: reserve it for optional previews with an actual full-content path; avoid hiding essential labels/instructions/errors.
+
+**Evidence boundary:** W3C SC 1.4.12, F104, C35/C36 establish normative and technique boundaries; MDN documents line-clamp compatibility. The browser fixture establishes only one rendering failure mode. No cross-browser/AT test, WCAG certification or user-outcome evidence. Frontend maturity remains 3/10.
+
 ### 2026-10-25 — Reduced transparency is not a backdrop-filter switch
 **Question:** Can AI-generated glass UI honor Reduce Transparency merely by removing blur or increasing element opacity, and can the web reliably detect the OS setting?
 
