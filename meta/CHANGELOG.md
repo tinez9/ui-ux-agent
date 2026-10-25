@@ -1,5 +1,8 @@
 # Knowledge Changelog
 
+## 2026-10-26
+- Revalidated the maintained UI UX Pro Max skill against its actual deterministic source. Found that negative “no gamification/without booking” prompts can activate forbidden CSV constraints and “no dark mode” matches a positive dark-mode substring; high variance may bypass product style priorities. Replaced a generic endorsement with a constraint-first workflow, conditional install notes, source provenance and paired falsification plan. Isolated predicate/source analysis only; no npm/agent runtime, user study or maturity change.
+
 ## 2026-10-25
 - Deepened existing passkey UX contract with **Conditional Create vs Conditional Get**: prior-consent/recent-login eligibility, client-vs-provider capability, nonblocking enrollment, scoped UP=0 versus required UV verification, SimpleWebAuthn 14 configuration, orphan cleanup and consent/management boundaries. Contrasted W3C draft with open Safari report #2295 and adidas's observational +8% creation uplift. No browser/provider runtime or maturity-score change.
 - Resolved axe-core 4.14.0 `target-size` selection ambiguity using pinned upstream rule-selection code and an isolated execution harness: bare default skips, explicit `wcag22aa` tag includes despite `enabled:false`, explicit rule ID includes, and explicit rule-level disable overrides tag. Corrected overly broad default-disabled guidance in frontend and agent-audit contracts; narrowed runtime falsification. No full axe/browser run or maturity change.
