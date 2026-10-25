@@ -33,7 +33,6 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 **Evidence boundary:** W3C/MDN/Apple establish platform semantics and compatibility; one headless Chromium/CDP fixture demonstrates CSS behavior, not real OS propagation, accessibility outcomes or cross-browser parity. No broad maturity-score change. Next: real OS/browser toggle matrix and dynamic-background legibility trials.
 
-## Recent research
 ### 2026-10-25 — Safari MCP: real signed-in profile is a privilege, not a QA upgrade
 **Question:** When does a third-party Safari MCP tool add value beyond Apple's newly shipped first-party Safari MCP, and what are the hidden operational boundaries?
 
