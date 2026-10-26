@@ -1,6 +1,14 @@
 # Open Research Questions
 
 
+
+## Compact bottom navigation: selected-only label falsification (2026-10-26)
+- **Observed in Chromium 144:** when SVGs were decorative and labels the only implicit link names, inactive `display:none` removed names from four of five links (3/3 fresh fixtures). `opacity:0`, visually-hidden text, matching `aria-label` and explicit `aria-labelledby` to a hidden label preserved names in their tested controls. Equal-width grid tracks prevented hit-target movement after changing selection; **do not generalize to flex layouts**.
+- Reproduce with Safari/WebKit, Firefox, real VoiceOver/NVDA/TalkBack and speech control. Include `display:none`, `visibility:hidden`, `content-visibility:hidden`, opacity, offscreen/sr-only, hidden `aria-labelledby` and SVG title/alt variants; check actual spoken names, focus order, navigation purpose, selected/current announcement and voice targeting. Distinguish browser naming rules from Android Compose semantics.
+- Compare 3, 4 and 5 destinations using Apple-like all-visible labels, Android Material 3 selected-only variants and icon-only controls. Test novice/returning users, icon comprehension before activation, wrong taps, task completion, RTL, longer locales, badges, 200–400% zoom, large text, short landscape viewports and fixed/variable-width item geometry. Measure whether labels genuinely improve outcomes rather than inferring from guidelines or the DOM fixture.
+- Test route links (`aria-current`) separately from genuine local tabpanels (`role=tab`/`aria-selected`). Verify no custom “tab” semantics leak into routing and that any dynamic responsive replacement does not leave duplicate focusable navigation trees.
+
+
 ## Verification-code entry: native versus visually segmented input (2026-10-26)
 - Compare a single visible HTML input, `input-otp` single-input/visual slots and Radix preview multi-input/hidden aggregate at pinned revisions in real iOS Safari, Android Chrome, Firefox/desktop and VoiceOver/NVDA/TalkBack. Test full/partial paste, undo/selection, IME, RTL, password-manager overlays, leading zeros, mobile viewport/keyboard, 400% zoom, no-JS and `FormData`. Verify effective tab stops and accessible names; a one-field DOM shape does not certify real AT quality.
 - Use origin-bound test SMS and permissioned WebOTP on devices to distinguish `autocomplete` suggestions, explicit API retrieval, manual paste and absent SMS; measure timeout/abort and focus/error recovery. Browser automation alone cannot establish real OS/SMS behavior.
