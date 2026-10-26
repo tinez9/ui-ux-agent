@@ -1,5 +1,11 @@
 # Open Research Questions
 
+## CSS-generated carousel controls: locale and automation falsification (2026-10-26)
+- Run the same generated `::scroll-button`/`::scroll-marker` fixture in **Firefox and Safari** (including iOS), with a real-HTML-controls fallback and an intentionally blank/duplicate-name negative control. Separate unsupported CSS from broken keyboard/focus behavior; confirm actual support rather than assuming MDN's latest matrix applies to installed versions.
+- In Chromium, compare **Playwright JS/Python role locators and ARIA snapshots**, CDP AX tree, real screen readers (NVDA/JAWS/VoiceOver), keyboard Tab/arrow/Space/Enter, visual focus, touch targets and dynamic slide insertion. Does the locator blind spot persist across releases? Can agents detect generated controls and regressions without CDP-specific assertions?
+- Test real **browser automatic translation** versus app-managed locale switches: CSS literal/alt strings, `attr(data-label)`, mixed-language slides, RTL and fallback DOM controls. Changing `lang` alone did not change English AX names in three Chromium fixtures, but that **does not test** Chrome Translate or a screen reader's language switching. Track [CSSWG #12268](https://github.com/w3c/csswg-drafts/issues/12268).
+- Compare CSS pseudo-controls versus ordinary semantic HTML controls on matched carousels for accessibility, localization, feature support, maintenance, visual freedom and measured task success. Include autoplay/pause, reduced motion, offscreen focus, marker pagination at responsive widths and CSS-disabled/unsupported conditions.
+
 ## Modal-scoped portals and top-layer inertness (2026-10-26)
 - **Observed:** Chromium 144/Playwright, three fresh pages per cell: popovers outside a `showModal()` dialog were open but unclickable/unfocusable for both `auto` and `manual`; descendants of the modal worked. A nonmodal `show()` control worked in both locations. Neither `.inert` nor computed `pointer-events` revealed the effective blocking.
 - Repeat in current Firefox, Safari/WebKit, mobile browsers and NVDA/VoiceOver/TalkBack. Inspect the accessibility tree and actual speech/focus order. Revisit WHATWG #10811/#9936 for standards or browser changes; do not assume this remains universal.
