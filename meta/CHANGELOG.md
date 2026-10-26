@@ -1,6 +1,7 @@
 # Knowledge Changelog
 
 ## 2026-10-26
+- Added a virtualized-collection accessibility contract separating table/grid indices from listbox set positions and focus continuity. Three Chromium 144/Playwright fixtures reproduced focus-to-BODY on focused-row removal, successful pre-removal focus transfer, and stale `aria-activedescendant` losing its resolved AX relation. Added role-specific acceptance tests and cross-browser/AT falsification; no production virtualizer, outcome claim or maturity change.
 - Added a role-scoped `wrap`/`balance`/`pretty`/`stable` typography contract. Repeated Chromium 144 text-layout probes demonstrated significant heading-footprint changes and a line-count threshold for balancing; contrasted CSS Text 4, MDN and WebKit's differing algorithms. Added source/evidence limits and cross-engine/localization falsification. No user-outcome claim or maturity change.
 - Revalidated the maintained UI UX Pro Max skill against its actual deterministic source. Found that negative “no gamification/without booking” prompts can activate forbidden CSV constraints and “no dark mode” matches a positive dark-mode substring; high variance may bypass product style priorities. Replaced a generic endorsement with a constraint-first workflow, conditional install notes, source provenance and paired falsification plan. Isolated predicate/source analysis only; no npm/agent runtime, user study or maturity change.
 

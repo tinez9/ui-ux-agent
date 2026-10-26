@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-26 — Virtualization indices cannot repair lost focus
+**Question:** Can ARIA indices make a windowed table/list accessible when focused content unmounts?
+
+**Finding:** W3C APG distinguishes table/grid `aria-rowcount` (including headers) + absolute `aria-rowindex` from listbox/list item `aria-setsize` + `aria-posinset`; WAI-ARIA 1.3 requires a valid active descendant. Three repeated Chromium 144/Playwright fixtures showed focus falling to BODY when a focused row was removed, preserved focus after deliberate pre-removal transfer, and stale active-option ID losing its resolved Chromium AX relationship. Added role-specific metadata and focus-continuity gates.
+
+**Evidence boundary:** Standards/APG, AG Grid/React Spectrum/TanStack docs and one-engine isolated DOM/AX probes; no production virtualizer, cross-browser/AT, performance or user-outcome trial. UX patterns remain **4/10**; overall **3.7/10**. Next: real-virtualizer/AT comparisons.
+
 ### 2026-10-26 — Balanced text is not automatically better text
 **Question:** Should agents use `text-wrap: balance` for headings and `pretty` for prose by default, or are there context-specific composition costs?
 

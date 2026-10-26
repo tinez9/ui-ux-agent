@@ -1,5 +1,10 @@
 # Open Research Questions
 
+## Virtualized collection position and focus falsification (2026-10-26)
+- Reproduce the three Chromium 144 DOM/AX focus fixtures in Firefox, WebKit/Safari, mobile and NVDA/JAWS/VoiceOver. Then run actual pinned TanStack Virtual and AG Grid instances with overscan/retention, pre-unmount focus transfer and `aria-activedescendant` approaches. Test keyboard traversal beyond the window, editing, delete, filter/sort, rapid scroll, 400% zoom, async data, SSR hydration and restoring position; measure missed/duplicated announcements, focus, lost drafts, DOM count and latency.
+- Seed a table with two header rows, 100 logical data rows, unknown server total, pinned/skipped columns, sticky groups and an offscreen active cell. Verify `aria-rowcount` includes headers, all rendered `aria-rowindex` are valid/ordered, per-cell `aria-colindex` reflects gaps, and active content is navigable. Compare pagination as a control. For virtualized listbox options separately validate `aria-setsize`/`aria-posinset` and mounted active descendant. A passing axe scan or valid indices alone do not prove AT access to unmounted content.
+- Primary references: https://www.w3.org/WAI/ARIA/apg/practices/grid-and-table-properties/ ; https://www.w3.org/TR/wai-aria-1.3/ ; https://www.ag-grid.com/javascript-data-grid/accessibility/ .
+
 ## Text wrapping: cross-engine, localization and layout context (2026-10-26)
 - Reproduce Chromium 144 `wrap`/`balance`/`pretty` fixtures on current Safari (including iOS) and Firefox at the six-to-seven-line boundary. Vary font, viewport, English/Spanish/German/Arabic/CJK text and unbreakable identifiers; record actual breaks and value-level support. CSS Text 4 deliberately permits engine differences.
 - Compare headings aligned under same-width images, headlines beside CTAs and prose in product-context blind review. Measure scanning/comprehension, not just typography preference; does `balance` narrow the block enough to weaken the intended alignment?
