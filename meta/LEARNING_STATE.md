@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-26 — Balanced text is not automatically better text
+**Question:** Should agents use `text-wrap: balance` for headings and `pretty` for prose by default, or are there context-specific composition costs?
+
+**Finding:** CSS Text 4, MDN and WebKit show that `balance` trades filled width for even line lengths, `pretty` is a discretionary engine-specific hint, and `stable` targets editing. Repeated Chromium 144/Playwright fixtures showed a three-line 430px heading changing from **403/380/59px** (`wrap`) to **252/269/321px** (`balance`) or **319/381/142px** (`pretty`); longer text balanced at six but not eight lines. Added role-scoped selection and real-copy/localization QA guidance.
+
+**Evidence boundary:** One browser engine, one font and controlled samples; no Safari/Firefox, real users, screen readers or performance benchmark. Visual-design maturity unchanged at **3/10**. Next: cross-engine/localization and contextual comparisons.
+
 ### 2026-10-26 — UI UX Pro Max can invert explicit negative design requirements
 **Question:** Does a popular installable design-skill generator respect “no/without/only” constraints, or can its deterministic retrieval rules recommend the forbidden feature?
 
