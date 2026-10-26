@@ -27,6 +27,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-26 — Accessibility-agent stacks: evidence, workflow side effects and non-enforcing hooks
+**Question:** Which installable accessibility-agent tools materially improve audit/repair judgment, and do their claimed enforcement and verification mechanisms hold up to source inspection?
+
+**Finding:** AccessLint's five-stage live-DOM pipeline offers useful evidence grading but its scripted `focus()` walk is not real Tab/`:focus-visible` verification and its diff skill mutates git state through stash/checkout. smukh's local-first Playwright/axe suite provides explicit negative controls and honest unsupported behavior metrics but has low adoption and no model-uplift benchmark. Community-Access's guard only recognizes path fields; a faithful isolated predicate probe showed `patch`/`command` mutation payloads escape its UI-file classification, and its heading absolutes overstate WCAG. W3C published WCAG-EM 2.0 in July 2026.
+
+**Evidence boundary:** Canonical skill/engine docs, hook implementation/tests, standards and GitHub metadata inspected; isolated predicate reproduction only. No live package/client hook run, agent-output trial, real screen reader or security certification. Tooling maturity remains **5/10** and overall **3.7/10**; next evaluate pinned tools against negative controls, real input modalities and dirty-repository safety.
+
 ### 2026-10-26 — Programmatic focus and `:focus-visible` can disagree after pointer actions
 **Question:** Does a script-moved focus always get a visible ring, and can agents rely on `focus({focusVisible:true})` or `locator.focus()` to validate it?
 
