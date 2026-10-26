@@ -27,6 +27,15 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+
+### 2026-10-26 — Active-only mobile navigation labels can erase web link names
+**Question:** Do selected-only labels preserve navigation usability and accessibility simply because the inactive label text remains in the DOM?
+
+**Finding:** Apple favors labeled tab bars, whereas current Android Compose Material 3 permits conditional inactive-label hiding for 4–5 destinations (and defaults `alwaysShowLabel=true`). In an isolated Chromium 144/Playwright five-link web fixture (three fresh pages per variant), `display:none` on inactive text erased four implicitly derived accessible link names; visually-hidden text, opacity-zero, and explicit matching names preserved them. A direct hidden `aria-labelledby` reference also preserved naming (3/3). Fixed grid tracks prevented target movement, so “active-only always shifts targets” is false for that layout. The core decision is **visible comprehension versus programmatic naming versus geometry**—three independent checks.
+
+**Evidence boundary:** Apple/Android first-party docs, NN/g research/guidance, W3C AccName/WCAG and a single-engine DOM/geometry fixture; no native Compose runtime, screen reader/voice control, other browsers or user outcomes. UX patterns **4/10**, overall **3.7/10** unchanged. Next: cross-browser/AT and novice/experienced user tests with 3–5 tabs, localization and fixed-vs-flex layouts.
+
+
 ### 2026-10-26 — OTP visual slots are not an input-semantic requirement
 **Question:** Should AI agents implement six independent code boxes, a single input or a hybrid for verification-code UX?
 
