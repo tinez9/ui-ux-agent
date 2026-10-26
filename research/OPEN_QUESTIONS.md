@@ -1,5 +1,11 @@
 # Open Research Questions
 
+## Scripted focus visibility across input modalities (2026-10-26)
+- **Observed:** Three Chromium 144/Playwright runs each: after a real pointer click, scripted focus to a button did **not** match `:focus-visible`, and `focus({focusVisible:true})` was ignored; after keyboard Space it **did** match. A temporary explicit `:focus` cue restored the outline without changing heuristic matching. Fresh Playwright `locator.focus()` alone showed the ring and would miss the pointer path.
+- Re-run on Chrome **145+**, Firefox and Safari (including mobile/AT); verify `focusVisible:true/false`, pointer/touch/keyboard/switch/voice modalities, browser user preference to always show focus, shadow-DOM delegation and script focus after delays. BCD claims support for Chrome 145+, Firefox 104+, Safari 18.4+ but **no non-Chromium runtime was tested**.
+- Compare `:focus-visible` alone, permanent `:focus` rings, and scoped temporary programmatic-focus cues in realistic error recovery, dialog open/close, command palettes and newly inserted actions. Measure whether users find the new focus, whether ring persistence annoys pointer users, and whether cue cleanup survives unmount/re-render.
+- Audit with real keyboard and pointer journeys, forced-colors/contrast, zoom, sticky bars and screen readers. Do not declare WCAG failure from `:focus-visible=false` alone; distinguish AA focus visibility, AA occlusion and AAA appearance. Verify Playwright `locator.focus()` is not being used as a substitute for input-modality tests.
+
 ## CSS scrollspy visual versus semantic current state (2026-10-26)
 - **Observed:** Three Chromium 144/Playwright TOC fixtures: `scroll-target-group:auto` + `:target-current` followed scroll, but did not set `aria-current`; clicking #s4 then scrolling to s1 left `location.hash`/`:target` at s4. Three additional `scroll-marker-group: after links` vs `after tabs` probes parsed both modes but exposed tabs in both. CDP AX did not serialize `current` even for an explicit attribute; this is **not** an AT speech test.
 - Repeat real-link and generated-marker variants in Firefox, Safari/WebKit, mobile browsers and NVDA/VoiceOver/TalkBack. Confirm actual feature support, current-state announcements, link/tab semantics, keyboard order, hash/back navigation and whether draft `links` mode is implemented beyond parsing.
