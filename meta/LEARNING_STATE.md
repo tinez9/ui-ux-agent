@@ -27,6 +27,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-26 — Programmatic focus and `:focus-visible` can disagree after pointer actions
+**Question:** Does a script-moved focus always get a visible ring, and can agents rely on `focus({focusVisible:true})` or `locator.focus()` to validate it?
+
+**Finding:** Three repeated Chromium 144/Playwright paths showed pointer-click→script focus on a button was real but did not match `:focus-visible` (0px outline in a reset fixture), whereas keyboard Space→script focus did (4px); a text input did, too. The `focusVisible:true` option was ignored in Chromium 144 (a getter was never read); current MDN BCD lists Chrome 145+, Firefox 104+ and Safari 18.4+ support. A scoped `:focus` cue restored visibility for intentional focus relocation, while Playwright's standalone `locator.focus()` gave a misleadingly positive ring. Distinguish focus ownership, input modality, visual cue and occlusion; a missing pointer-origin ring alone is not a WCAG 2.4.7 failure.
+
+**Evidence boundary:** CSSWG/WHATWG, WCAG/MDN BCD and isolated Chromium tests; no Firefox/Safari runtime, real AT, forced-colors contrast, or user outcome. **Frontend 3/10, overall 3.7/10 unchanged.** Next: cross-engine/AT and real-app focus-transfer evaluation.
+
 ### 2026-10-26 — CSS scrollspy highlighting is not an authored accessible current state
 **Question:** Does `scroll-target-group`/`:target-current` fully replace JS scrollspy for semantic navigation, and do the new generated-marker `links`/`tabs` modes match shipping roles?
 
