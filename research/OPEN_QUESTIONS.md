@@ -1,5 +1,11 @@
 # Open Research Questions
 
+## Modal-scoped portals and top-layer inertness (2026-10-26)
+- **Observed:** Chromium 144/Playwright, three fresh pages per cell: popovers outside a `showModal()` dialog were open but unclickable/unfocusable for both `auto` and `manual`; descendants of the modal worked. A nonmodal `show()` control worked in both locations. Neither `.inert` nor computed `pointer-events` revealed the effective blocking.
+- Repeat in current Firefox, Safari/WebKit, mobile browsers and NVDA/VoiceOver/TalkBack. Inspect the accessibility tree and actual speech/focus order. Revisit WHATWG #10811/#9936 for standards or browser changes; do not assume this remains universal.
+- Test real React portals and component libraries (select, combobox, calendar, tooltip, toast), including nested dialogs, shadow DOM/flat-tree boundaries, focus restoration, light dismiss, Escape, close/reopen, route unmount, and overlay cleanup. Check whether an agent's visual-only or `:popover-open`-only tests falsely report success.
+- Compare modal-scoped portal container versus body-root portal under identical interaction tests. For global notifications during modal work, test in-modal announcement versus deferral; avoid claiming user preference without actual task/AT evidence.
+
 
 
 ## Compact bottom navigation: selected-only label falsification (2026-10-26)
