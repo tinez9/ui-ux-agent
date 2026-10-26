@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-26 — Animated native disclosure can be closed yet keyboard-interactive
+**Question:** Does CSS intrinsic-height animation preserve the keyboard and focus contract of native `<details>` while its content exits?
+
+**Finding:** In three independent Chromium 144/Playwright fixtures, `interpolate-size` plus `::details-content` and discrete `content-visibility` transitions kept a nested button Tab-focusable ~120ms **after `details.open=false`**; focus fell to BODY at the end of a 900ms exit. Native instant close skipped the button. Removing the discrete transition removed visual exit; a `toggle`-driven inert wrapper prevented the focus problem in the fixture but does not prove race-free production behavior. Prefer instant close for interactive disclosures unless focus/inertness is explicitly managed.
+
+**Evidence boundary:** First-party CSS/spec/compatibility docs and three headless Chromium repetitions; no cross-browser, real assistive-technology or user-outcome evidence. Interaction/motion **3/10**, UX patterns **4/10**, overall **3.7/10** unchanged. Next: Firefox/Safari/AT, exclusive auto-close, rapid toggles and synchronous inert/focus guards.
+
 ### 2026-10-26 — Storybook a11y checks are advisory unless CI is explicitly gated
 **Question:** Does Storybook's official a11y addon or its agent test command enforce WCAG 2.2 automatically?
 
