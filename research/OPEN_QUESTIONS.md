@@ -1,5 +1,11 @@
 # Open Research Questions
 
+## Native disclosure exit animation: focus ownership and inert timing (2026-10-26)
+**Observed:** Chromium 144/Playwright (3× fresh fixtures): a `<details>` closed with `open=false` yet `::details-content` remained visible during a 900ms `content-visibility ... allow-discrete` transition. Tab entered a nested button and focus dropped to BODY after exit; native instant close did neither. A `toggle`-updated `inert` wrapper avoided it in the fixture, but `toggle` is asynchronous/coalesced.
+
+**Falsify:** Repeat in pinned Firefox, Safari/WebKit and NVDA/VoiceOver/TalkBack; compare native instant close, CSS exit, synchronous inert/focus ownership, asynchronous `toggle` inert and reduced motion. Include Tab/Shift+Tab at 0/50/120/500ms, programmatic close with focused input, `details name` exclusive auto-close, rapid reopen, nested interactive content, zoom and dynamic content height. Assert logical `open`, visible/hit-test geometry, focus target, AX tree and post-exit destination separately. Test whether any pure-CSS pattern preserves semantics; prefer instant close until proven. Measure task errors and perceived continuity before claiming UX benefit.
+
+
 ## Storybook a11y CI and async-state falsification (2026-10-26)
 - Pin **Storybook/addon-a11y 10.6.3** plus resolved axe version. Seed a clean story, missing accessible name, tightly packed sub-24px targets without spacing exceptions, and an asynchronously revealed invalid form. Compare `todo`, `error`, `off`, `manual:true` and per-story `todo` override under Vitest addon and legacy test-runner. Record CI exit codes, warnings, executed rule IDs, violations and `incomplete` (not just screenshots).
 - Compare default tags with explicit WCAG 2.0/2.1/2.2 A/AA tags and a configured `target-size` disable under `runOnly`; verify earlier tags remain included and the `region` exclusion is isolated to component stories. Cross-check direct Playwright+axe and a full-page landmark audit.
