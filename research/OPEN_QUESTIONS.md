@@ -1,5 +1,13 @@
 # Open Research Questions
 
+
+## Verification-code entry: native versus visually segmented input (2026-10-26)
+- Compare a single visible HTML input, `input-otp` single-input/visual slots and Radix preview multi-input/hidden aggregate at pinned revisions in real iOS Safari, Android Chrome, Firefox/desktop and VoiceOver/NVDA/TalkBack. Test full/partial paste, undo/selection, IME, RTL, password-manager overlays, leading zeros, mobile viewport/keyboard, 400% zoom, no-JS and `FormData`. Verify effective tab stops and accessible names; a one-field DOM shape does not certify real AT quality.
+- Use origin-bound test SMS and permissioned WebOTP on devices to distinguish `autocomplete` suggestions, explicit API retrieval, manual paste and absent SMS; measure timeout/abort and focus/error recovery. Browser automation alone cannot establish real OS/SMS behavior.
+- For a service that must meet NIST SP 800-63B-4, verify six-or-more-digit OOB secrets, <=10-minute validity, replay rejection, rate limiting across resends and correct account binding. Contrast GOV.UK's illustrative 5-digit/15-minute *phone-confirmation* pattern without conflating security jurisdictions. Test multiple still-valid issued codes, expiration messaging, delivery failure, recovery and passkey alternatives.
+- Compare error rate, task time, comprehension and abandonment with representative users; no conversion or accessibility superiority is established by source inspection. Recheck Radix's 2026-06 paste fix in the actual published version before asserting a regression.
+
+
 ## Native disclosure exit animation: focus ownership and inert timing (2026-10-26)
 **Observed:** Chromium 144/Playwright (3× fresh fixtures): a `<details>` closed with `open=false` yet `::details-content` remained visible during a 900ms `content-visibility ... allow-discrete` transition. Tab entered a nested button and focus dropped to BODY after exit; native instant close did neither. A `toggle`-updated `inert` wrapper avoided it in the fixture, but `toggle` is asynchronous/coalesced.
 

@@ -26,6 +26,14 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+
+### 2026-10-26 — OTP visual slots are not an input-semantic requirement
+**Question:** Should AI agents implement six independent code boxes, a single input or a hybrid for verification-code UX?
+
+**Finding:** W3C WCAG 2.2 SC 3.3.8 explicitly illustrates six boxes that accept only the first pasted digit as an inaccessible authentication failure; the failure is **forced transcription**, not visual segmentation itself. GOV.UK uses one labeled `autocomplete="one-time-code"` input. Source inspection compared MIT `input-otp` (one real input + visual slots and substantial mobile/selection workarounds) against Radix's preview `OneTimePasswordField` (multiple real inputs + hidden aggregate, per-digit focus/paste logic). Radix's historic overlong-paste issue was fixed in June 2026, not still open. For NIST-governed out-of-band authentication, NIST SP 800-63B-4's >=6 digits/<=10 minutes differ from GOV.UK's 5-digit/15-minute phone-confirmation example; distinguish normative security scope from UI pattern reuse.
+
+**Evidence boundary:** W3C, GOV.UK, NIST, MDN/web.dev and pinned upstream React source/tests; no real-device SMS, runtime library comparison, assistive technology or user outcomes. UX patterns **4/10**, frontend **3/10**, overall **3.7/10** unchanged. Next: controlled browser/device/AT, full/partial paste, resend/replay and user-outcome comparison.
+
 ### 2026-10-26 — Animated native disclosure can be closed yet keyboard-interactive
 **Question:** Does CSS intrinsic-height animation preserve the keyboard and focus contract of native `<details>` while its content exits?
 
