@@ -27,6 +27,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-26 — A body-level popover portal can be open but inert above a modal
+**Question:** Does top-layer rendering or an invoker inside a modal make a body-mounted popover interactive, and can `popover="manual"` repair it?
+
+**Finding:** No in the tested Chromium 144 fixture. Across three fresh runs of each of eight variants, a popover appended outside a `showModal()` dialog matched `:popover-open` but could not be clicked or focused, regardless of `auto`/`manual`; the same control inside the dialog worked. Nonmodal `show()` controls worked in both DOM locations. Computed `pointer-events:auto` and `.inert=false` masked effective modal blocking. Use a modal-scoped portal root and test real interaction rather than screenshots or open state. This qualifies the existing native-overlay contract and refutes “manual fixes modal popover” as a general solution.
+
+**Evidence boundary:** WHATWG/MDN specify modal inertness; WHATWG #10811/#9936 remain open. Isolated Chromium/Playwright only, no React component, Firefox/Safari, assistive technology, or outcome testing. No maturity-score change. Next: real component-library portal behavior and cross-engine/AT checks.
+
 
 ### 2026-10-26 — Active-only mobile navigation labels can erase web link names
 **Question:** Do selected-only labels preserve navigation usability and accessibility simply because the inactive label text remains in the DOM?
