@@ -1,5 +1,10 @@
 # Source Registry
 
+## Modal dialog + body-portal popover inertness (2026-10-26)
+- **Normative/platform:** https://html.spec.whatwg.org/multipage/interaction.html#blocked-by-a-modal-dialog ; https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/showModal (a modal makes same-document non-descendants inert); https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using (top layer, auto/manual, invoker relations). Top-layer rendering is not an exemption from modal inertness.
+- **Live standards disagreement:** https://github.com/whatwg/html/issues/10811 (open 2026-10-26; specifically popovers invoked from modal but mounted outside its flat tree, including manual toasts); https://github.com/whatwg/html/issues/9936 (open; argues visible top-layer popovers should be interactive). These are unresolved proposals, **not** shipped fixes.
+- **Local controlled browser evidence:** Chromium 144.0.7559.96/Linux with Playwright; 2 dialog modes (`showModal`/`show`) × 2 DOM locations (descendant/body sibling) × 2 popover modes (`auto`/`manual`), each on three fresh pages. All 24 popovers reported `:popover-open`. Both modes clicked 3/3 inside modal and nonmodal, but 0/3 body portal under modal. Blocked case: center `elementFromPoint` hit dialog, `.focus()` did not move to popover action, while `inert=false` and computed `pointer-events:auto`. Click failure measured via 600ms Playwright timeout. No Firefox/Safari/AT or framework runtime; do not treat click timeout as measured user failure.
+
 
 
 ## Compact bottom-navigation labels and hidden-name behavior (2026-10-26)
