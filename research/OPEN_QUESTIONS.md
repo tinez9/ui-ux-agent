@@ -1,5 +1,11 @@
 # Open Research Questions
 
+## Storybook a11y CI and async-state falsification (2026-10-26)
+- Pin **Storybook/addon-a11y 10.6.3** plus resolved axe version. Seed a clean story, missing accessible name, tightly packed sub-24px targets without spacing exceptions, and an asynchronously revealed invalid form. Compare `todo`, `error`, `off`, `manual:true` and per-story `todo` override under Vitest addon and legacy test-runner. Record CI exit codes, warnings, executed rule IDs, violations and `incomplete` (not just screenshots).
+- Compare default tags with explicit WCAG 2.0/2.1/2.2 A/AA tags and a configured `target-size` disable under `runOnly`; verify earlier tags remain included and the `region` exclusion is isolated to component stories. Cross-check direct Playwright+axe and a full-page landmark audit.
+- Delay an invalid async form beyond first render; compare explicit settled-state stories and `developmentModeForBuild` in React Suspense/RSC and Storybook 10 vs 11, then add keyboard, AT and real-journey controls. **No Storybook runtime executed in this cycle.**
+
+
 ## Virtualized collection position and focus falsification (2026-10-26)
 - Reproduce the three Chromium 144 DOM/AX focus fixtures in Firefox, WebKit/Safari, mobile and NVDA/JAWS/VoiceOver. Then run actual pinned TanStack Virtual and AG Grid instances with overscan/retention, pre-unmount focus transfer and `aria-activedescendant` approaches. Test keyboard traversal beyond the window, editing, delete, filter/sort, rapid scroll, 400% zoom, async data, SSR hydration and restoring position; measure missed/duplicated announcements, focus, lost drafts, DOM count and latency.
 - Seed a table with two header rows, 100 logical data rows, unknown server total, pinned/skipped columns, sticky groups and an offscreen active cell. Verify `aria-rowcount` includes headers, all rendered `aria-rowindex` are valid/ordered, per-cell `aria-colindex` reflects gaps, and active content is navigable. Compare pagination as a control. For virtualized listbox options separately validate `aria-setsize`/`aria-posinset` and mounted active descendant. A passing axe scan or valid indices alone do not prove AT access to unmounted content.

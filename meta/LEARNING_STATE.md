@@ -26,6 +26,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 5. Which design-system artifact mix most improves agent fidelity when isolated experimentally?
 
 ## Recent research
+### 2026-10-26 — Storybook a11y checks are advisory unless CI is explicitly gated
+**Question:** Does Storybook's official a11y addon or its agent test command enforce WCAG 2.2 automatically?
+
+**Finding:** Stable **Storybook 10.6.3** source exports `test:'todo'` by default: violations warn locally but **do not fail CI**. `test:'error'` plus a running Vitest/test-runner are needed. Official docs describe default WCAG 2.0/2.1 A/AA + best practices, the runner disables `region` for component isolation, and async Suspense/RSC updates can land after the scan. Added a concrete agent preflight, complete tag-selection example, negative controls and final-state QA.
+
+**Evidence boundary:** First-party stable source/tests, manifest and 10.6 docs; **no executed Storybook/axe/Vitest, browser/AT validation or measured agent uplift**. Agent workflows **5/10**, frontend **3/10**, overall **3.7/10** unchanged. Next: seeded CI exit-code and async-state comparisons against direct Playwright+axe.
+
 ### 2026-10-26 — Virtualization indices cannot repair lost focus
 **Question:** Can ARIA indices make a windowed table/list accessible when focused content unmounts?
 

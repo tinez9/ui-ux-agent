@@ -177,6 +177,27 @@ Its strongest idea is falsifiable evidence: build success, DOM presence and unin
 
 **Failure/security boundaries:** a documented April 2026 issue reports OOM/timeouts with ~460 stories and TypeScript docgen; it is one reported deployment, not a proven universal regression. Trade docgen detail against startup cost and check current release behavior. The local MCP handler checks browser origins/content types, but non-browser clients may omit Origin; **these checks are not authorization**. Do not expose the dev/test endpoint on an untrusted network. Its source includes telemetry collection; review project telemetry/privacy settings. The addon enables dev/docs/test toolsets by default; disable unnecessary toolsets, protect remote access, and exclude sensitive fixtures from published manifests. An axe-clean story does not certify keyboard/screen-reader UX or full-page behavior; Storybook documents async-render false negatives.
 
+**Accessibility CI gate — pinned stable Storybook 10.6.3 (source-audited 2026-10-26):** The official `@storybook/addon-a11y` is a **component-state axe harness**, not an automatically enforced WCAG gate. Its `preview.tsx` exports `parameters.a11y.test: 'todo'`: violations warn locally but **do not fail CI**. The docs list the user parameter default as `undefined`; the addon-provided default resolves it to `todo`. Explicit `'error'` plus a running Vitest addon or test-runner are needed for a failing CI check. `'off'`, `globals.a11y.manual: true`, and per-story `'todo'` overrides can bypass enforcement. An installed addon, green panel or Storybook MCP `test-run` is **not proof** that a blocking a11y gate ran. Inspect effective story settings and the CI command; seed a deliberately unnamed button to prove the gate fails.
+
+**Ruleset and timing are separate coverage gates.** Official 10.6 docs describe default WCAG **2.0/2.1 A/AA + best-practice** checks, not a WCAG 2.2 conformance test. Explicitly select **all applicable** `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22a`, `wcag22aa` tags (plus `best-practice` if wanted); selecting only `wcag22aa` omits earlier A/AA tags. The pinned runner disables `region` for isolated component stories and preserves configured rule disables when `runOnly` is used. Audit actual executed rule IDs, exclusions and `incomplete` results; zero violations does not certify coverage. The package declares an `axe-core` semver **range**, so inspect the lockfile. WCAG 2.2 `target-size` depends on effective axe selection and target exceptions; use a deliberately defective, tightly packed target as a negative control rather than assuming coverage.
+
+```ts
+// .storybook/preview.ts — policy example; validate against pinned Storybook/axe
+export default {
+  parameters: {
+    a11y: {
+      test: 'error',
+      options: {
+        runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa',
+                  'wcag22a', 'wcag22aa', 'best-practice'],
+      },
+    },
+  },
+};
+```
+
+**Agent preflight:** (1) inspect installed Storybook/addon/axe versions, `.storybook/preview.*`, story overrides, manual flags and CI runner; (2) run an intentionally broken story and passing control, recording executed rules and CI exit status; (3) test loaded, async-error, dialog-open, validation, disabled and responsive states **after they settle**; (4) verify keyboard/focus, full-page landmarks, screen readers and real journeys separately. Storybook warns that Suspense/RSC updates can arrive *after* the initial audit; `developmentModeForBuild` is a documented mitigation, **not** a final-state guarantee. `region` exclusion is reasonable for isolated components, not for full-page landmark testing. Prefer this workflow for an existing maintained Storybook; otherwise use direct Playwright+axe and manual AT rather than installing Storybook solely for a green badge. The addon is first-party/MIT; `npx storybook add` still modifies dependencies/configuration and requires lockfile review. **Evidence boundary:** stable source/tests and first-party docs; no local Storybook/Vitest/axe runtime or measured agent-quality uplift.
+
 **Evidence boundary:** canonical source contains a Claude/Codex agent-eval harness with model-pinned workflow checks, but this does not establish **causal design-quality uplift** over the same agent without Storybook context. Compared with third-party `strongeron/storybook-workbench` (React+Vite inventory/flow audit skills), official Storybook offers first-party component contracts and executable tests; the third-party audit may complement it but adds another skill/dependency surface and has no validated incremental uplift here. Benchmark hallucinated props, story-state coverage, seeded defects, accessibility false negatives, token/time cost and visual quality against a no-MCP baseline.
 
 Sources: https://storybook.js.org/docs/11/ai/mcp/overview ; https://storybook.js.org/docs/11/ai/manifests ; https://storybook.js.org/docs/ai/mcp/api ; https://storybook.js.org/docs/writing-tests/accessibility-testing ; https://github.com/storybookjs/storybook/tree/next/code/addons/mcp ; https://github.com/storybookjs/storybook/tree/next/agent-eval ; https://github.com/storybookjs/storybook/tree/next/code/lib/codex-plugin ; https://github.com/storybookjs/mcp/issues/214 .
