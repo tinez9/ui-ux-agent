@@ -27,6 +27,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-26 — CSS carousel pseudo-controls are real AX controls but can evade agent locators
+**Question:** Are CSS Overflow 5-generated carousel buttons and markers fully discoverable, meaningfully named, localized and verifiable by ordinary AI-agent browser QA?
+
+**Finding:** In three fresh Chromium 144/Playwright Python fixtures, CDP AX exposed four generated buttons, two tablists and six marker tabs, including three unnamed tabs from `content:""`; Playwright role locators and ARIA snapshots omitted all pseudo-controls. Keyboard Tab and Enter nevertheless operated a generated Next button and scrolled 330px. CSS marker `attr(data-label)` changes updated AX names, but changing `lang` alone left English labels unchanged. Blank, glyph-only and repeated generic names failed meaningful identification. MDN warns `attr()` marker labels are not automatically translated; CSSWG #12268 remains open. Use localized distinct names, actual keyboard/AX checks and HTML-control fallback where browser support matters.
+
+**Evidence boundary:** Repeated synthetic Chromium AX/keyboard probes and first-party W3C/MDN/CSSWG guidance; no Firefox/Safari, actual AT speech, browser automatic translation, production component or user-outcome test. **Frontend 3/10, overall 3.7/10 unchanged.** Next: cross-engine and real AT/translation comparison, including false-negative Playwright locator checks.
+
 ### 2026-10-26 — A body-level popover portal can be open but inert above a modal
 **Question:** Does top-layer rendering or an invoker inside a modal make a body-mounted popover interactive, and can `popover="manual"` repair it?
 
