@@ -1,5 +1,10 @@
 # Open Research Questions
 
+## Text wrapping: cross-engine, localization and layout context (2026-10-26)
+- Reproduce Chromium 144 `wrap`/`balance`/`pretty` fixtures on current Safari (including iOS) and Firefox at the six-to-seven-line boundary. Vary font, viewport, English/Spanish/German/Arabic/CJK text and unbreakable identifiers; record actual breaks and value-level support. CSS Text 4 deliberately permits engine differences.
+- Compare headings aligned under same-width images, headlines beside CTAs and prose in product-context blind review. Measure scanning/comprehension, not just typography preference; does `balance` narrow the block enough to weaken the intended alignment?
+- In editable and frequently updated content, compare `stable`, `pretty` and default `wrap` for caret jumps, reflow cost, 200–400% zoom, user spacing overrides and AT behavior. Do not infer performance or accessibility benefit from CSS support.
+
 ## Design-skill constraint fidelity — UI UX Pro Max (2026-10-26)
 - **Pinned full-runtime falsification:** On a clean checkout, run the actual `search.py --design-system --json` for paired positive/negative prompts (“gamification”/“no gamification”; “booking”/“without booking”; “dark mode”/“light only, no dark mode”), and inspect `activated_rules`, `constraints`, mode, palette, style and persisted `MASTER.md`. Compare `--variance 3/7/8/10` on conservative/professional and expressive products. Source-level predicate probes show inversion risk, not the end-to-end result.
 - **Agent-output causal test:** With identical briefs, assets and existing tokens, compare Claude Code/Codex without skill, with skill, and with skill plus an explicit positive/forbidden/optional requirement gate. Seed negative requirements, brand exceptions, accessibility conflicts and contradictory dials; score **forbidden-feature violations**, design quality, rendered/keyboard defects, time and tokens, with clean controls. Check whether the skill's existing “verify fit” instruction prevents the source-level issue in practice.
