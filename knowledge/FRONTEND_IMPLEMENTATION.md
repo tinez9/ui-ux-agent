@@ -1,5 +1,30 @@
 # Frontend Implementation
 
+## Programmatic focus can be real but visually unindicated (2026-10-26)
+
+**Decision:** `:focus` means an element owns focus; `:focus-visible` is a **browser heuristic about when to show a focus cue**, not an invariant of `.focus()`. When a pointer-activated action moves focus by script to another **button**, the new button may receive keyboard events without matching `:focus-visible`. The same move following keyboard activation can match. Editable text inputs often match regardless of pointer modality. Do not confuse “`document.activeElement` is correct” with “the user can see where interaction moved.”
+
+**When to intervene:** Normally retain the browser's `:focus-visible` behavior and provide a high-contrast outline; **never reset `:focus` outlines globally without a verified alternative**. When an action *deliberately relocates focus* and users need to find its destination (e.g. focus transferred to a newly added action, recovery button or dynamically opened region), add an explicit, temporary cue to that target such as `.needs-focus-cue:focus { outline: 3px solid currentColor; outline-offset: 2px; }` alongside the ordinary `:focus-visible` rule; clear the marker on blur/unmount. Do not force a ring after every mouse click, or mistake focus styling for a substitute for correct focus placement and announcement. Ensure the focused component is not hidden under sticky headers/footers; `focus({preventScroll:true})` is **not** a visibility guarantee.
+
+**API compatibility trap:** The HTML Standard defines `element.focus({focusVisible:true})`, but support is **version-specific**. The MDN browser-compat-data source inspected on 2026-10-26 lists Chrome **145+**, Firefox **104+**, Safari **18.4+**; Chromium **144.0.7559.96** ignored the option. Do not assume the documented option works in a deployed browser or use `focusVisible:false` to suppress a keyboard user's indicator. An explicit CSS cue with lifecycle cleanup is a practical fallback when orientation must be guaranteed.
+
+**Controlled evidence (3 fresh Chromium 144/Playwright Python runs per path):**
+
+| Trigger → script target | `:focus-visible` on target | CSS outline in test fixture |
+|---|---:|---:|
+| Real pointer click → `button.focus()` | false | 0px |
+| Real pointer click → `button.focus({focusVisible:true})` | false | 0px |
+| Real pointer click → add `.needs-focus-cue`, then `button.focus()` | false | **4px** |
+| Keyboard Space on focused trigger → `button.focus()` | true | **4px** |
+| Pointer click → `input.focus()` | true | **4px** |
+| Playwright `locator.focus()` on fresh target | true | **4px** |
+
+The fixture intentionally removed the default button outline on `:focus` and supplied a 4px outline only for `:focus-visible`/the explicit-cue class. A getter probe showed Chromium 144 read `preventScroll` but **did not read** `focusVisible` from the focus-options object, corroborating that the latter was ignored. A bare Playwright `.focus()` test therefore **cannot substitute for real pointer-triggered and keyboard-triggered journeys**.
+
+**Standards and acceptance:** WCAG **2.4.7 Focus Visible (AA)** requires a mode with visible keyboard focus; **2.4.11 Focus Not Obscured (Minimum, AA)** prevents complete occlusion by author content; **2.4.13 Focus Appearance (AAA)** adds indicator size/change-contrast criteria. The pointer-origin missing ring above is **not automatically a WCAG 2.4.7 failure**: test keyboard paths separately. Test pointer, keyboard, scripted focus after async work, zoom/sticky overlays, forced colors, focus restoration, actual screenshots and real assistive technologies. CSS computed outline and `:focus-visible` matching alone do not certify visibility, contrast or user orientation.
+
+**Evidence boundary:** CSS Selectors 4 and WHATWG HTML algorithms, W3C WCAG 2.2, MDN and its versioned compatibility data, plus isolated Linux Chromium 144 fixtures. No Firefox/Safari runtime, screen-reader or user-outcome comparison. Sources in `research/SOURCES.md`.
+
 ## Pointer targets: rendered hit area, exceptions, and audit coverage (2026-10-25)
 
 **Decision contract — WCAG 2.2 SC 2.5.8 (AA):** A pointer target needs an axis-aligned 24×24 **CSS-pixel square inside its effective clickable area**, **or** one of five exceptions: sufficient spacing, an equivalent conforming control on the same page, inline text, an unmodified user-agent-sized control, or essential/legal spatial presentation. For spacing, center a **24px-diameter circle on each undersized target's bounding box**: it must intersect neither another target nor the circle around another undersized target. W3C's 20×20px buttons with 4px gap pass the spacing example; with 0px gap they fail. A small target's circle must also clear a *large neighboring target itself*. A 24px icon does not prove a 24px hit area; a 16px icon inside a genuinely 44px button may be preferable. 44×44px is the stricter **AAA** size / useful touch aspiration, not the AA minimum. Browser zoom does not fix a CSS-pixel shortfall.
