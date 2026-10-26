@@ -426,6 +426,29 @@ Do not import a floating-UI library merely because a surface needs to escape cli
 
 This ordering keeps semantics independent from geometry and reduces JavaScript state that merely mirrors browser state.
 
+### Modal popover portal trap: top-layer paint is not modality ownership (Chromium 144, 2026-10-26)
+
+**Decision:** An overlay invoked *from* a modal must remain in that modal's **flat-tree subtree** if it needs to be interactive. A `popover` appended to `document.body` by a generic React/portal overlay root may be visibly open in the top layer yet **effectively inert** because `showModal()` blocks everything outside the dialog. An invoker inside the modal with `popovertarget` does **not** grant the external popover an inertness exemption. This is a DOM ownership issue, not a `z-index`, anchor-positioning or popover dismissal issue.
+
+**Controlled falsification (Chromium 144.0.7559.96/Linux, Playwright, three fresh pages per cell):** An identical button-driven popover was mounted either under the modal's DOM subtree or under a sibling `<div>` in `body`; the dialog was opened with `showModal()` or non-modally with `show()`. Both `popover="auto"` and `popover="manual"` were tested.
+
+| Dialog / popover DOM location | `auto` action clickable? | `manual` action clickable? |
+|---|---|---|
+| Modal `showModal()`, inside dialog | **Yes (3/3)** | **Yes (3/3)** |
+| Modal `showModal()`, body portal outside dialog | **No (0/3)** | **No (0/3)** |
+| Non-modal `show()`, inside dialog | **Yes (3/3)** | **Yes (3/3)** |
+| Non-modal `show()`, body portal | **Yes (3/3)** | **Yes (3/3)** |
+
+All eight variants matched `:popover-open`. In the blocked modal/body-portal variants, `elementFromPoint()` at the popover button's center hit the **dialog**, Playwright's real pointer click timed out, and programmatic `.focus()` left focus on the invoker. Yet the action's own `.inert` property was `false` and computed `pointer-events` was `auto`: neither is a reliable effective-interactivity test. Switching to `popover="manual"` **did not fix** the blocked interaction; it only changes dismissal behavior. This contradicts simplistic “use manual popover inside modals” advice when the actual problem is a body-level portal.
+
+**Implementation contract for coding agents:**
+1. Render interactive dropdowns, calendars, combobox lists, contextual menus and other popovers into a **modal-scoped portal container inside the dialog**, or directly as descendants. In React, choose a portal container under the active `<dialog>` rather than the application's default `document.body` overlay root. CSS top-layer promotion still allows the nested popover to escape clipping; no external body portal is needed merely for stacking.
+2. Do not “fix” this by downgrading `showModal()` to `show()` unless non-modality is genuinely the intended workflow. `aria-owns`, `popovertarget`, `z-index`, and `manual` are not substitutes for correct DOM/modal ownership.
+3. Exercise the **real** action: open the modal, open the popover, click its item, Tab/Shift+Tab through it, Escape/light-dismiss as appropriate, close/reopen the modal, and verify focus return and overlay cleanup. A screenshot, `:popover-open`, computed CSS, or DOM `.inert` alone can falsely pass. Test external toast/notification portals separately; an interactive global toast above a modal may be inert even if visible. Keep critical status/choices inside the active modal or defer them.
+4. Do not overgeneralize: the experiment is **Chromium-only** and does not measure screen-reader speech, React portal-library behavior, or user outcomes. WHATWG issues [#10811](https://github.com/whatwg/html/issues/10811) and [#9936](https://github.com/whatwg/html/issues/9936) remain open as of 2026-10-26; the standards discussion may change future engine behavior.
+
+**Evidence:** [MDN `showModal()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/showModal) (only dialog descendants escape document inertness); [WHATWG #10811](https://github.com/whatwg/html/issues/10811) (same modal/portal failure and `manual` toast example); [WHATWG #9936](https://github.com/whatwg/html/issues/9936) (open standards concern); [MDN popover guide](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using) (top-layer and auto/manual contracts). Browser matrix above is an isolated, repeated fixture, **not** cross-engine conformance evidence.
+
 ### Interest invokers: optional preview, not the only path to content — reviewed 2026-10-24
 
 **Decision:** use `interestfor` as a **progressive enhancement for supplementary hover/focus/touch previews**, not as the sole path to necessary information, editing or actions. A hovercard may reduce navigation cost; it can also obscure controls, distract keyboard users and exclude browsers or input methods. Preserve a direct link or visible tap/click disclosure. Do not mistake an interest-triggered popover for a modal dialog or a fully specified tooltip/menu widget.
