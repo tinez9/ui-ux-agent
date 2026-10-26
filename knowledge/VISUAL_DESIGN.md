@@ -80,6 +80,14 @@ Control reading width independently from page width. GOV.UK constrains common co
 
 Short UI labels, dense tables, code, editorial prose, and multilingual text have different measure needs. Do not force one prose measure onto every text-bearing component.
 
+### Soft-wrap policy: `balance`, `pretty`, and `stable` serve different goals (2026-10-26)
+
+Choose the line-breaking **objective**, not a fashionable CSS property. `text-wrap: balance` equalizes short lines but can leave unused width under an image or beside a CTA. `text-wrap: pretty` favors improved rag/short last lines without promising uniform results; browsers implement different algorithms. `text-wrap: stable` targets editing, preserving preceding lines while typing. Ordinary `wrap` is a robust default for controls and changing content. Avoid applying `balance` globally: `text-wrap-style` inherits, and Chromium/Firefox cap how many lines are balanced (WebKit documents a different strategy).
+
+**Measured layout counterexample:** Two matching Chromium 144.0.7559.96/Playwright runs (Linux, Arial 28px, line-height 1.25, 430px text width) measured a three-line English heading's rounded line-ink widths via per-character DOM Range rectangles: `wrap` **403/380/59px**, `balance` **252/269/321px**, `pretty` **319/381/142px**. All remained three lines. `balance` changed the overall footprint; `pretty` improved the isolated last line in this fixture without equalizing all lines. A longer sample showed identical `balance`/`wrap` at **eight lines/430px** but different wrapping at **six lines/580px**. These are layout observations, **not** readability, user preference, performance or cross-browser outcomes.
+
+**Agent gate:** Scope each style to a semantic text role. Compare `wrap`, `balance`, `pretty` against the surrounding composition and real copy at narrow/intermediate widths, zoom, user spacing overrides, fallback fonts and longer translations. Preserve natural height and normal-wrap fallback. Do not hardcode `<br>` or add a JS balancer just to reproduce a single screenshot. CSS Text Level 4 allows user-agent variation; MDN documents short-block and performance boundaries, and WebKit explains its broader Safari 26 `pretty` algorithm. Test the actual browser rather than assuming pixel-identical wrapping.
+
 ### Spacing must be resilient, not merely attractive
 WCAG 2.2 SC 1.4.12 does **not** prescribe the site's default typography. It requires content and functionality to survive user-applied spacing of at least 1.5× line height, 2× paragraph spacing, 0.12em letter spacing, and 0.16em word spacing where those properties apply to the language/script.
 
