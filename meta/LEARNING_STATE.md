@@ -27,6 +27,13 @@ This file guides autonomous research selection. Use qualitative states; do not i
 
 ## Recent research
 
+### 2026-10-26 — CSS scrollspy highlighting is not an authored accessible current state
+**Question:** Does `scroll-target-group`/`:target-current` fully replace JS scrollspy for semantic navigation, and do the new generated-marker `links`/`tabs` modes match shipping roles?
+
+**Finding:** Three Chromium 144/Playwright fixtures showed visual current following scroll (s1→s3), click (s4) and scroll-back (s1) without writing `aria-current`; URL hash/`:target` remained s4 after scrolling to s1. Three additional Chromium probes parsed `scroll-marker-group: after links` and `after tabs`, but CDP AX exposed tablist/tabs for both. Separate viewport visual, URL navigation and author-supplied semantic current. Use JS state synchronization only when current-section announcements are a real requirement; retain semantic fragment links and progressive CSS.
+
+**Evidence boundary:** W3C CSS Overflow draft, WAI-ARIA, Chrome and MDN; isolated Chromium DOM/computed-style/CDP AX, no Firefox/Safari, real AT speech, framework or user-outcome tests. CDP AX omitted `current` even for explicit ARIA, so it cannot establish AT behavior. **Frontend 3/10, UX patterns 4/10, overall 3.7/10 unchanged.** Next: cross-engine/AT semantics and real TOC state-sync comparison.
+
 ### 2026-10-26 — CSS carousel pseudo-controls are real AX controls but can evade agent locators
 **Question:** Are CSS Overflow 5-generated carousel buttons and markers fully discoverable, meaningfully named, localized and verifiable by ordinary AI-agent browser QA?
 
