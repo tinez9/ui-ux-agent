@@ -1,5 +1,11 @@
 # Open Research Questions
 
+## CSS scrollspy visual versus semantic current state (2026-10-26)
+- **Observed:** Three Chromium 144/Playwright TOC fixtures: `scroll-target-group:auto` + `:target-current` followed scroll, but did not set `aria-current`; clicking #s4 then scrolling to s1 left `location.hash`/`:target` at s4. Three additional `scroll-marker-group: after links` vs `after tabs` probes parsed both modes but exposed tabs in both. CDP AX did not serialize `current` even for an explicit attribute; this is **not** an AT speech test.
+- Repeat real-link and generated-marker variants in Firefox, Safari/WebKit, mobile browsers and NVDA/VoiceOver/TalkBack. Confirm actual feature support, current-state announcements, link/tab semantics, keyboard order, hash/back navigation and whether draft `links` mode is implemented beyond parsing.
+- Compare CSS-only visual highlight, JavaScript IntersectionObserver plus synchronized `aria-current="location"`, and no automatic highlight in a real article TOC. Include nested scrollers, smooth scrolling, scroll padding, short/hidden sections, resize, dynamic headings, virtualized content, RTL and reduced motion. Quantify semantic/visual state disagreement and announcement chatter.
+- Test whether dynamically announcing a current section improves orientation or distracts users; do not infer WCAG failure or UX preference from the DOM mismatch. Revisit the CSS Overflow 5 draft and browser releases before promoting `links`/`tabs` guarantees.
+
 ## CSS-generated carousel controls: locale and automation falsification (2026-10-26)
 - Run the same generated `::scroll-button`/`::scroll-marker` fixture in **Firefox and Safari** (including iOS), with a real-HTML-controls fallback and an intentionally blank/duplicate-name negative control. Separate unsupported CSS from broken keyboard/focus behavior; confirm actual support rather than assuming MDN's latest matrix applies to installed versions.
 - In Chromium, compare **Playwright JS/Python role locators and ARIA snapshots**, CDP AX tree, real screen readers (NVDA/JAWS/VoiceOver), keyboard Tab/arrow/Space/Enter, visual focus, touch targets and dynamic slide insertion. Does the locator blind spot persist across releases? Can agents detect generated controls and regressions without CDP-specific assertions?
